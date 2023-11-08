@@ -1,0 +1,223 @@
+﻿<link rel="stylesheet" href="~/css/Transactions/style.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+@using Prosperium.Management.Web.Startup
+@{
+    ViewData["Title"] = "Registrar Nova Transação";
+    ViewBag.CurrentPageName = PageNames.Users;
+}
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Transactions/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Transactions/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.css">
+
+<style>
+    .tagify {
+        border: none;
+        background: transparent;
+        font-size: 18px;
+        color: #333;
+        outline: none;
+        border-bottom: 1px solid #ccc;
+        transition: border-color 0.3s;
+        text-align: left;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .tagify__tag:hover {
+        opacity: 0.8;
+    }
+
+    .tagify--maxTags, .tagify--invalid {
+        border-color: red;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 30px 0;
+    }
+    
+ </style>
+
+<div class="form-container">
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="post">
+        <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gasto')">
+            <input type="radio" name="tipoTransacao" style="display: none;" checked />
+            <div class="opcao">Gasto</div>
+        </div>
+
+        <div class="opcao-btn" onclick="marcarOpcao(this, 'ganho')">
+            <input type="radio" name="tipoTransacao" style="display: none;" />
+            <div class="opcao">Ganho</div>
+        </div>
+
+        <div class="opcao-btn" onclick="marcarOpcao(this, 'transferencia')">
+            <input type="radio" name="tipoTransacao" style="display: none;" />
+            <div class="opcao">Transferência</div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="campo-valor">
+                    <label id="labelValor" for="valor">Valor do gasto</label>
+                    <input type="text" id="valor" style="color: red; font-weight: bold;" name="valor" placeholder="R$ 0,00" oninput="formatarValor(this)" />
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="campo-descricao">
+                    <label id="labelDescricao" for="descricao">Descrição do gasto</label>
+                    <input type="text" id="descricao" name="descricao" placeholder="Digite sua descrição" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="campo-categoria">
+                    <label id="labelCategoria" for="categoria">Categoria</label>
+                    <select id="categoria" name="categoria">
+                        <option value="">Selecione uma categoria</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="campo-cartao">
+                    <label id="labelCartao">Cartão de Crédito/Débito</label>
+                    <div class="opcao-cartao-btn" onclick="marcarOpcaoCartao(this, 'credito')">
+                        <input type="radio" name="tipoCartao" style="display: none;" />
+                        <div class="opcao">Crédito</div>
+                    </div>
+
+                    <div class="opcao-cartao-btn opcao-selecionada" onclick="marcarOpcaoCartao(this, 'debito')">
+                        <input type="radio" name="tipoCartao" style="display: none;" checked />
+                        <div class="opcao">Débito</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="campo-condicoes">
+                    <label id="labelCondicoes">Condições de Pagamento</label>
+                    <div class="opcao-condicao-btn opcao-selecionada" onclick="marcarOpcaoCondicao(this, 'avista')">
+                        <input type="radio" name="tipoCondicao" style="display: none;" checked />
+                        <div class="opcao">À Vista</div>
+                    </div>
+
+                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')">
+                        <input type="radio" name="tipoCondicao" style="display: none;" />
+                        <div class="opcao">Parcelado</div>
+                    </div>
+
+                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'recorrente')">
+                        <input type="radio" name="tipoCondicao" style="display: none;" />
+                        <div class="opcao">Recorrente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="campo-conta">
+                    <label id="labelConta" for="conta">Conta</label>
+                    <select id="conta" name="conta">
+                        <option value="">Selecione uma conta</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="campo-data">
+                    <label id="labelData" for="data">Data da Transação</label>
+                    <input type="text" id="data" name="data" placeholder="Selecione a data" />
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="campo-tags">
+                    <label id="labelTags" for="tags">Tags</label>
+                    <input type="text" id="tags" name="tags" placeholder="Adicione tag e pressione Enter" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" id="btnSubmit" class="gasto">
+                Registrar Gasto
+            </button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    function marcarOpcao(elemento, valor) {
+        var botoes = document.querySelectorAll('.opcao-btn');
+        botoes.forEach(function (botao) {
+            botao.classList.remove('opcao-selecionada');
+        });
+
+        elemento.classList.add('opcao-selecionada');
+
+        var inputRadio = elemento.querySelector('input[type="radio"]');
+        inputRadio.checked = true;
+
+        var labelValor = document.getElementById('labelValor');
+        var campoValor = document.getElementById('valor');
+        var labelDescricao = document.getElementById('labelDescricao');
+        var campoDescricao = document.getElementById('descricao');
+        var btnSubmit = document.getElementById('btnSubmit');
+
+        if (valor === 'gasto') {
+            labelValor.textContent = 'Valor do gasto';
+            campoValor.style.color = 'red';
+            labelDescricao.textContent = 'Descrição do gasto';
+            btnSubmit.textContent = 'Registrar Gasto';
+            btnSubmit.className = 'gasto';
+            btnSubmit.style.background = 'green';
+            btnSubmit.style.color = 'white';
+            btnSubmit.style.fontWeight = 'bold';
+        } else if (valor === 'ganho') {
+            labelValor.textContent = 'Valor do ganho';
+            campoValor.style.color = 'green';
+            labelDescricao.textContent = 'Descrição do ganho';
+            btnSubmit.textContent = 'Registrar Ganho';
+            btnSubmit.className = 'ganho';
+            btnSubmit.style.background = 'green';
+            btnSubmit.style.color = 'white';
+            btnSubmit.style.fontWeight = 'bold';
+        } else if (valor === 'transferencia') {
+            labelValor.textContent = 'Valor da transferência';
+            campoValor.style.borderColor = '';
+            campoValor.style.color = '#333';
+            labelDescricao.textContent = 'Descrição da transferência';
+            btnSubmit.textContent = 'Registrar Transferência';
+            btnSubmit.className = 'transferencia';
+            btnSubmit.style.background = 'green';
+            btnSubmit.style.color = 'white';
+            btnSubmit.style.fontWeight = 'bold';
+        }
+
+        mostrarCamposAdicionais(valor);
+    }
+</script>

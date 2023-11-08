@@ -1,0 +1,329 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 95%;
+    width: 100%;
+    margin: 10px auto 0;
+}
+
+h2 {
+    color: #333;
+}
+
+.opcao-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .opcao-btn:hover {
+        background-color: #eee;
+    }
+
+.opcao-selecionada {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.campo-valor,
+.campo-descricao {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+#labelValor,
+#labelDescricao {
+    margin-bottom: 10px;
+    color: #333;
+    display: block;
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+}
+
+#valor,
+#descricao {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #333;
+    outline: none;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    transition: border-color 0.3s;
+    text-align: left;
+    width: 100%;
+}
+
+    #valor::placeholder,
+    #descricao::placeholder {
+        color: #aaa;
+    }
+
+.form-group {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: green;
+    color: white;
+    font-weight: bold;
+}
+
+    button:hover {
+        filter: brightness(90%);
+    }
+
+.campo-categoria,
+.campo-conta,
+.campo-cartao,
+.campo-condicoes {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#labelCategoria,
+#LabelConta,
+#labelCartao,
+#labelCondicoes {
+    margin-bottom: 10px;
+    color: #333;
+    display: block;
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+}
+
+#categoria,
+#conta,
+#tipoCartao,
+#tipoCondicao {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #333;
+    outline: none;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    transition: border-color 0.3s;
+    text-align: left;
+    width: 100%;
+}
+
+    #categoria:hover,
+    #conta:hover,
+    #categoria:focus,
+    #tipoCartao:hover,
+    #tipoCartao:focus,
+    #tipoCondicao:hover,
+    #tipoCondicao:focus {
+        border-color: #aaa;
+    }
+
+    #categoria, #conta option {
+        background-color: #fff;
+        color: #333;
+    }
+
+#tipoCartao,
+#tipoCondicao {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: linear-gradient(45deg, transparent 50%, #ccc 50%), linear-gradient(135deg, #ccc 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+}
+
+.opcao-cartao-btn,
+.opcao-condicao-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .opcao-cartao-btn:hover,
+    .opcao-condicao-btn:hover {
+        background-color: #eee;
+    }
+
+.opcao-selecionada {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.campo-cartao,
+.campo-condicoes {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+    .campo-cartao .opcao-btn,
+    .campo-condicoes .opcao-btn {
+        margin-right: 10px;
+    }
+
+.flatpickr-calendar {
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.flatpickr-months {
+    background-color: #4CAF50;
+}
+
+.flatpickr-days {
+    background-color: #f4f4f4;
+}
+
+.flatpickr-day {
+    color: #333;
+}
+
+    .flatpickr-day.today {
+        background-color: green;
+        color: #fff;
+    }
+
+    .flatpickr-day.selected {
+        background-color: #4CAF50;
+        color: #fff;
+    }
+
+.campo-data, .campo-tags {
+    margin-top: 20px;
+    position: relative;
+}
+
+#labelData {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 10px;
+    margin-top: 5px; /* Ajuste conforme necessário para alinhamento vertical */
+    font-size: 14px;
+    color: #333;
+}
+
+#data {
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: #333;
+    outline: none;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    transition: border-color 0.3s;
+    text-align: left;
+    width: 100%;
+    margin-top: 20px; /* Ajuste conforme necessário para alinhamento vertical */
+}
+
+#labelTags {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 10px;
+    margin-top: 5px; /* Ajuste conforme necessário para alinhamento vertical */
+    font-size: 14px;
+    color: #333;
+}
+
+
+@keyframes rotateGasto {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    50% {
+        transform: rotate(15deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes scaleGanho {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes changeColorTransferencia {
+    0% {
+        background-color: #4CAF50;
+    }
+
+    50% {
+        background-color: #45a049;
+    }
+
+    100% {
+        background-color: #4CAF50;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes buttonAnimation {
+    from {
+        transform: scale(0.8);
+    }
+
+    to {
+        transform: scale(1);
+    }
