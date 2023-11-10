@@ -63,7 +63,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpEditions", (string)null);
+                    b.ToTable("AbpEditions");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.FeatureSetting", b =>
@@ -99,7 +99,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpFeatures", (string)null);
+                    b.ToTable("AbpFeatures");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("FeatureSetting");
 
@@ -179,7 +179,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpAuditLogs", (string)null);
+                    b.ToTable("AbpAuditLogs");
                 });
 
             modelBuilder.Entity("Abp.Authorization.PermissionSetting", b =>
@@ -215,7 +215,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "Name");
 
-                    b.ToTable("AbpPermissions", (string)null);
+                    b.ToTable("AbpPermissions");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("PermissionSetting");
 
@@ -255,7 +255,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "ClaimType");
 
-                    b.ToTable("AbpRoleClaims", (string)null);
+                    b.ToTable("AbpRoleClaims");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserAccount", b =>
@@ -316,7 +316,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "UserName");
 
-                    b.ToTable("AbpUserAccounts", (string)null);
+                    b.ToTable("AbpUserAccounts");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserClaim", b =>
@@ -352,7 +352,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "ClaimType");
 
-                    b.ToTable("AbpUserClaims", (string)null);
+                    b.ToTable("AbpUserClaims");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserLogin", b =>
@@ -391,7 +391,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "LoginProvider", "ProviderKey");
 
-                    b.ToTable("AbpUserLogins", (string)null);
+                    b.ToTable("AbpUserLogins");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserLoginAttempt", b =>
@@ -440,7 +440,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenancyName", "UserNameOrEmailAddress", "Result");
 
-                    b.ToTable("AbpUserLoginAttempts", (string)null);
+                    b.ToTable("AbpUserLoginAttempts");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserOrganizationUnit", b =>
@@ -475,7 +475,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpUserOrganizationUnits", (string)null);
+                    b.ToTable("AbpUserOrganizationUnits");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserRole", b =>
@@ -509,7 +509,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpUserRoles", (string)null);
+                    b.ToTable("AbpUserRoles");
                 });
 
             modelBuilder.Entity("Abp.Authorization.Users.UserToken", b =>
@@ -547,7 +547,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpUserTokens", (string)null);
+                    b.ToTable("AbpUserTokens");
                 });
 
             modelBuilder.Entity("Abp.BackgroundJobs.BackgroundJobInfo", b =>
@@ -593,7 +593,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("IsAbandoned", "NextTryTime");
 
-                    b.ToTable("AbpBackgroundJobs", (string)null);
+                    b.ToTable("AbpBackgroundJobs");
                 });
 
             modelBuilder.Entity("Abp.Configuration.Setting", b =>
@@ -637,7 +637,7 @@ namespace Prosperium.Management.Migrations
                     b.HasIndex("TenantId", "Name", "UserId")
                         .IsUnique();
 
-                    b.ToTable("AbpSettings", (string)null);
+                    b.ToTable("AbpSettings");
                 });
 
             modelBuilder.Entity("Abp.DynamicEntityProperties.DynamicEntityProperty", b =>
@@ -666,7 +666,7 @@ namespace Prosperium.Management.Migrations
                         .IsUnique()
                         .HasFilter("[EntityFullName] IS NOT NULL AND [TenantId] IS NOT NULL");
 
-                    b.ToTable("AbpDynamicEntityProperties", (string)null);
+                    b.ToTable("AbpDynamicEntityProperties");
                 });
 
             modelBuilder.Entity("Abp.DynamicEntityProperties.DynamicEntityPropertyValue", b =>
@@ -694,7 +694,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("DynamicEntityPropertyId");
 
-                    b.ToTable("AbpDynamicEntityPropertyValues", (string)null);
+                    b.ToTable("AbpDynamicEntityPropertyValues");
                 });
 
             modelBuilder.Entity("Abp.DynamicEntityProperties.DynamicProperty", b =>
@@ -727,7 +727,7 @@ namespace Prosperium.Management.Migrations
                         .IsUnique()
                         .HasFilter("[PropertyName] IS NOT NULL AND [TenantId] IS NOT NULL");
 
-                    b.ToTable("AbpDynamicProperties", (string)null);
+                    b.ToTable("AbpDynamicProperties");
                 });
 
             modelBuilder.Entity("Abp.DynamicEntityProperties.DynamicPropertyValue", b =>
@@ -752,7 +752,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("DynamicPropertyId");
 
-                    b.ToTable("AbpDynamicPropertyValues", (string)null);
+                    b.ToTable("AbpDynamicPropertyValues");
                 });
 
             modelBuilder.Entity("Abp.EntityHistory.EntityChange", b =>
@@ -789,7 +789,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("EntityTypeFullName", "EntityId");
 
-                    b.ToTable("AbpEntityChanges", (string)null);
+                    b.ToTable("AbpEntityChanges");
                 });
 
             modelBuilder.Entity("Abp.EntityHistory.EntityChangeSet", b =>
@@ -842,7 +842,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "UserId");
 
-                    b.ToTable("AbpEntityChangeSets", (string)null);
+                    b.ToTable("AbpEntityChangeSets");
                 });
 
             modelBuilder.Entity("Abp.EntityHistory.EntityPropertyChange", b =>
@@ -885,7 +885,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("EntityChangeId");
 
-                    b.ToTable("AbpEntityPropertyChanges", (string)null);
+                    b.ToTable("AbpEntityPropertyChanges");
                 });
 
             modelBuilder.Entity("Abp.Localization.ApplicationLanguage", b =>
@@ -941,7 +941,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "Name");
 
-                    b.ToTable("AbpLanguages", (string)null);
+                    b.ToTable("AbpLanguages");
                 });
 
             modelBuilder.Entity("Abp.Localization.ApplicationLanguageText", b =>
@@ -991,7 +991,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "Source", "LanguageName", "Key");
 
-                    b.ToTable("AbpLanguageTexts", (string)null);
+                    b.ToTable("AbpLanguageTexts");
                 });
 
             modelBuilder.Entity("Abp.Notifications.NotificationInfo", b =>
@@ -1052,7 +1052,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpNotifications", (string)null);
+                    b.ToTable("AbpNotifications");
                 });
 
             modelBuilder.Entity("Abp.Notifications.NotificationSubscriptionInfo", b =>
@@ -1099,7 +1099,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "NotificationName", "EntityTypeName", "EntityId", "UserId");
 
-                    b.ToTable("AbpNotificationSubscriptions", (string)null);
+                    b.ToTable("AbpNotificationSubscriptions");
                 });
 
             modelBuilder.Entity("Abp.Notifications.TenantNotificationInfo", b =>
@@ -1149,7 +1149,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("AbpTenantNotifications", (string)null);
+                    b.ToTable("AbpTenantNotifications");
                 });
 
             modelBuilder.Entity("Abp.Notifications.UserNotificationInfo", b =>
@@ -1181,7 +1181,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("UserId", "State", "CreationTime");
 
-                    b.ToTable("AbpUserNotifications", (string)null);
+                    b.ToTable("AbpUserNotifications");
                 });
 
             modelBuilder.Entity("Abp.Organizations.OrganizationUnit", b =>
@@ -1235,7 +1235,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "Code");
 
-                    b.ToTable("AbpOrganizationUnits", (string)null);
+                    b.ToTable("AbpOrganizationUnits");
                 });
 
             modelBuilder.Entity("Abp.Organizations.OrganizationUnitRole", b =>
@@ -1270,7 +1270,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "RoleId");
 
-                    b.ToTable("AbpOrganizationUnitRoles", (string)null);
+                    b.ToTable("AbpOrganizationUnitRoles");
                 });
 
             modelBuilder.Entity("Abp.Webhooks.WebhookEvent", b =>
@@ -1300,7 +1300,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpWebhookEvents", (string)null);
+                    b.ToTable("AbpWebhookEvents");
                 });
 
             modelBuilder.Entity("Abp.Webhooks.WebhookSendAttempt", b =>
@@ -1334,7 +1334,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("WebhookEventId");
 
-                    b.ToTable("AbpWebhookSendAttempts", (string)null);
+                    b.ToTable("AbpWebhookSendAttempts");
                 });
 
             modelBuilder.Entity("Abp.Webhooks.WebhookSubscriptionInfo", b =>
@@ -1371,43 +1371,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AbpWebhookSubscriptions", (string)null);
-                });
-
-            modelBuilder.Entity("Prosperium.Management.Accounts.Account", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AccountNickname")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("AccountType")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("BalanceAvailable")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<long?>("FinancialInstitutionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("MainAccount")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FinancialInstitutionId");
-
-                    b.ToTable("P_Accounts", (string)null);
+                    b.ToTable("AbpWebhookSubscriptions");
                 });
 
             modelBuilder.Entity("Prosperium.Management.Authorization.Roles.Role", b =>
@@ -1482,7 +1446,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "NormalizedName");
 
-                    b.ToTable("AbpRoles", (string)null);
+                    b.ToTable("AbpRoles");
                 });
 
             modelBuilder.Entity("Prosperium.Management.Authorization.Users.User", b =>
@@ -1610,33 +1574,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "NormalizedUserName");
 
-                    b.ToTable("AbpUsers", (string)null);
-                });
-
-            modelBuilder.Entity("Prosperium.Management.Categories.Category", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("SubcategoryId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubcategoryId")
-                        .IsUnique()
-                        .HasFilter("[SubcategoryId] IS NOT NULL");
-
-                    b.ToTable("P_Categories", (string)null);
+                    b.ToTable("AbpUsers");
                 });
 
             modelBuilder.Entity("Prosperium.Management.MultiTenancy.Tenant", b =>
@@ -1700,10 +1638,46 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenancyName");
 
-                    b.ToTable("AbpTenants", (string)null);
+                    b.ToTable("AbpTenants");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Subcategories.Subcategory", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.Account", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AccountNickname")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("AccountType")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("BalanceAvailable")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<long?>("FinancialInstitutionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("MainAccount")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinancialInstitutionId");
+
+                    b.ToTable("P_Accounts");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Categories.Category", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1714,15 +1688,38 @@ namespace Prosperium.Management.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("P_Subcategories", (string)null);
+                    b.ToTable("P_Categories");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Tags.Tag", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("CategoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("P_Subcategories");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Tags.Tag", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1743,10 +1740,10 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TransactionId");
 
-                    b.ToTable("P_Tags", (string)null);
+                    b.ToTable("P_Tags");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Transactions.Transaction", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -1808,7 +1805,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("CategoriesId");
 
-                    b.ToTable("P_Transactions", (string)null);
+                    b.ToTable("P_Transactions");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
@@ -1820,7 +1817,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("EditionId", "Name");
 
-                    b.ToTable("AbpFeatures", (string)null);
+                    b.ToTable("AbpFeatures");
 
                     b.HasDiscriminator().HasValue("EditionFeatureSetting");
                 });
@@ -1831,7 +1828,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TenantId", "Name");
 
-                    b.ToTable("AbpFeatures", (string)null);
+                    b.ToTable("AbpFeatures");
 
                     b.HasDiscriminator().HasValue("TenantFeatureSetting");
                 });
@@ -1845,7 +1842,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AbpPermissions", (string)null);
+                    b.ToTable("AbpPermissions");
 
                     b.HasDiscriminator().HasValue("RolePermissionSetting");
                 });
@@ -1859,7 +1856,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AbpPermissions", (string)null);
+                    b.ToTable("AbpPermissions");
 
                     b.HasDiscriminator().HasValue("UserPermissionSetting");
                 });
@@ -1987,15 +1984,6 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("WebhookEvent");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Accounts.Account", b =>
-                {
-                    b.HasOne("Prosperium.Management.Accounts.Account", "FinancialInstitution")
-                        .WithMany()
-                        .HasForeignKey("FinancialInstitutionId");
-
-                    b.Navigation("FinancialInstitution");
-                });
-
             modelBuilder.Entity("Prosperium.Management.Authorization.Roles.Role", b =>
                 {
                     b.HasOne("Prosperium.Management.Authorization.Users.User", "CreatorUser")
@@ -2038,15 +2026,6 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("LastModifierUser");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Categories.Category", b =>
-                {
-                    b.HasOne("Prosperium.Management.Subcategories.Subcategory", "Subcategory")
-                        .WithOne("Category")
-                        .HasForeignKey("Prosperium.Management.Categories.Category", "SubcategoryId");
-
-                    b.Navigation("Subcategory");
-                });
-
             modelBuilder.Entity("Prosperium.Management.MultiTenancy.Tenant", b =>
                 {
                     b.HasOne("Prosperium.Management.Authorization.Users.User", "CreatorUser")
@@ -2074,20 +2053,40 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("LastModifierUser");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Tags.Tag", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.Account", b =>
                 {
-                    b.HasOne("Prosperium.Management.Transactions.Transaction", null)
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.Account", "FinancialInstitution")
+                        .WithMany()
+                        .HasForeignKey("FinancialInstitutionId");
+
+                    b.Navigation("FinancialInstitution");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>
+                {
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Category")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Tags.Tag", b =>
+                {
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", null)
                         .WithMany("Tags")
                         .HasForeignKey("TransactionId");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Transactions.Transaction", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
                 {
-                    b.HasOne("Prosperium.Management.Accounts.Account", "Account")
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId");
 
-                    b.HasOne("Prosperium.Management.Categories.Category", "Categories")
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Categories")
                         .WithMany()
                         .HasForeignKey("CategoriesId");
 
@@ -2167,12 +2166,12 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("Tokens");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Subcategories.Subcategory", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Categories.Category", b =>
                 {
-                    b.Navigation("Category");
+                    b.Navigation("Subcategories");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.Transactions.Transaction", b =>
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
                 {
                     b.Navigation("Tags");
                 });

@@ -2,6 +2,7 @@
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Categories
 {
@@ -9,7 +10,7 @@ namespace Prosperium.Management.OpenAPI.V1.Categories
     {
         Task CreateAsync(CategoryDto input);
         Task<CategoryDto> GetByIdAsync(long id);
-        Task<List<CategoryDto>> GetAllAsync();
+        Task<List<CategoryDto>> GetAllAsync(TransactionType transactionType);
         Task DeleteAsync(long id);
     }
 }

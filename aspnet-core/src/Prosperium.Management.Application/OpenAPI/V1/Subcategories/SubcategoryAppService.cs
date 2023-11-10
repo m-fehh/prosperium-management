@@ -39,12 +39,19 @@ namespace Prosperium.Management.OpenAPI.V1.Subcategories
             return ObjectMapper.Map<SubcategoryDto>(subcategory);
         }
 
+        [HttpGet("{categoryId}")]
+        public async Task<List<SubcategoryDto>> GetByCategoryIdAsync(long categoryId)
+        {
+            List<Subcategory> subcategories = await _subcategoryRepository.GetAll().Include(x => x.Category).Where(x => x.Category.Id == categoryId).ToListAsync();
+
+            return ObjectMapper.Map<List<SubcategoryDto>>(subcategories);
+        }
+
         [HttpGet]
         public async Task<List<SubcategoryDto>> GetAllAsync()
         {
             List<Subcategory> allSubcategories = await _subcategoryRepository.GetAll()
-                .Include(x => x.Category)
-                .Where(c => c.TenantId == AbpSession.TenantId.Value).ToListAsync();
+                .Include(x => x.Category).ToListAsync();
 
             return ObjectMapper.Map<List<SubcategoryDto>>(allSubcategories);
         }

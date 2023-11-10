@@ -1,8 +1,7 @@
 ﻿<link rel="stylesheet" href="~/css/Transactions/style.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-
+@model TransactionDto
+@using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 @using Prosperium.Management.Web.Startup
 @{
     ViewData["Title"] = "Registrar Nova Transação";
@@ -20,6 +19,10 @@
 }
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.css">
 
 <style>
@@ -55,22 +58,22 @@
     
  </style>
 
-<div class="form-container">
+<div class="form-container" id="TransactionCreate">
     <h2>@ViewData["Title"]</h2>
 
     <form method="post">
         <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gasto')">
-            <input type="radio" name="tipoTransacao" style="display: none;" checked />
+            <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
             <div class="opcao">Gasto</div>
         </div>
 
         <div class="opcao-btn" onclick="marcarOpcao(this, 'ganho')">
-            <input type="radio" name="tipoTransacao" style="display: none;" />
+            <input type="radio" name="TransactionType" value="2" style="display: none;" />
             <div class="opcao">Ganho</div>
         </div>
 
         <div class="opcao-btn" onclick="marcarOpcao(this, 'transferencia')">
-            <input type="radio" name="tipoTransacao" style="display: none;" />
+            <input type="radio" name="TransactionType" value="3" style="display: none;" />
             <div class="opcao">Transferência</div>
         </div>
 
@@ -78,13 +81,13 @@
             <div class="col-6">
                 <div class="campo-valor">
                     <label id="labelValor" for="valor">Valor do gasto</label>
-                    <input type="text" id="valor" style="color: red; font-weight: bold;" name="valor" placeholder="R$ 0,00" oninput="formatarValor(this)" />
+                    <input type="text" id="valor" style="color: red; font-weight: bold;" name="ExpenseValue" placeholder="R$ 0,00" oninput="formatarValor(this)" />
                 </div>
             </div>
             <div class="col-6">
                 <div class="campo-descricao">
                     <label id="labelDescricao" for="descricao">Descrição do gasto</label>
-                    <input type="text" id="descricao" name="descricao" placeholder="Digite sua descrição" />
+                    <input type="text" id="descricao" name="Description" placeholder="Digite sua descrição" />
                 </div>
             </div>
         </div>
@@ -93,9 +96,9 @@
             <div class="col-12">
                 <div class="campo-categoria">
                     <label id="labelCategoria" for="categoria">Categoria</label>
-                    <select id="categoria" name="categoria">
-                        <option value="">Selecione uma categoria</option>
-                    </select>
+                    <div id="categoria" data-toggle="modal" data-target="#SelectCategoryModal">
+                        Selecione uma categoria
+                    </div>
                 </div>
             </div>
         </div>
@@ -105,12 +108,12 @@
                 <div class="campo-cartao">
                     <label id="labelCartao">Cartão de Crédito/Débito</label>
                     <div class="opcao-cartao-btn" onclick="marcarOpcaoCartao(this, 'credito')">
-                        <input type="radio" name="tipoCartao" style="display: none;" />
+                        <input type="radio" name="PaymentType" value="1" style="display: none;" />
                         <div class="opcao">Crédito</div>
                     </div>
 
                     <div class="opcao-cartao-btn opcao-selecionada" onclick="marcarOpcaoCartao(this, 'debito')">
-                        <input type="radio" name="tipoCartao" style="display: none;" checked />
+                        <input type="radio" name="PaymentType" value="2" style="display: none;" checked />
                         <div class="opcao">Débito</div>
                     </div>
                 </div>
@@ -119,45 +122,45 @@
                 <div class="campo-condicoes">
                     <label id="labelCondicoes">Condições de Pagamento</label>
                     <div class="opcao-condicao-btn opcao-selecionada" onclick="marcarOpcaoCondicao(this, 'avista')">
-                        <input type="radio" name="tipoCondicao" style="display: none;" checked />
+                        <input type="radio" name="PaymentTerm" value="1" style="display: none;" checked />
                         <div class="opcao">À Vista</div>
                     </div>
 
                     <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')">
-                        <input type="radio" name="tipoCondicao" style="display: none;" />
+                        <input type="radio" name="PaymentTerm" value="2" style="display: none;" />
                         <div class="opcao">Parcelado</div>
                     </div>
 
                     <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'recorrente')">
-                        <input type="radio" name="tipoCondicao" style="display: none;" />
+                        <input type="radio" name="PaymentTerm" value="3" style="display: none;" />
                         <div class="opcao">Recorrente</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
+@*         <div class="row">
             <div class="col-12">
                 <div class="campo-conta">
                     <label id="labelConta" for="conta">Conta</label>
-                    <select id="conta" name="conta">
+                    <select id="conta" class="conta" name="conta">
                         <option value="">Selecione uma conta</option>
                     </select>
                 </div>
             </div>
-        </div>
+        </div> *@
 
         <div class="row">
             <div class="col-6">
                 <div class="campo-data">
                     <label id="labelData" for="data">Data da Transação</label>
-                    <input type="text" id="data" name="data" placeholder="Selecione a data" />
+                    <input type="text" id="data" name="Date" placeholder="Selecione a data" />
                 </div>
             </div>
             <div class="col-6">
                 <div class="campo-tags">
                     <label id="labelTags" for="tags">Tags</label>
-                    <input type="text" id="tags" name="tags" placeholder="Adicione tag e pressione Enter" />
+                    <input type="text" id="tags" name="Tags" placeholder="Adicione tag e pressione Enter" />
                 </div>
             </div>
         </div>
@@ -171,6 +174,8 @@
 
 
 <script>
+    var tipoTransacaoSelecionado = 'gasto';
+
     function marcarOpcao(elemento, valor) {
         var botoes = document.querySelectorAll('.opcao-btn');
         botoes.forEach(function (botao) {
@@ -219,5 +224,22 @@
         }
 
         mostrarCamposAdicionais(valor);
+        tipoTransacaoSelecionado = valor;
     }
 </script>
+
+@* Modal de categorias *@
+<div class="modal fade" id="SelectCategoryModal" tabindex="-1" role="dialog" aria-labelledby="SelectCategoryModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+@* Modal de contas *@
+<div class="modal fade" id="SelectAccountModal" tabindex="-1" role="dialog" aria-labelledby="SelectAccountModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>

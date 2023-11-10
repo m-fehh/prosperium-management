@@ -12,14 +12,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var tagify = new Tagify(inputTags, {
         duplicates: false,
-        maxTags: 1,
+        maxTags: 2,
     });
 
     inputTags.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-
-            // Adiciona as tags apenas quando o usuário pressiona Enter
             tagify.addTags(inputTags.value);
         }
     });
@@ -46,12 +44,22 @@ function mostrarCamposAdicionais(tipoTransacao) {
     var campoCartao = document.querySelector('.campo-cartao');
     var campoCondicoes = document.querySelector('.campo-condicoes');
 
+    // Limpar o texto da div CATEGORIA
+    $('#categoria').html('Selecione uma categoria');
+
     if (tipoTransacao === 'gasto') {
         campoCartao.style.display = 'flex';
         campoCondicoes.style.display = 'flex';
     } else {
         campoCartao.style.display = 'none';
         campoCondicoes.style.display = 'none';
+    }
+
+    // Se a opção for 'transferencia', esconda a categoria
+    if (tipoTransacao === 'transferencia') {
+        $(".campo-categoria").css("display", "none")
+    } else {
+        $(".campo-categoria").css("display", "block")
     }
 }
 
@@ -63,8 +71,6 @@ function marcarOpcaoCartao(elemento, tipoCartao) {
     });
 
     elemento.classList.add('opcao-selecionada');
-
-    // Adicione o código para marcar a opção no seu modelo de dados (se necessário)
 }
 
 function marcarOpcaoCondicao(elemento, tipoCondicao) {
@@ -74,12 +80,171 @@ function marcarOpcaoCondicao(elemento, tipoCondicao) {
     });
 
     elemento.classList.add('opcao-selecionada');
-
-    // Adicione o código para marcar a opção no seu modelo de dados (se necessário)
 }
 
 function formatarValor(elemento) {
-    var valor = elemento.value.replace(/\D/g, ''); // Remove não-dígitos
+    var valor = elemento.value.replace(/\D/g, '');
     valor = (parseFloat(valor) / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     elemento.value = valor;
 }
+
+var categoriaSelecionada = '';
+var subcategoriaSelecionada = '';
+
+// Selecionar categoria
+$(document).on('click', '#categoria', function (e) {
+    e.preventDefault();
+
+    abp.ajax({
+        url: abp.appPath + 'App/Transactions/SelectCategory',
+        type: 'GET',
+        data: { tipoTransacao: tipoTransacaoSelecionado },
+        dataType: 'html',
+        success: function (content) {
+            $('#SelectCategoryModal div.modal-content').html(content);
+
+            // Limpar variáveis quando o modal é aberto novamente
+            categoriaSelecionada = '';
+            subcategoriaSelecionada = '';
+            modalAtualizado = false; // Reiniciar a flag para permitir atualizações no modal
+        },
+        error: function (e) { }
+    });
+});
+
+var selectedCategoryId = null;
+
+// Selecionar subcategoria
+$(document).on('click', '.categoria-modal', function (e) {
+    e.preventDefault();
+
+    // Obter dados da categoria clicada
+    var categoriaSelecionadaTemp = $(this).data('categoria-nome');
+    var categoryId = $(this).data('categoria-id');
+
+    selectedCategoryId = categoryId;
+
+    getSubcategories(categoryId);
+
+    // Remover o evento 'click' anterior da subcategoria
+    $(document).off('click', '.subcategoria');
+
+    $(document).on('click', '.subcategoria', function (e) {
+        e.preventDefault();
+
+        // Obter dados da subcategoria clicada
+        subcategoriaSelecionada = $(this).data('subcategoria');
+
+        // Usar categoriaSelecionada e subcategoriaSelecionada conforme necessário
+        $('#categoria').html(categoriaSelecionadaTemp + ' > ' + subcategoriaSelecionada);
+
+        // Restaurar as variáveis para futuros usos
+        categoriaSelecionada = '';
+        subcategoriaSelecionada = '';
+
+        $('#SelectCategoryModal').modal('hide');
+    });
+});
+
+function getSubcategories(categoryid) {
+    $.ajax({
+        url: abp.appPath + 'App/Transactions/SelectSubcategory',
+        type: 'GET',
+        data: { categoryId: categoryid },
+        dataType: 'json',
+        success: function (subcategories) {
+            updateModalSubcategories(subcategories.result);
+        },
+        error: function (error) {
+            console.error('Erro na chamada AJAX:', error);
+        }
+    });
+}
+
+var modalAtualizado = false;
+
+function updateModalSubcategories(subcategories) {
+    if (!modalAtualizado) {
+        var subcategoriasHtml = `
+            <div class="modal-body">
+                <h2>Subcategorias</h2>
+                <div role="tabpanel" class="tab-pane container" id="select-category">
+                    <div class="row">
+        `;
+
+        for (var i = 0; i < subcategories.length; i++) {
+            subcategoriasHtml += `
+                        <div class="col-md-12">
+                            <div class="card categoria-modal subcategoria" data-subcategoria="${subcategories[i].name}" data-subcategoria-id="${subcategories[i].id}" data-categoria-id="${selectedCategoryId}">
+                                <div class="card-body">
+                                    <h5 class="card-title">${subcategories[i].name}</h5>
+                                </div>
+                            </div>
+                        </div>
+            `;
+        }
+
+        subcategoriasHtml += `
+                    </div>
+                </div>
+            </div>
+        `;
+
+        $('#SelectCategoryModal div.modal-content').html(subcategoriasHtml);
+
+        modalAtualizado = true;
+    }
+}
+
+// Adicionar evento quando o modal é totalmente fechado para permitir novas aberturas
+$('#SelectCategoryModal').on('hidden.bs.modal', function () {
+    modalAtualizado = false;
+});
+
+
+// ABP
+(function ($) {
+    var _transactionService = abp.services.app.transaction,
+        l = abp.localization.getSource('Management'),
+        _$form = $('#TransactionCreate').find('form');
+
+
+    $(document).on('click', '#btnSubmit', function (e) {
+        e.preventDefault();
+
+        if (!_$form.valid()) {
+            return;
+        }
+
+        var transactionDto = _$form.serializeFormToObject();
+
+        transactionDto['CategoryId'] = selectedCategoryId;
+
+        // Ajuste para o campo ExpenseValue
+        var expenseValueString = transactionDto['ExpenseValue']
+            .replace('R$', '') 
+            .replace(/\./g, '') 
+            .replace(',', '.'); 
+
+        transactionDto['ExpenseValue'] = parseFloat(expenseValueString).toFixed(2);
+
+        // Ajuste para o campo Tags
+        var tagsString = transactionDto['Tags'];
+        transactionDto['Tags'] = JSON.parse(tagsString).map(tag => ({ Name: tag.value }));
+
+        // Ajuste para o campo Date
+        var dateParts = transactionDto['Date'].split('/');
+        transactionDto['Date'] = new Date(`${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`);
+
+        console.log(transactionDto);
+
+        _transactionService.create(transactionDto).done(function () {
+                abp.notify.info(l('SavedSuccessfully'));
+            })
+            .fail(function (error) {
+                console.error('Erro ao criar transação:', error);
+            });
+
+    })
+
+})(jQuery);

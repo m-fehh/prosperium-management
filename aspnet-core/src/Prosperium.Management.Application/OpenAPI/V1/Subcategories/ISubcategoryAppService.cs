@@ -9,6 +9,7 @@ namespace Prosperium.Management.OpenAPI.V1.Subcategories
     {
         Task CreateAsync(SubcategoryDto input);
         Task<SubcategoryDto> GetByIdAsync(long id);
+        Task<List<SubcategoryDto>> GetByCategoryIdAsync(long categoryId);
         Task<List<SubcategoryDto>> GetAllAsync();
         Task DeleteAsync(long id);
     }

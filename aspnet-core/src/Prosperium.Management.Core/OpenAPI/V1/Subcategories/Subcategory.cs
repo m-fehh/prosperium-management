@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Prosperium.Management.OpenAPI.V1.Subcategories
 {
     [Table("P_Subcategories")]
-    public class Subcategory : Entity<long>, IMustHaveTenant
+    public class Subcategory : Entity<long>
     {
-        public int TenantId { get; set; }
-        public Category Category { get; set; }
         public string Name { get; set; }
+        public long CategoryId { get; set; }
+        public virtual Category Category { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Categories
 {
@@ -41,10 +42,9 @@ namespace Prosperium.Management.OpenAPI.V1.Categories
         }
 
         [HttpGet]
-        public async Task<List<CategoryDto>> GetAllAsync()
+        public async Task<List<CategoryDto>> GetAllAsync(TransactionType transactionType)
         {
-            List<Category> allCategories = await _categoryRepository.GetAll()
-                .Where(c => c.TenantId == AbpSession.TenantId.Value).ToListAsync();
+            List<Category> allCategories = await _categoryRepository.GetAll().Where(x => x.TransactionType == transactionType).ToListAsync();
 
             return ObjectMapper.Map<List<CategoryDto>>(allCategories);
         }

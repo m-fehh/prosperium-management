@@ -31,6 +31,11 @@ namespace Prosperium.Management.EntityFrameworkCore
                 .HasConversion<string>()
                 .HasMaxLength(32);
 
+            modelBuilder.Entity<Category>()
+                .Property(e => e.TransactionType)
+                .HasConversion<string>()
+                .HasMaxLength(32);
+
             modelBuilder.Entity<Transaction>()
                 .Property(e => e.PaymentType)
                 .HasConversion<string>()

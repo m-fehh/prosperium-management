@@ -2,6 +2,8 @@
 using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Linq.Extensions;
+using Abp.MultiTenancy;
+using Abp.Runtime.Session;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -52,10 +54,10 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "id asc").PageBy(input);
 
             var transactions = from o in pagedAndFilteredTransaction
-                                select new GetTransactionForViewDto()
-                                {
-                                    Transaction = ObjectMapper.Map<TransactionDto>(o),
-                                };
+                               select new GetTransactionForViewDto()
+                               {
+                                   Transaction = ObjectMapper.Map<TransactionDto>(o),
+                               };
 
             int totalCount = await allTransaction.CountAsync();
             return new PagedResultDto<GetTransactionForViewDto>

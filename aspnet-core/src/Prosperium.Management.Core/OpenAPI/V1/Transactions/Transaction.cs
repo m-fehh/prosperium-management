@@ -21,12 +21,12 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         [Column(TypeName = "decimal(18,2)")]
         public decimal ExpenseValue { get; set; }
         public string Description { get; set; }
+        public virtual long CategoryId { get; set; }
         public Category Categories { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
         public Account Account { get; set; }
         public DateTime Date { get; set; }
-        public bool Paid { get; set; }
         public ICollection<Tag> Tags { get; set; }
     }
 }

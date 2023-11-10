@@ -1,0 +1,25 @@
+﻿@using Prosperium.Management.Web.Models.Transactions
+@model SelectCategoryModalViewModel
+@{
+    Layout = null;
+}
+
+<form name="SelectCategoryModal" role="form" class="form-horizontal">
+    <div class="modal-body">
+        <h2>Categorias</h2>
+        <div role="tabpanel" class="tab-pane container" id="select-category">
+            <div class="row">
+                @foreach (var item in Model.Categories)
+                {
+                    <div class="col-md-12">
+                        <div class="card categoria-modal" data-categoria-nome="@item.Name" data-categoria-id="@item.Id">
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>

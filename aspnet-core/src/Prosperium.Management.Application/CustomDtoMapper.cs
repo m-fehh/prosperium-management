@@ -3,6 +3,8 @@ using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.OpenAPI.V1.Subcategories;
 using Prosperium.Management.OpenAPI.V1.Subcategories.Dto;
+using Prosperium.Management.OpenAPI.V1.Tags;
+using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 
@@ -15,6 +17,7 @@ namespace PayMetrix
             configuration.CreateMap<Category, CategoryDto>().ReverseMap();
             configuration.CreateMap<Subcategory, SubcategoryDto>().ReverseMap();
             configuration.CreateMap<Transaction, TransactionDto>().ReverseMap();
+            configuration.CreateMap<Tag, TagDto>().ReverseMap();
         }
     }
 }
