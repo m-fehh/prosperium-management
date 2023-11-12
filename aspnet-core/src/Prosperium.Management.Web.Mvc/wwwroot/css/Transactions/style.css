@@ -1,5 +1,6 @@
 ﻿body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /*font-family: 'Roboto', Arial, sans-serif;*/
     background-color: #f4f4f4;
 }
 
@@ -33,7 +34,7 @@ h2 {
     }
 
 .opcao-selecionada {
-    background-color: #4CAF50;
+    background-color: #FF8C00;
     color: white;
 }
 
@@ -90,7 +91,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: green;
+    background: #FF8C00;
     color: white;
     font-weight: bold;
     margin-top: 50px;
@@ -183,7 +184,7 @@ button {
     }
 
 .opcao-selecionada {
-    background-color: #4CAF50;
+    background-color: #FF8C00;
     color: white;
 }
 
@@ -207,7 +208,7 @@ button {
 }
 
 .flatpickr-months {
-    background-color: #4CAF50;
+    background-color: #FF8C00;
 }
 
 .flatpickr-days {
@@ -219,12 +220,12 @@ button {
 }
 
     .flatpickr-day.today {
-        background-color: green;
+        background-color: #FF8C00;
         color: #fff;
     }
 
     .flatpickr-day.selected {
-        background-color: #4CAF50;
+        background-color: #FF8C00;
         color: #fff;
     }
 
@@ -254,7 +255,7 @@ button {
     transition: border-color 0.3s;
     text-align: left;
     width: 100%;
-    margin-top: 20px; 
+    margin-top: 30px; 
 }
 
 #labelTags {
@@ -271,15 +272,12 @@ button {
 #SelectCategoryModal .modal-content {
     background-color: #f8f9fa;
     border-radius: 10px;
-}
-
-#SelectCategoryModal .modal-body {
     padding: 20px;
 }
 
 #SelectCategoryModal h2 {
-    color: green;
-    text-align: center;
+    color: #FF8C00;
+    text-align: left;
     font-size: 24px;
     margin-bottom: 20px;
 }
@@ -289,23 +287,46 @@ button {
     margin-bottom: 20px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
 }
 
     .categoria-modal:hover {
         transform: scale(1.05);
     }
 
+    .categoria-modal .card-content {
+        display: flex;
+        align-items: center;
+    }
+
+    .categoria-modal .icon {
+        margin-right: 15px;
+        color: #FF8C00;
+    }
+
     .categoria-modal .card-body {
-        background-color: #ffffff;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 15px;
         text-align: center;
     }
 
     .categoria-modal .card-title {
-        color: green;
-        font-size: 18px;
+        color: #FF8C00;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .categoria-modal .card-description {
+        color: #555;
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    .categoria-modal .arrow-icon {
+        color: #FF8C00;
+        font-size: 24px;
     }
 
 
@@ -339,7 +360,7 @@ button {
 
 @keyframes changeColorTransferencia {
     0% {
-        background-color: #4CAF50;
+        background-color: #FF8C00;
     }
 
     50% {
@@ -347,7 +368,7 @@ button {
     }
 
     100% {
-        background-color: #4CAF50;
+        background-color: #FF8C00;
     }
 }
 

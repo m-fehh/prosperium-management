@@ -1754,7 +1754,7 @@ namespace Prosperium.Management.Migrations
                     b.Property<long?>("AccountId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("CategoriesId")
+                    b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreationTime")
@@ -1778,9 +1778,6 @@ namespace Prosperium.Management.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("Paid")
-                        .HasColumnType("bit");
-
                     b.Property<string>("PaymentTerm")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -1803,7 +1800,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("CategoriesId");
+                    b.HasIndex("CategoryId");
 
                     b.ToTable("P_Transactions");
                 });
@@ -2088,7 +2085,9 @@ namespace Prosperium.Management.Migrations
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Categories")
                         .WithMany()
-                        .HasForeignKey("CategoriesId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Account");
 

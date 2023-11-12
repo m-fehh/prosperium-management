@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var tagify = new Tagify(inputTags, {
         duplicates: false,
-        maxTags: 2,
+        maxTags: 4,
     });
 
     inputTags.addEventListener('keydown', function (event) {
@@ -167,7 +167,6 @@ function updateModalSubcategories(subcategories) {
     if (!modalAtualizado) {
         var subcategoriasHtml = `
             <div class="modal-body">
-                <h2>Subcategorias</h2>
                 <div role="tabpanel" class="tab-pane container" id="select-category">
                     <div class="row">
         `;
