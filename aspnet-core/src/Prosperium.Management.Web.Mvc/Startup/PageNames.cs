@@ -9,5 +9,6 @@
         public const string Roles = "Roles"; 
 
         public const string Transactions = "Transações"; 
+        public const string Extract = "Extrato"; 
     }
 }

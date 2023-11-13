@@ -8,6 +8,7 @@ using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
@@ -45,11 +46,29 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         }
 
         [HttpGet]
+        [Route("list-transaction")]
+        public async Task<List<TransactionDto>> GetAllListAsync()
+        {
+            List<Transaction> allTransactions = await _transactionRepository.GetAllListAsync();
+            return ObjectMapper.Map<List<TransactionDto>>(allTransactions);
+        }
+
+        [HttpGet]
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input)
         {
             var allTransaction = _transactionRepository.GetAll()
-                .WhereIf(!string.IsNullOrEmpty(input.Filter), x => false ||
-                 x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
+                .Include(x => x.Categories)
+                    .ThenInclude(x => x.Subcategories)
+                .WhereIf(!string.IsNullOrEmpty(input.Filter), x => x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
+
+            if (!string.IsNullOrEmpty(input.MonthYear))
+            {
+                var parts = input.MonthYear.Split('/');
+                var month = int.Parse(parts[0]);
+                var year = int.Parse(parts[1]);
+
+                allTransaction = allTransaction.Where(x => x.Date.Month == month && x.Date.Year == year);
+            }
 
             var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "id asc").PageBy(input);
 

@@ -6,6 +6,7 @@ using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
 using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Tags.Dto;
+using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
 {
@@ -19,6 +20,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
         public decimal ExpenseValue { get; set; }
         public string Description { get; set; }
         public virtual long CategoryId { get; set; }
+        public CategoryDto Categories { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
 

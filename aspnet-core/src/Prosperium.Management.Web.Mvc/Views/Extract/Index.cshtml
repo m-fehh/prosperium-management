@@ -1,0 +1,280 @@
+﻿<link rel="stylesheet" href="~/css/Transactions/style.css" />
+
+
+<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+
+
+
+@using Prosperium.Management.Web.Startup
+@{
+    ViewData["Title"] = "Extrato";
+    ViewBag.CurrentPageName = PageNames.Extract;
+}
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Extract/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Extract/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 30px 0;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            padding: 60px;
+        }
+
+        .table th {
+            background-color: #f2f4f8;
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 30px;
+        }
+
+        .table tbody tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        .table tbody tr.gastos:hover {
+            background-color: #FFE6E6; /* Vermelho bem clarinho para gastos */
+        }
+
+        .table tbody tr.ganhos:hover {
+            background-color: #E6FFE6; /* Verde bem clarinho para ganhos */
+        }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .card {
+        background: #f2f4f8;
+        border: 1px solid #ddd;
+        padding: 10px; /* Reduzindo o preenchimento */
+        margin: 10px;
+        text-align: center;
+        margin-bottom: 20px; /* Reduzindo a margem inferior */
+        transition: transform 0.3s ease-in-out;
+        border-radius: 10px;
+        height: 100px; /* Reduzindo a altura */
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: space-around;
+    }
+
+    .icon {
+        font-size: 36px; /* Aumentando o tamanho do ícone */
+        margin-right: 10px;
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .text-content {
+        flex-grow: 1; /* Ocupando o espaço disponível */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #gastosValue, #ganhosValue {
+        font-size: 18px;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    h3 {
+        font-size: 12px;
+        margin: 0;
+        color: #555;
+        font-weight: bold;
+    }
+
+    #totalGastos .icon {
+        color: #e74c3c;
+    }
+
+    #totalGanhos .icon {
+        color: #2ecc71;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+    }
+
+    .page-item.active .page-link {
+        background-color: #FF8C00;
+        border-color: #FF8C00;
+        color: white;
+    }
+
+    .page-item .page-link:hover {
+        background-color: #ddd;
+        border-color: #ddd;
+        color: #333;
+    }
+
+    .data-tables-refresh button{
+        background: #FF8C00;
+        margin-top: 30px;
+        display: flex;
+        justify-content: end !important;
+        border: none;
+    }
+
+    .dataTables_length, #ExtractTable_paginate {
+        margin-top: 30px;
+        display: flex;
+        justify-content: end!important;
+    }
+
+    .dataTables_info{
+        margin-top: 30px;
+        display: flex;
+        justify-content: end;
+        padding-top: 0.30em !important
+    }
+
+    .datepicker {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .datepicker table {
+            width: 100%;
+        }
+
+        .datepicker th, .datepicker td {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .datepicker .datepicker-switch {
+            font-size: 18px;
+        }
+
+        .datepicker .datepicker-days table {
+            margin: 0;
+        }
+
+        .datepicker table tr td,
+        .datepicker table tr th {
+            border-radius: 0;
+        }
+
+            .datepicker table tr td.day:hover,
+            .datepicker table tr td.day.focused {
+                background-color: #f2f4f8;
+            }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="form-container" id="TransactionCreate">
+    <h2>@ViewData["Title"]</h2>
+
+    <div class="row">
+        <div class="col-6" style="display: flex; align-items: center;">
+            <h2 id="resumoTitle" style="border: none; margin: 0; font-size: 1.5rem; color: #333;"></h2>
+        </div>
+        <div class="col-6" style="display: flex; width: 100%; align-items: center; justify-content: flex-start;">
+            <form id="ExtractSearchForm" class="form-horizontal" style="width: 85%;">
+                <div style="position: relative; display: flex; align-items: center;">
+                    <i class="far fa-calendar-alt" style="font-size: 28px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="calendarIcon"></i>
+                    <input type="text" name="Filter" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 30px;" oninput="HandleSearchInput(this)" id="filterInput" />
+                    <input type="text" name="MonthYear" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 30px; display: none;" oninput="HandleSearchInput(this)" id="monthYearInput" />
+                    <i class="fas fa-search" style="opacity: 0.3; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></i>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div class="row" style="display: flex; justify-content: space-evenly; margin: 30px 0;">
+        <div class="col-5">
+            <div class="card" id="totalGastos">
+                <div class="card-content">
+                    <i class="fas fa-arrow-down icon"></i>
+                    <div>
+                        <p id="gastosValue">Carregando...</p>
+                        <h3>Gastos do mês</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="card" id="totalGanhos">
+                <div class="card-content">
+                    <i class="fas fa-arrow-up icon"></i>
+                    <div>
+                        <p id="ganhosValue">Carregando...</p>
+                        <h3>Ganhos do mês</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <table id="ExtractTable" class="table">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>

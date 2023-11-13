@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions
@@ -9,6 +10,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
     {
         Task CreateAsync(TransactionDto input);
         Task<TransactionDto> GetByIdAsync(long id);
+        Task<List<TransactionDto>> GetAllListAsync();
         Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input);
         Task UpdateAsync(TransactionDto input);
         Task DeleteAsync(long id);
