@@ -1,0 +1,184 @@
+﻿@* <link rel="stylesheet" href="~/css/Accounts/style.css" /> *@
+
+
+<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+
+
+
+@using Prosperium.Management.Web.Startup
+@{
+    ViewData["Title"] = "Minhas contas";
+    ViewBag.CurrentPageName = PageNames.Accounts;
+}
+
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Accounts/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Accounts/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 30px 0;
+    }
+
+    .custom-button {
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+        .custom-button:hover {
+            transform: scale(1.05);
+        }
+
+
+    .card {
+        background: #f2f4f8;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+        border-radius: 10px;
+        height: 150px; /* Altura ajustável conforme necessário */
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .icon {
+        font-size: 36px;
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .text-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    hr.divider {
+        width: 100%;
+        margin: 10px 0;
+        border: 1px solid rgba(204, 204, 204, 0.5);
+    }
+
+    .saldo-label {
+        font-size: 14px;
+        margin: 0;
+        color: #555;
+    }
+
+    .saldo-valor {
+        font-size: 18px;
+        margin: 0;
+        font-weight: bold;
+    }
+</style>
+
+<div class="form-container" id="AccountCreate">
+    <h2>@ViewData["Title"]</h2>
+    <div class="row" style="display: flex; justify-content: flex-end;">
+        <a href="@Url.Action("CreateAccount", "Accounts")" class="custom-button">
+            <i class="fa fa-plus"></i> &nbsp; Adicionar Nova Conta
+        </a>
+    </div>
+
+    <div id="card-container"></div>
+</div>
+
+<script>
+    $(document).ready(function () { 
+        UpdateCardValues();
+    });
+
+    function UpdateCardValues() {
+        $.ajax({
+            url: '/App/Accounts/GetAccounts',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+
+                $('#card-container').empty();
+
+                // data.forEach(function (account, index) {
+                //     // Abre uma nova linha a cada dois cards
+                //     if (index % 2 === 0) {
+                //         cardContainer.append('<div class="row">');
+                //     }
+
+                //     var cardHtml = `
+                //         <div class="col-6"> <!-- Utilize col-6 para dois cards por linha -->
+                //             <div class="card">
+                //                 <div class="card-content">
+                //                     <div class="icon">
+                //                         <img src="${account.institution.imagePath}" width="60"/>
+                //                     </div>
+                //                     <div class="text-content">
+                //                         <h3>${account.accountNickname}</h3>
+                //                         <hr class="divider">
+                //                         <p class="saldo-label">Saldo:</p>
+                //                         <p class="saldo-valor">R$ ${account.balanceAvailable.toFixed(2)}</p>
+                //                     </div>
+                //                 </div>
+                //             </div>
+                //         </div>`;
+
+                //     // Adiciona o card à linha atual
+                //     cardContainer.append(cardHtml);
+
+                //     // Fecha a linha a cada dois cards
+                //     if (index % 2 === 1 || index === data.length - 1) {
+                //         cardContainer.append('</div>');
+                //     }
+                // });
+
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+</script>

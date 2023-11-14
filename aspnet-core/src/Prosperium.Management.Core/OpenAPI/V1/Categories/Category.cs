@@ -6,7 +6,7 @@ using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Categories
 {
-    [Table("P_Categories")]
+    [Table("Pxp_Categories")]
     public class Category : Entity<long>
     {
         public string Name { get; set; }

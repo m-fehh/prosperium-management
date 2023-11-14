@@ -6,6 +6,8 @@ using Prosperium.Management.MultiTenancy;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Subcategories;
+using Prosperium.Management.Banks;
+using Prosperium.Management.OpenAPI.V1.Accounts;
 
 namespace Prosperium.Management.EntityFrameworkCore
 {
@@ -14,6 +16,8 @@ namespace Prosperium.Management.EntityFrameworkCore
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Subcategory> Subcategories { get; set; }
+        public DbSet<Bank> Banks { get; set; }
+        public DbSet<AccountFinancial> Accounts { get; set; }
 
         public ManagementDbContext(DbContextOptions<ManagementDbContext> options)
             : base(options)
@@ -45,17 +49,6 @@ namespace Prosperium.Management.EntityFrameworkCore
                 .Property(e => e.PaymentTerm)
                 .HasConversion<string>()
                 .HasMaxLength(32);
-
-
-
-            // Relacionamentos:
-
-            //modelBuilder.Entity<Category>(b =>
-            //{
-            //    b.HasOne(c => c.Subcategory)
-            //        .WithOne(c => c.Category) 
-            //        .HasForeignKey<Category>(c => c.SubcategoryId);
-            //});
         }
     }
 }

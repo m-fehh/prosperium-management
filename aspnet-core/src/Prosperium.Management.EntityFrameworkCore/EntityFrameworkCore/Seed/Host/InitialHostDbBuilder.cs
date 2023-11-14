@@ -15,7 +15,9 @@
             new DefaultLanguagesCreator(_context).Create();
             new HostRoleAndUserCreator(_context).Create();
             new DefaultSettingsCreator(_context).Create();
+
             new DefaultCategoriesAndSubcategoriesCreator(_context).Create();
+            new DefaultBanksCreator(_context).Create();
 
             _context.SaveChanges();
         }

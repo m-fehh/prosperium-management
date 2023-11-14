@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Prosperium.Management.OpenAPI.V1.Subcategories
 {
-    [Table("P_Subcategories")]
+    [Table("Pxp_Subcategories")]
     public class Subcategory : Entity<long>
     {
         public string Name { get; set; }

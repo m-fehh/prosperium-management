@@ -1,0 +1,193 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 95%;
+    width: 100%;
+    margin: 10px auto 0;
+}
+
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 50px;
+    text-align: left;
+    border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+    padding: 30px 0;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .table th, .table td {
+        padding: 60px;
+    }
+
+    .table th {
+        background-color: #f2f4f8;
+        color: black;
+        font-weight: bold;
+        border: none;
+        padding: 30px;
+    }
+
+    .table tbody tr:nth-child(odd) {
+        background-color: #fff;
+    }
+
+    .table tbody tr.gastos:hover {
+        background-color: #FFE6E6; /* Vermelho bem clarinho para gastos */
+    }
+
+    .table tbody tr.ganhos:hover {
+        background-color: #E6FFE6; /* Verde bem clarinho para ganhos */
+    }
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.card {
+    background: #f2f4f8;
+    border: 1px solid #ddd;
+    padding: 10px; /* Reduzindo o preenchimento */
+    margin: 10px;
+    text-align: center;
+    margin-bottom: 20px; /* Reduzindo a margem inferior */
+    transition: transform 0.3s ease-in-out;
+    border-radius: 10px;
+    height: 100px; /* Reduzindo a altura */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    justify-content: space-around;
+}
+
+.icon {
+    font-size: 36px; /* Aumentando o tamanho do ícone */
+    margin-right: 10px;
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+}
+
+.text-content {
+    flex-grow: 1; /* Ocupando o espaço disponível */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#gastosValue, #ganhosValue {
+    font-size: 18px;
+    margin: 0;
+    font-weight: bold;
+}
+
+h3 {
+    font-size: 12px;
+    margin: 0;
+    color: #555;
+    font-weight: bold;
+}
+
+#totalGastos .icon {
+    color: #e74c3c;
+}
+
+#totalGanhos .icon {
+    color: #2ecc71;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.page-item.active .page-link {
+    background-color: #FF8C00;
+    border-color: #FF8C00;
+    color: white;
+}
+
+.page-item .page-link:hover {
+    background-color: #ddd;
+    border-color: #ddd;
+    color: #333;
+}
+
+.data-tables-refresh button {
+    background: #FF8C00;
+    margin-top: 30px;
+    display: flex;
+    justify-content: end !important;
+    border: none;
+}
+
+.dataTables_length, #ExtractTable_paginate {
+    margin-top: 30px;
+    display: flex;
+    justify-content: end !important;
+}
+
+.dataTables_info {
+    margin-top: 30px;
+    display: flex;
+    justify-content: end;
+    padding-top: 0.30em !important
+}
+
+.datepicker {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+    .datepicker table {
+        width: 100%;
+    }
+
+    .datepicker th, .datepicker td {
+        text-align: center;
+        padding: 10px;
+    }
+
+    .datepicker .datepicker-switch {
+        font-size: 18px;
+    }
+
+    .datepicker .datepicker-days table {
+        margin: 0;
+    }
+
+    .datepicker table tr td,
+    .datepicker table tr th {
+        border-radius: 0;
+    }
+
+        .datepicker table tr td span.active, .datepicker table tr td span.active.disabled, .datepicker table tr td span.active.disabled:hover, .datepicker table tr td span.active:hover {
+            background-color: #FF8C00 !important;
+            color: #fff !important;
+            background-image: none;
+        }
+
+        .datepicker table tr td span.focused, .datepicker table tr td span:hover {
+            background-color: #FF8C00 !important;
+            color: #fff !important;
+            background-image: none;
+            font-weight: 600;
+        }

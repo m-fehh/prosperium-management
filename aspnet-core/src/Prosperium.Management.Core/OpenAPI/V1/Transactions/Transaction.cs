@@ -11,7 +11,7 @@ using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions
 {
-    [Table("P_Transactions")]
+    [Table("Pxp_Transactions")]
     public class Transaction : AuditedEntity<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
@@ -25,7 +25,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public Category Categories { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
-        public Account Account { get; set; }
+        public AccountFinancial Account { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Tag> Tags { get; set; }
     }
