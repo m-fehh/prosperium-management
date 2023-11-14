@@ -27,24 +27,24 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
 
         private void SeedBanks()
         {
-            AddBanks("Nubank", "wwwroot/img/banks/nubank");
-            AddBanks("Itaú", "wwwroot/img/banks/itau");
-            AddBanks("Bradesco", "wwwroot/img/banks/bradesco");
-            AddBanks("Caixa", "wwwroot/img/banks/caixa");
-            AddBanks("Santander", "wwwroot/img/banks/santander");
-            AddBanks("Inter", "wwwroot/img/banks/inter");
-            AddBanks("Mercado Pago", "wwwroot/img/banks/mercado-pago");
-            AddBanks("C6", "wwwroot/img/banks/csix");
-            AddBanks("Neon", "wwwroot/img/banks/neon");
-            AddBanks("BMG", "wwwroot/img/banks/bmg");
-            AddBanks("Banco do Brasil", "wwwroot/img/banks/bb");
-            AddBanks("Banrisul", "wwwroot/img/banks/banrisul");
-            AddBanks("PAN", "wwwroot/img/banks/pan");
-            AddBanks("PagBank", "wwwroot/img/banks/pagbank");
-            AddBanks("PayPal", "wwwroot/img/banks/paypal");
-            AddBanks("PicPay", "wwwroot/img/banks/picpay");
-            AddBanks("Safra", "wwwroot/img/banks/safra");
-            AddBanks("Sicredi", "wwwroot/img/banks/sicredi");
+            AddBanks("Nubank", "nubank.png");
+            AddBanks("Itaú", "itau.png");
+            AddBanks("Bradesco", "bradesco.png");
+            AddBanks("Caixa", "caixa.png");
+            AddBanks("Santander", "santander.png");
+            AddBanks("Inter", "inter.png");
+            AddBanks("Mercado Pago", "mercado-pago.png");
+            AddBanks("C6", "csix.png");
+            AddBanks("Neon", "neon.png");
+            AddBanks("BMG", "bmg.png");
+            AddBanks("Banco do Brasil", "bb.png");
+            AddBanks("Banrisul", "banrisul.png");
+            AddBanks("PAN", "pan.png");
+            AddBanks("PagBank", "pagbank.png");
+            AddBanks("PayPal", "paypal.png");
+            AddBanks("PicPay", "picpay.png");
+            AddBanks("Safra", "safra.png");
+            AddBanks("Sicredi", "sicredi.png");
 
             SaveChanges();
         }

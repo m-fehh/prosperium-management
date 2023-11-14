@@ -1,0 +1,114 @@
+﻿@using Prosperium.Management.Web.Models.Accounts;
+
+@model CreateAccountViewModel
+@{
+    Layout = null;
+}
+
+
+<!-- Estilo da Modal -->
+<style>
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .arrow-right {
+        float: right;
+        color: #FF8C00;
+        margin-top: 8px;
+    }
+
+        .arrow-right svg {
+            vertical-align: middle;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .institution-modal {
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        display: flex;
+        justify-content: space-between;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+    }
+
+        .institution-modal:hover {
+            transform: scale(1.05);
+        }
+
+        .institution-modal .card-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .institution-modal .icon {
+            margin-right: 15px;
+            color: #FF8C00;
+        }
+
+        .institution-modal .card-body {
+            text-align: center;
+        }
+
+        .institution-modal .card-title {
+            color: #FF8C00;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .institution-modal .card-description {
+            color: #555;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .institution-modal .arrow-icon {
+            color: #FF8C00;
+            font-size: 24px;
+        }
+
+</style>
+
+
+<form name="SelectCategoryModal" role="form" class="form-horizontal">
+    <div class="modal-body">
+        <div role="tabpanel" class="tab-pane container" id="select-category">
+            <div class="row">
+                @foreach (var item in Model.Banks)
+                {
+                    <div class="col-md-12">
+                        <div class="card categoria-modal" data-categoria-nome="@item.Name" data-categoria-id="@item.Id" style="cursor: pointer;" onclick="selectBank('@item.Id', '@item.Name')">
+                            <div class="card-body d-flex align-items-center">
+                                <h5 class="card-title" style="color: #ff8c00">@item.Name</h5>
+                                <div class="ml-auto arrow-right">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="color: #FF8C00;" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                        <path d="M11.354 8.354a.5.5 0 0 0 0-.708L9.172 5.464a.5.5 0 1 1 .707-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.707-.708L11.354 8.354z" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>

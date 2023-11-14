@@ -11,7 +11,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
     public class AccountFinancialDto : AuditedEntityDto<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
-        public BankDto Institution { get; set; }
+        public virtual long InstitutionId { get; set; }
         public string AccountNickname { get; set; }
 
         [DataType(DataType.Currency)]

@@ -25,12 +25,7 @@ namespace Prosperium.Management.Web.Controllers
         [Route("Create", Name = "CreateAccount")]
         public async Task<IActionResult> CreateAccount()
         {
-            var banks = await _accountsAppService.GetAllListBanksAsync();
-            var viewModel = new CreateAccountViewModel
-            {
-                Banks = banks,
-                Account = new AccountFinancialDto(),
-            };
+            var viewModel = new AccountFinancialDto();
 
             return View(viewModel);
         }
@@ -41,6 +36,20 @@ namespace Prosperium.Management.Web.Controllers
         {
             var allAccounts = await _accountsAppService.GetAllListAsync();
             return Json(allAccounts);
+        }
+
+        [HttpGet]
+        [Route("GetBanks")]
+        public async Task<IActionResult> GetBanks()
+        {
+            var allBanks = await _accountsAppService.GetAllListBanksAsync();
+
+            var model = new CreateAccountViewModel
+            {
+                Banks = allBanks
+            };
+
+            return PartialView("_SelectInstitutionModal", model);
         }
     }
 }

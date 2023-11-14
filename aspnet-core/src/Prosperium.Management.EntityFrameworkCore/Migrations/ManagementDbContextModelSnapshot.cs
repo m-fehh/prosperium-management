@@ -1683,7 +1683,7 @@ namespace Prosperium.Management.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("InstitutionId")
+                    b.Property<long>("InstitutionId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1699,8 +1699,6 @@ namespace Prosperium.Management.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InstitutionId");
 
                     b.ToTable("Pxp_Accounts");
                 });
@@ -1768,7 +1766,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasIndex("TransactionId");
 
-                    b.ToTable("P_Tags");
+                    b.ToTable("Pxp_Tags");
                 });
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
@@ -2076,15 +2074,6 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("Edition");
 
                     b.Navigation("LastModifierUser");
-                });
-
-            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", b =>
-                {
-                    b.HasOne("Prosperium.Management.Banks.Bank", "Institution")
-                        .WithMany()
-                        .HasForeignKey("InstitutionId");
-
-                    b.Navigation("Institution");
                 });
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>

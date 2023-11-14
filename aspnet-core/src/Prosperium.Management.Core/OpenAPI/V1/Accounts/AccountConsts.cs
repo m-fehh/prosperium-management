@@ -4,7 +4,7 @@
     {
         public enum AccountType
         {
-            ContaCorrente = 1,
+            Corrente = 1,
             Poupança = 2,
             Investimento = 3,
             Outros = 4,

@@ -48,6 +48,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\libs\" />
     <Folder Include="wwwroot\view-resources\Views\Extract\" />
+    <Folder Include="wwwroot\view-resources\Views\Accounts\" />
     <Folder Include="wwwroot\view-resources\Views\Transactions\" />
     <Folder Include="wwwroot\view-resources\Views\_Bundles\" />
   </ItemGroup>

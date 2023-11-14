@@ -34,5 +34,12 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             List<AccountFinancial> allAccounts = await _accountFinancialRepository.GetAllListAsync();
             return ObjectMapper.Map<List<AccountFinancialDto>>(allAccounts);
         }
+
+        [HttpPost]
+        public async Task CreateAsync(AccountFinancialDto input)
+        {
+            AccountFinancial account = ObjectMapper.Map<AccountFinancial>(input);
+            await _accountFinancialRepository.InsertAsync(account);
+        }
     }
 }

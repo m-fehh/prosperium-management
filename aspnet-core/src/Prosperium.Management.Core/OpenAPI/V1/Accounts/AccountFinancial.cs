@@ -12,7 +12,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
     public class AccountFinancial : AuditedEntity<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
-        public Bank Institution { get; set; }
+        public virtual long InstitutionId { get; set; }
         public string AccountNickname { get; set; }
 
         [DataType(DataType.Currency)]

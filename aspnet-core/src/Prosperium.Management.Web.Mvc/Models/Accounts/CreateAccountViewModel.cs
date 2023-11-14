@@ -6,6 +6,5 @@ namespace Prosperium.Management.Web.Models.Accounts
     public class CreateAccountViewModel
     {
         public List<BankDto> Banks { get; set; }
-        public AccountFinancialDto Account { get; set; }
     }
 }

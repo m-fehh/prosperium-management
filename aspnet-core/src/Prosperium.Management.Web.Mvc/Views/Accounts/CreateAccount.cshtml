@@ -1,5 +1,259 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model AccountFinancialDto
+@using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+@using Prosperium.Management.Web.Startup
+@using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 @{
+    ViewData["Title"] = "Conectar conta";
+    ViewBag.CurrentPageName = PageNames.Accounts;
 }
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Accounts/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Accounts/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /*font-family: 'Roboto', Arial, sans-serif;*/
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 30px 0;
+    }
+
+    .campo-instituicao,
+    .campo-conta-principal,
+    .campo-tipo,
+    .campo-apelido,
+    .campo-valor {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    #labelInstituicao,
+    #labelTipo,
+    #labelValor,
+    #labelApelido {
+        margin-bottom: 10px;
+        color: #333;
+        display: block;
+        font-size: 14px;
+        text-align: left;
+        width: 100%;
+    }
+
+    #instituicao,
+    #conta-principal,
+    #valor,
+    #apelido,
+    #tipo,
+    #toggleSwitch {
+        border: none;
+        background: transparent;
+        font-size: 18px;
+        color: #333;
+        outline: none;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        transition: border-color 0.3s;
+        text-align: left;
+        width: 100%;
+    }
+
+        #instituicao::placeholder,
+        #conta-principal::placeholder,
+        #valor::placeholder,
+        #apelido::placeholder,
+        #tipo::placeholder,
+        #toggleSwitch::placeholder {
+            color: #aaa;
+        }
+
+    #labelContaPrincipal,
+    .campo-conta-principal {
+        margin-bottom: 10px;
+        color: #333;
+        display: block;
+        font-size: 14px;
+        width: 100%;
+        align-items: center;
+    }
+
+    .toggleSwitch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+
+        .toggleSwitch input {
+            display: none;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ddd; /* Laranja claro para o fundo (quando false) */
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "Não";
+            height: 30px;
+            width: 30px;
+            text-align: center;
+            line-height: 30px;
+            color: #333;
+            font-size: 14px;
+            left: 0;
+            bottom: 0;
+            background-color: #F5F5F5;
+            border: 1px solid #F5F5F5;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+    input:checked + .slider:before {
+        content: "Sim";
+        color: white;
+        background-color: #FFA500; /* Laranja para a bolinha (quando true) */
+        transform: translateX(30px);
+    }
+
+    input:focus + .slider:before {
+        box-shadow: 0 0 1px #FFA500; /* Laranja para o efeito de foco (quando true) */
+    }
+
+    input:checked + .slider {
+        background-color: #F0E68C; /* Laranja claro para o fundo (quando true) */
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FF8C00;
+        color: white;
+        font-weight: bold;
+        margin-top: 50px;
+    }
+
+        button:hover {
+            filter: brightness(90%);
+        }
+
+</style>
+
+<div class="form-container" id="AccountCreate">
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="post">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="campo-instituicao">
+                    <label id="labelInstituicao" for="instituicao">Instituição financeira</label>
+                    <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal">
+                        Selecione a Instituição
+                    </div>
+                    <input type="hidden" id="selectedBankId" name="InstitutionId" value="" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="campo-apelido">
+                    <label id="labelApelido" for="apelido">Apelido da conta</label>
+                    <input type="text" id="apelido" name="AccountNickname" placeholder="Digite sua descrição" required />
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="campo-valor">
+                    <label id="labelValor" for="valor">Saldo disponível na conta</label>
+                    <input type="text" id="valor" style="font-weight: bold;" name="BalanceAvailable" placeholder="R$ 0,00" oninput="formatarValor(this)" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-10">
+                <div class="campo-tipo">
+                    <label id="labelTipo" for="tipo">Tipo de conta</label>
+                    <select class="form-select" id="tipo" name="AccountType">
+                        @foreach (var accountType in Enum.GetValues(typeof(AccountType)))
+                        {
+                            <option value="@accountType">@accountType</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-2">
+                <div class="campo-conta-principal mx-auto">
+                    <label id="labelContaPrincipal" for="conta-principal">Conta principal?</label>
+                    <label class="toggleSwitch">
+                        <input type="checkbox" id="conta-principal" name="MainAccount">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" id="btnSubmit" class="accountSubmit">
+                Adicionar conta
+            </button>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+@* MODAL DE INSTITUIÇÃO FINANCEIRA *@
+<div class="modal fade" id="SelectInstitutionModal" tabindex="-1" role="dialog" aria-labelledby="SelectInstitutionModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
