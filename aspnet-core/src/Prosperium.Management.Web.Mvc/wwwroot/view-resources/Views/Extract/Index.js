@@ -62,7 +62,23 @@ var monthYearInput;
             },
             {
                 targets: 2,
-                data: 'transaction.categories.name',
+                data: 'transaction.categories',
+                render: function (data, type, row) {
+                    if (data && data.name) {
+                        return `
+                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                    <div>
+                        <i class="${data.iconPath}" style="margin-right: 10px; color: #FF8C00;"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">${data.name.toUpperCase()}</h5>
+                    </div>
+                </div>
+            `;
+                    } else {
+                        return ''; 
+                    }
+                },
                 sortable: false
             },
             {

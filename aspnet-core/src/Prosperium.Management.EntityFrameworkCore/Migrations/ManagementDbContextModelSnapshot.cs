@@ -1671,8 +1671,14 @@ namespace Prosperium.Management.Migrations
                     b.Property<string>("AccountNickname")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AccountNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("AccountType")
                         .HasColumnType("int");
+
+                    b.Property<string>("AgencyNumber")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("BalanceAvailable")
                         .HasColumnType("decimal(18, 2)");
@@ -1783,7 +1789,7 @@ namespace Prosperium.Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("AccountId")
+                    b.Property<long>("AccountId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("CategoryId")
@@ -2104,7 +2110,9 @@ namespace Prosperium.Management.Migrations
                 {
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
                         .WithMany()
-                        .HasForeignKey("AccountId");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Categories")
                         .WithMany()

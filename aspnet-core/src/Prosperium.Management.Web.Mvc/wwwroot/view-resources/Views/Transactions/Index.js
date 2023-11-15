@@ -13,7 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var tagify = new Tagify(inputTags, {
         duplicates: false,
         maxTags: 4,
+        dropdown: {
+            classname: "tags-look"
+        }
     });
+
+    inputTags.classList.add('custom-placeholder');
 
     inputTags.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {

@@ -24,6 +24,9 @@
     </environment>
 }
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -136,47 +139,51 @@
         UpdateCardValues();
     });
 
+
     function UpdateCardValues() {
+        var cardContainer = $('#card-container');
         $.ajax({
             url: '/App/Accounts/GetAccounts',
             type: 'GET',
             dataType: 'json',
             success: function (data) {
-                console.log(data);
-
                 $('#card-container').empty();
 
-                // data.forEach(function (account, index) {
-                //     // Abre uma nova linha a cada dois cards
-                //     if (index % 2 === 0) {
-                //         cardContainer.append('<div class="row">');
-                //     }
+                data.result.forEach(function (account, index) {
 
-                //     var cardHtml = `
-                //         <div class="col-6"> <!-- Utilize col-6 para dois cards por linha -->
-                //             <div class="card">
-                //                 <div class="card-content">
-                //                     <div class="icon">
-                //                         <img src="${account.institution.imagePath}" width="60"/>
-                //                     </div>
-                //                     <div class="text-content">
-                //                         <h3>${account.accountNickname}</h3>
-                //                         <hr class="divider">
-                //                         <p class="saldo-label">Saldo:</p>
-                //                         <p class="saldo-valor">R$ ${account.balanceAvailable.toFixed(2)}</p>
-                //                     </div>
-                //                 </div>
-                //             </div>
-                //         </div>`;
+                    // Abre uma nova linha a cada dois cards
+                    if (index % 2 === 0) {
+                        cardContainer.append('<div class="row">');
+                    }
 
-                //     // Adiciona o card à linha atual
-                //     cardContainer.append(cardHtml);
+                    console.log(account);
 
-                //     // Fecha a linha a cada dois cards
-                //     if (index % 2 === 1 || index === data.length - 1) {
-                //         cardContainer.append('</div>');
-                //     }
-                // });
+                    // <div class="icon">
+                    //     <img src="${account.institution.imagePath}" width="60"/>
+                    // </div>
+                    var cardHtml = `
+                            <div class="col-6"> 
+                                <div class="card">
+                                    <div class="card-content">
+                                        <div class="text-content">
+                                            <h3>${account.accountNickname}</h3>
+                                            <hr class="divider">
+                                            <p class="saldo-label">Saldo:</p>
+                                            <p class="saldo-valor">R$ ${account.balanceAvailable.toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+
+                    // Adiciona o card à linha atual
+                    cardContainer.append(cardHtml);
+
+                    // Fecha a linha a cada dois cards
+                    if (index % 2 === 1 || index === data.length - 1) {
+                        cardContainer.append('</div>');
+                    }
+                });
 
             },
             error: function (error) {

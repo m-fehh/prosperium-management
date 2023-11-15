@@ -25,6 +25,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public Category Categories { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
+        public virtual long AccountId { get; set; }
         public AccountFinancial Account { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Tag> Tags { get; set; }

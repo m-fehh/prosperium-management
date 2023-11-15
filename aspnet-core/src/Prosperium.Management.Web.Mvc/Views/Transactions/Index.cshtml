@@ -18,6 +18,7 @@
     </environment>
 }
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -29,7 +30,7 @@
     .tagify {
         border: none;
         background: transparent;
-        font-size: 18px;
+        font-size: 16px;
         color: #333;
         outline: none;
         border-bottom: 1px solid #ccc;
@@ -38,6 +39,21 @@
         width: 100%;
         margin-top: 20px;
     }
+
+    .custom-tagify {
+        --placeholder-color: #aaa; 
+        --placeholder-color-focus: #FF8C00;
+    }
+
+        .custom-tagify::placeholder {
+            color: var(--placeholder-color);
+            font-size: 16px;
+        }
+
+        .custom-tagify:focus::placeholder {
+            color: var(--placeholder-color-focus); /* Cor do texto do placeholder quando em foco */
+        }
+
 
     .tagify__tag:hover {
         opacity: 0.8;
@@ -55,6 +71,13 @@
         border-bottom: 2px solid rgba(204, 204, 204, 0.5);
         padding: 30px 0;
     }
+
+    .custom-placeholder {
+        font-size: 16px;
+        color: #aaa;
+    }
+
+
 </style>
 
 <div class="form-container" id="TransactionCreate">
@@ -79,14 +102,14 @@
         <div class="row">
             <div class="col-6">
                 <div class="campo-valor">
-                    <label id="labelValor" for="valor">Valor do gasto</label>
-                    <input type="text" id="valor" style="color: red; font-weight: bold;" name="ExpenseValue" placeholder="R$ 0,00" oninput="formatarValor(this)" />
+                    <label id="labelValor" for="valor">Valor do gasto * </label>
+                    <input type="text" id="valor" style="color: red; font-weight: bold;" name="ExpenseValue" placeholder="R$ 0,00" required oninput="formatarValor(this)" />
                 </div>
             </div>
             <div class="col-6">
                 <div class="campo-descricao">
-                    <label id="labelDescricao" for="descricao">Descrição do gasto</label>
-                    <input type="text" id="descricao" name="Description" placeholder="Digite sua descrição" />
+                    <label id="labelDescricao" for="descricao">Descrição do gasto * </label>
+                    <input type="text" id="descricao" name="Description" placeholder="Digite sua descrição" required />
                 </div>
             </div>
         </div>
@@ -94,9 +117,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="campo-categoria">
-                    <label id="labelCategoria" for="categoria">Categoria</label>
+                    <label id="labelCategoria" for="categoria">Categoria *</label>
                     <div id="categoria" data-toggle="modal" data-target="#SelectCategoryModal">
-                        Selecione uma categoria
+                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma categoria" style="padding: 0; background: transparent; border: none;" readonly>
                     </div>
                 </div>
             </div>
@@ -105,7 +128,7 @@
         <div class="row">
             <div class="col-6">
                 <div class="campo-cartao">
-                    <label id="labelCartao">Cartão de Crédito/Débito</label>
+                    <label id="labelCartao">Cartão de Crédito/Débito *</label>
                     <div class="opcao-cartao-btn" onclick="marcarOpcaoCartao(this, 'credito')">
                         <input type="radio" name="PaymentType" value="1" style="display: none;" />
                         <div class="opcao">Crédito</div>
@@ -119,7 +142,7 @@
             </div>
             <div class="col-6">
                 <div class="campo-condicoes">
-                    <label id="labelCondicoes">Condições de Pagamento</label>
+                    <label id="labelCondicoes">Condições de Pagamento *</label>
                     <div class="opcao-condicao-btn opcao-selecionada" onclick="marcarOpcaoCondicao(this, 'avista')">
                         <input type="radio" name="PaymentTerm" value="1" style="display: none;" checked />
                         <div class="opcao">À Vista</div>
@@ -138,30 +161,30 @@
             </div>
         </div>
 
-        @*         <div class="row">
-        <div class="col-12">
-        <div class="campo-conta">
-        <label id="labelConta" for="conta">Conta</label>
-        <select id="conta" class="conta" name="conta">
-        <option value="">Selecione uma conta</option>
-        </select>
+        <div class="row">
+            <div class="col-12">
+                <div class="campo-conta">
+                    <label id="labelConta" for="conta">Conta *</label>
+                    <div id="conta" data-toggle="modal" data-target="#SelectAccountModal">
+                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="padding: 0; background: transparent; border: none;" readonly>
+                    </div>
+                </div>
+            </div>
         </div>
-        </div>
-        </div> *@
 
         <div class="row">
             <div class="col-12">
                 <div class="campo-data">
-                    <label id="labelData" for="data">Data da Transação</label>
-                    <input type="text" id="data" name="Date" placeholder="Selecione a data" />
+                    <label id="labelData" for="data">Data da Transação *</label>
+                    <input type="text" id="data" name="Date" placeholder="Selecione a data" required />
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
                 <div class="campo-tags">
-                    <label id="labelTags" for="tags">Tags</label>
-                    <input type="text" id="tags" name="Tags" placeholder="Adicione tag e pressione Enter" />
+                    <label id="labelTags" for="tags">Tags *</label>
+                    <input type="text" id="tags" name="Tags" class="tagify custom-tagify" placeholder="Adicione tag e pressione Enter" required />
                 </div>
             </div>
         </div>
@@ -205,7 +228,7 @@
             btnSubmit.style.fontWeight = 'bold';
         } else if (valor === 'ganho') {
             labelValor.textContent = 'Valor do ganho';
-            campoValor.style.color = '#FF8C00';
+            campoValor.style.color = 'green';
             labelDescricao.textContent = 'Descrição do ganho';
             btnSubmit.textContent = 'Registrar Ganho';
             btnSubmit.className = 'ganho';

@@ -38,6 +38,7 @@ h2 {
     color: white;
 }
 
+.campo-tags,
 .campo-valor,
 .campo-descricao {
     margin-top: 20px;
@@ -47,6 +48,7 @@ h2 {
     width: 100%;
 }
 
+#labelTags,
 #labelValor,
 #labelDescricao {
     margin-bottom: 10px;
@@ -57,11 +59,12 @@ h2 {
     width: 100%;
 }
 
+#tags,
 #valor,
 #descricao {
     border: none;
     background: transparent;
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
     outline: none;
     padding: 10px;
@@ -70,15 +73,35 @@ h2 {
     text-align: left;
     width: 100%;
 }
-
+    .custom-placeholder::placeholder,
     #valor::placeholder,
+    #tags::placeholder,
+    #data::placeholder,
     #descricao::placeholder {
+        font-size: 16px;
         color: #aaa;
+        padding: 10px;
     }
 
-.form-group {
-    margin-top: 20px;
+/* Adicione esta regra de estilo ao seu arquivo de estilos CSS */
+.custom-tagify .tagify__input::placeholder {
+    color: #6c757d; /* Cor do texto do placeholder */
 }
+
+.custom-tagify .tagify__input:focus::placeholder {
+    color: #3595f6; /* Cor do texto do placeholder quando em foco */
+}
+
+
+
+.tagify__input {
+    margin-top: 20px !important;
+}
+
+
+    .form-group {
+        margin-top: 20px;
+    }
 
 button {
     padding: 10px;

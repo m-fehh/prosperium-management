@@ -17,10 +17,11 @@
     </environment>
 }
 
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        /*font-family: 'Roboto', Arial, sans-serif;*/
         background-color: #f4f4f4;
     }
 
@@ -43,6 +44,8 @@
         padding: 30px 0;
     }
 
+    .campo-agencia,
+    .campo-conta,
     .campo-instituicao,
     .campo-conta-principal,
     .campo-tipo,
@@ -55,6 +58,8 @@
         width: 100%;
     }
 
+    #labelAgencia,
+    #labelConta,
     #labelInstituicao,
     #labelTipo,
     #labelValor,
@@ -67,6 +72,8 @@
         width: 100%;
     }
 
+    #agencia,
+    #conta,
     #instituicao,
     #conta-principal,
     #valor,
@@ -75,7 +82,7 @@
     #toggleSwitch {
         border: none;
         background: transparent;
-        font-size: 18px;
+        font-size: 16px;
         color: #333;
         outline: none;
         padding: 10px;
@@ -85,6 +92,8 @@
         width: 100%;
     }
 
+        #agencia::placeholder,
+        #conta::placeholder,
         #instituicao::placeholder,
         #conta-principal::placeholder,
         #valor::placeholder,
@@ -99,7 +108,7 @@
         margin-bottom: 10px;
         color: #333;
         display: block;
-        font-size: 14px;
+        font-size: 11px;
         width: 100%;
         align-items: center;
     }
@@ -136,7 +145,7 @@
             text-align: center;
             line-height: 30px;
             color: #333;
-            font-size: 14px;
+            font-size: 11px;
             left: 0;
             bottom: 0;
             background-color: #F5F5F5;
@@ -182,6 +191,10 @@
             filter: brightness(90%);
         }
 
+    .custom-placeholder {
+        font-size: 16px;
+        color: #aaa;
+    }
 </style>
 
 <div class="form-container" id="AccountCreate">
@@ -193,10 +206,36 @@
             <div class="col-12">
                 <div class="campo-instituicao">
                     <label id="labelInstituicao" for="instituicao">Instituição financeira</label>
-                    <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal">
-                        Selecione a Instituição
+                    <div class="col-12">
+                        <div class="d-flex align-items-center">
+                            <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal" class="col-11">
+                                <div class="col-12">
+                                    <span class="custom-placeholder">Selecione a Instituição</span>
+                                </div>
+                            </div>
+                            <div class="col-1" style="display: flex; align-items: center; justify-content: flex-end;">
+                                <img id="instituicaoLogo" src="/img/banks/nubank.png" alt="Instituição Logo" style="border-radius: 10px; display: none;" width="50" />
+                            </div>
+                        </div>
                     </div>
                     <input type="hidden" id="selectedBankId" name="InstitutionId" value="" />
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row" id="camposAgenciaConta" style="display: none;">
+            <div class="col-6">
+                <div class="campo-agencia">
+                    <label id="labelAgencia" for="agencia">Número da Agência</label>
+                    <input type="text" id="agencia" name="AgencyNumber" placeholder="Digite o número da agência" required />
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="campo-conta">
+                    <label id="labelConta" for="conta">Número da Conta</label>
+                    <input type="text" id="conta" name="AccountNumber" placeholder="Digite o número da conta" required />
                 </div>
             </div>
         </div>
@@ -245,9 +284,6 @@
         </div>
     </form>
 </div>
-
-
-
 
 
 @* MODAL DE INSTITUIÇÃO FINANCEIRA *@

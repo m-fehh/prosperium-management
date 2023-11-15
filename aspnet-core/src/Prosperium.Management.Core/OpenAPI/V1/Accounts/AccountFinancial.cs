@@ -14,6 +14,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         public int TenantId { get; set; }
         public virtual long InstitutionId { get; set; }
         public string AccountNickname { get; set; }
+        public string AgencyNumber { get; set; }
+        public string AccountNumber { get; set; }
 
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18, 2)")]
