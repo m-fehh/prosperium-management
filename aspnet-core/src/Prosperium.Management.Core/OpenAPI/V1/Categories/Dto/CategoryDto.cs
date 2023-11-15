@@ -9,9 +9,11 @@ namespace Prosperium.Management.OpenAPI.V1.Categories.Dto
 {
     public class CategoryDto : EntityDto<long>
     {
+        public string IconPath { get; set; }
         public string Name { get; set; }
         public TransactionType TransactionType { get; set; }
 
         public virtual ICollection<SubcategoryDto> Subcategories { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

@@ -121,10 +121,11 @@ $(document).on('click', '.categoria-modal', function (e) {
     // Obter dados da categoria clicada
     var categoriaSelecionadaTemp = $(this).data('categoria-nome');
     var categoryId = $(this).data('categoria-id');
+    var categoryIcon = $(this).data('categoria-icone');
 
     selectedCategoryId = categoryId;
 
-    getSubcategories(categoryId);
+    getSubcategories(categoryId, categoryIcon);
 
     // Remover o evento 'click' anterior da subcategoria
     $(document).off('click', '.subcategoria');
@@ -146,14 +147,14 @@ $(document).on('click', '.categoria-modal', function (e) {
     });
 });
 
-function getSubcategories(categoryid) {
+function getSubcategories(categoryid, categoryIcon) {
     $.ajax({
         url: abp.appPath + 'App/Transactions/SelectSubcategory',
         type: 'GET',
         data: { categoryId: categoryid },
         dataType: 'json',
         success: function (subcategories) {
-            updateModalSubcategories(subcategories.result);
+            updateModalSubcategories(subcategories.result, categoryIcon);
         },
         error: function (error) {
             console.error('Erro na chamada AJAX:', error);
@@ -163,7 +164,7 @@ function getSubcategories(categoryid) {
 
 var modalAtualizado = false;
 
-function updateModalSubcategories(subcategories) {
+function updateModalSubcategories(subcategories, categoryIcon) {
     if (!modalAtualizado) {
         var subcategoriasHtml = `
             <div class="modal-body">
@@ -175,8 +176,20 @@ function updateModalSubcategories(subcategories) {
             subcategoriasHtml += `
                         <div class="col-md-12">
                             <div class="card categoria-modal subcategoria" data-subcategoria="${subcategories[i].name}" data-subcategoria-id="${subcategories[i].id}" data-categoria-id="${selectedCategoryId}">
-                                <div class="card-body">
-                                    <h5 class="card-title">${subcategories[i].name}</h5>
+                                <div class="card-body d-flex align-items-center" style="width: 100%;">
+                                    <div class="col-1">
+                                        <i class="${categoryIcon}" style="margin-right: 10px; float: left; color: #FF8C00"></i>
+                                    </div>
+                                    <div class="col-10">
+                                        <h5 class="card-title">${subcategories[i].name}</h5>
+                                    </div>  
+                                    <div class="col-1">
+                                        <div class="ml-auto arrow-right">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="color: #FF8C00;" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                                <path d="M11.354 8.354a.5.5 0 0 0 0-.708L9.172 5.464a.5.5 0 1 1 .707-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.707-.708L11.354 8.354z" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

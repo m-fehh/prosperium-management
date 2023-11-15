@@ -23,8 +23,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
         public CategoryDto Categories { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
-
-        // CONTA abrir modal
+        public virtual long AccountId { get; set; }        
         public DateTime Date { get; set; }
         public ICollection<TagDto> Tags { get; set; }
     }
