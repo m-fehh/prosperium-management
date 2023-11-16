@@ -160,7 +160,7 @@ function obterNomeOficial(nomeInformal) {
         'PAN': 'Banco PAN S.A.',
         'PagBank': 'PagSeguro Internet S.A.',
         'PayPal': 'PayPal do Brasil Serviços de Pagamentos Ltda.',
-        'PicPay': 'PicPay Serviços S.A.',
+        'PicPay': 'PicPay Servicos S.A.',
         'Safra': 'Banco Safra S.A.',
         'Sicredi': 'Sicredi'
     };

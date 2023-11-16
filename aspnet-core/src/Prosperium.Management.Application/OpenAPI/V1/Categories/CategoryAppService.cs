@@ -1,8 +1,10 @@
 ﻿using Abp.Domain.Repositories;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
+using Prosperium.Management.OpenAPI.V1.Transactions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -15,10 +17,12 @@ namespace Prosperium.Management.OpenAPI.V1.Categories
     public class CategoryAppService : ManagementAppServiceBase, ICategoryAppService
     {
         private readonly IRepository<Category, long> _categoryRepository;
+        private readonly IRepository<Transaction, long> _transactionRepository;
 
-        public CategoryAppService(IRepository<Category, long> categoryRepository)
+        public CategoryAppService(IRepository<Category, long> categoryRepository, IRepository<Transaction, long> transactionRepository)
         {
             _categoryRepository = categoryRepository;
+            _transactionRepository = transactionRepository;
         }
 
         [HttpPost]
@@ -39,6 +43,40 @@ namespace Prosperium.Management.OpenAPI.V1.Categories
             }
 
             return ObjectMapper.Map<CategoryDto>(category);
+        }
+
+        [HttpGet]
+        [Route("list-categories")]
+        public async Task<List<CategoryDto>> GetAllListAsync()
+        {
+            List<Category> allCategories = await _categoryRepository.GetAllListAsync();
+
+            return ObjectMapper.Map<List<CategoryDto>>(allCategories);
+        }
+
+        [HttpGet]
+        [Route("list-categories-per-tenant")]
+        public async Task<List<CategoryDto>> GetAllListPerTenantAsync()
+        {
+            var allCategoriesForTransaction = await _transactionRepository.GetAll().Include(x => x.Categories).Select(x => x.Categories.Id).ToListAsync();
+
+            List<Category> categories = new List<Category>();
+            List<Category> allCategories = await _categoryRepository.GetAllListAsync();
+
+            foreach (var category in allCategoriesForTransaction)
+            {
+                var categorySelected = allCategories.Where(x => x.Id == category).FirstOrDefault();
+                if (categorySelected != null)
+                {
+                    if (!categories.Any(x => x.Id == categorySelected.Id))
+                    {
+                        categories.Add(categorySelected);
+
+                    }
+                }
+            }
+
+            return ObjectMapper.Map<List<CategoryDto>>(categories);
         }
 
         [HttpGet]

@@ -61,7 +61,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             }
 
             // Quando adicionado uma conta, deve constar o valor no extrato
-            var extractCreated = new TransactionDto
+            var extractCreated = new CreateTransactionDto
             {
                 Date = DateTime.Now,
                 Description = $"Saldo da conta: {input.AccountNickname}",

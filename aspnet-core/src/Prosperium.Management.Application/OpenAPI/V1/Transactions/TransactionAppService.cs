@@ -7,6 +7,7 @@ using Abp.Runtime.Session;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,17 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
     public class TransactionAppService : ManagementAppServiceBase, ITransactionAppService
     {
         private readonly IRepository<Transaction, long> _transactionRepository;
+        private readonly IRepository<AccountFinancial, long> _accountRepository;
 
-        public TransactionAppService(IRepository<Transaction, long> transactionRepository)
+        public TransactionAppService(IRepository<Transaction, long> transactionRepository, IRepository<AccountFinancial, long> accountRepository)
         {
             _transactionRepository = transactionRepository;
+            _accountRepository = accountRepository;
         }
+            //transaction.Account = await _accountRepository.GetAsync(input.AccountId);
 
         [HttpPost]
-        public async Task CreateAsync(TransactionDto input)
+        public async Task CreateAsync(CreateTransactionDto input)
         {
             Transaction transaction = ObjectMapper.Map<Transaction>(input);
             await _transactionRepository.InsertAsync(transaction);
@@ -59,6 +63,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             var allTransaction = _transactionRepository.GetAll()
                 .Include(x => x.Categories)
                     .ThenInclude(x => x.Subcategories)
+                .Include(x => x.Account)
+                    .ThenInclude(x => x.Bank)
                 .WhereIf(!string.IsNullOrEmpty(input.Filter), x => x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
 
             if (!string.IsNullOrEmpty(input.MonthYear))
@@ -70,7 +76,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                 allTransaction = allTransaction.Where(x => x.Date.Month == month && x.Date.Year == year);
             }
 
-            var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "id asc").PageBy(input);
+            var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "id desc").PageBy(input);
 
             var transactions = from o in pagedAndFilteredTransaction
                                select new GetTransactionForViewDto()

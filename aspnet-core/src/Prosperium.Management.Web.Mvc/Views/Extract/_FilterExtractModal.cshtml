@@ -1,0 +1,212 @@
+﻿@using Prosperium.Management.Web.Models.Extract
+
+@model AllFiltersModalViewModel
+@{
+    Layout = null;
+}
+
+<style>
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden; 
+        transition: transform 0.3s; 
+    }
+
+        .card:hover {
+            transform: scale(1.05); 
+        }
+
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 1.2rem; 
+        margin-bottom: 10px; 
+    }
+
+    .card-text {
+        color: #555; 
+    }
+
+    .btn {
+        background-color: #3498db; 
+        color: #fff;
+        border: none; 
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer; 
+        transition: background-color 0.3s; 
+    }
+
+        .btn:hover {
+            background-color: #267bb5; 
+        }
+
+    .selected-card {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.5); 
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #28a745;
+        font-size: 20px;
+    }
+
+    .custom-button {
+        width: 100%;
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .custom-button:hover {
+            transform: scale(1.05);
+        }
+
+    a:hover {
+        color: #fff;
+    }
+
+    hr.divider {
+        width: 100%;
+        margin: 10px 0;
+        border: 1px solid rgba(204, 204, 204, 0.5);
+    }
+
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<form name="filterModal" role="form" class="form-horizontal">
+    <div class="modal-body">
+        <div role="tabpanel" class="tab-pane container" id="select-filters">
+            <div role="tabpanel" class="tab-pane container" id="select-filters">
+
+                <label for="selectedAccount">Filtrar por conta:</label>
+                <div class="row account-row">
+                    @foreach (var account in Model.Accounts)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card" data-conta-id="@account.Id">
+                                <img src="~/img/banks/@account.Bank.ImagePath"  width="50" alt="@account.AccountNickname">
+                                <div class="card-body">
+                                    <p style="font-size: 11px; color: #999; margin: 0;">Ag&ecirc;ncia: @account.AgencyNumber Conta: @account.AccountNumber</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <label for="selectedCategory">Filtrar por categorias:</label>
+                <div class="row category-row">
+                    @foreach (var category in Model.Categories)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id">
+                                <i class="@category.IconPath" style="color: #FF8C00; font-size: 30px;"></i>
+                                <div class="card-body">
+                                    <p style="font-size: 16px; color: #999; margin: 0;">@category.Name</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <label for="selectedCategory">Filtrar por Tipo:</label>
+                <div class="row transaction-type-row">
+                    @foreach (var type in Model.TransactionType)
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card" style="padding-top: 20px; display: flex;" data-tipo-id="@type.Value">
+                                <i class="fas fa-chart-line" style="color: #FF8C00; font-size: 30px;"></i>
+                                <div class="card-body">
+                                    <p style="font-size: 16px; color: #999; margin: 0;">@type.Text</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <hr class="divider">
+                <div class="row" style="display: flex; justify-content: flex-end;  padding: 10px 0;">
+                    <div class="filterSubmit custom-button">
+                        <i class="fas fa-search"></i> &nbsp; Aplicar filtro
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        var selectedAccountIds = [];
+        var selectedCategoryIds = [];
+        var selectedTransactionTypeIds = [];
+
+        $('.card').click(function () {
+            var row = $(this).parents('.row');
+            var itemId = $(this).data('conta-id') || $(this).data('categoria-id') || $(this).data('tipo-id');
+
+            toggleSelection($(this));
+
+            if (row.hasClass('account-row')) {
+                updateSelectedIds(selectedAccountIds, itemId);
+            } else if (row.hasClass('category-row')) {
+                updateSelectedIds(selectedCategoryIds, itemId);
+            } else if (row.hasClass('transaction-type-row')) {
+                updateSelectedIds(selectedTransactionTypeIds, itemId);
+            }
+        });
+
+        function toggleSelection(card) {
+            card.toggleClass('selected-card');
+            addCheckmark(card);
+        }
+
+        function updateSelectedIds(selectedIds, itemId) {
+            if (selectedIds.includes(itemId)) {
+                selectedIds.splice(selectedIds.indexOf(itemId), 1);
+            } else {
+                selectedIds.push(itemId);
+            }
+        }
+
+        function addCheckmark(card) {
+            // Remove checkmarks de outros cards
+            card.siblings('.card').find('.checkmark').remove();
+
+            // Adiciona ou remove checkmark baseado na seleção
+            if (card.hasClass('selected-card')) {
+                card.append('<span class="checkmark">&#10003;</span>');
+            } else {
+                card.find('.checkmark').remove();
+            }
+        }
+
+        // Função para obter os IDs selecionados
+        window.getSelectedIds = function () {
+            return {
+                accountIds: selectedAccountIds,
+                categoryIds: selectedCategoryIds,
+                typeIds: selectedTransactionTypeIds
+            };
+        };
+    });
+
+</script>
+
+

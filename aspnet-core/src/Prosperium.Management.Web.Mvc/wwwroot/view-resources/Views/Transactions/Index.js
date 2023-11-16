@@ -93,6 +93,47 @@ function formatarValor(elemento) {
     elemento.value = valor;
 }
 
+// Seleciona a conta
+var selectedAccountId = '';
+
+$(document).on('click', '#conta', function (e) {
+    e.preventDefault();
+
+    abp.ajax({
+        url: abp.appPath + 'App/Transactions/GetAccounts',
+        type: 'GET',
+        dataType: 'html',
+        success: function (content) {
+            $('#SelectAccountModal div.modal-content').html(content);
+        },
+        error: function (e) { }
+    });
+});
+
+$(document).on('click', '.institution-modal', function (e) {
+    e.preventDefault();
+
+    var accountId = $(this).data('conta-id');
+    var agencyNumber = $(this).data('conta-agencia');
+    var accountNumber = $(this).data('conta-numero');
+    var imagePath = $(this).data('conta-icon');
+    var accountNickname = $(this).find('.card-title').text();
+
+    selectedAccountId = accountId;
+
+    var imageFullPath = abp.appPath + 'img/banks/' + imagePath;
+
+    // Adiciona a miniatura do logo, o nickname e a agência/conta no elemento #conta
+    $('#conta').html(`
+        <img src="${imageFullPath}" style="border-radius: 10px;" width="35" />
+        <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${accountNickname}</span>
+        <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</p>
+    `);
+
+    $('#SelectAccountModal').modal('hide');
+});
+
+
 var categoriaSelecionada = '';
 var subcategoriaSelecionada = '';
 
@@ -142,7 +183,13 @@ $(document).on('click', '.categoria-modal', function (e) {
         subcategoriaSelecionada = $(this).data('subcategoria');
 
         // Usar categoriaSelecionada e subcategoriaSelecionada conforme necessário
-        $('#categoria').html(categoriaSelecionadaTemp + ' > ' + subcategoriaSelecionada);
+        $('#categoria').html(`
+            <div style="padding: 10px; display: flex; align-items: center; gap: 15px;">
+                <i class="${categoryIcon}" style="margin-right: 10px; float: left; color: #FF8C00"></i>
+                <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${categoriaSelecionadaTemp}</span>
+                <p style="font-size: 13px; color: #999; margin: 0;">Subcategoria: ${subcategoriaSelecionada}</p>
+            </div>
+        `);
 
         // Restaurar as variáveis para futuros usos
         categoriaSelecionada = '';
@@ -236,18 +283,24 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
         var transactionDto = _$form.serializeFormToObject();
 
         transactionDto['CategoryId'] = selectedCategoryId;
+        transactionDto['AccountId'] = selectedAccountId;
 
         // Ajuste para o campo ExpenseValue
         var expenseValueString = transactionDto['ExpenseValue']
-            .replace('R$', '') 
-            .replace(/\./g, '') 
-            .replace(',', '.'); 
+            .replace('R$', '')
+            .replace(/\./g, '')
+            .replace(',', '.');
 
         transactionDto['ExpenseValue'] = parseFloat(expenseValueString).toFixed(2);
 
         // Ajuste para o campo Tags
         var tagsString = transactionDto['Tags'];
-        transactionDto['Tags'] = JSON.parse(tagsString).map(tag => ({ Name: tag.value }));
+        transactionDto['Tags'] = tagsString ? JSON.parse(tagsString).map(tag => ({ Name: tag.value })) : [];
+
+        // Verifique se a propriedade Tags está presente no objeto e é uma matriz
+        if (!transactionDto['Tags'] || !Array.isArray(transactionDto['Tags'])) {
+            transactionDto['Tags'] = [];
+        }
 
         // Ajuste para o campo Date
         var dateParts = transactionDto['Date'].split('/');
@@ -256,8 +309,9 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
         console.log(transactionDto);
 
         _transactionService.create(transactionDto).done(function () {
-                abp.notify.info(l('SavedSuccessfully'));
-            })
+            abp.notify.info(l('SavedSuccessfully'));
+            window.location.href = '/app/Extract';
+        })
             .fail(function (error) {
                 console.error('Erro ao criar transação:', error);
             });

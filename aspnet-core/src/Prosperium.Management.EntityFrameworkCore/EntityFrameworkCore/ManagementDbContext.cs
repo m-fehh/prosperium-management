@@ -49,6 +49,29 @@ namespace Prosperium.Management.EntityFrameworkCore
                 .Property(e => e.PaymentTerm)
                 .HasConversion<string>()
                 .HasMaxLength(32);
+
+            // Relacionamentos
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Account)
+                .WithMany(a => a.Transactions) 
+                .HasForeignKey(t => t.AccountId);
+
+            modelBuilder.Entity<Transaction>()
+                .HasOne(t => t.Categories)
+                .WithMany() 
+                .HasForeignKey(t => t.CategoryId);
+
+            modelBuilder.Entity<AccountFinancial>()
+                .HasMany(a => a.Transactions)  
+                .WithOne(t => t.Account)
+                .HasForeignKey(t => t.AccountId);
+
+            modelBuilder.Entity<AccountFinancial>()
+                .HasOne(a => a.Bank)
+                .WithMany() 
+                .HasForeignKey(a => a.BankId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

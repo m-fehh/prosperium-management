@@ -73,6 +73,7 @@ h2 {
     text-align: left;
     width: 100%;
 }
+
     .custom-placeholder::placeholder,
     #valor::placeholder,
     #tags::placeholder,
@@ -93,15 +94,14 @@ h2 {
 }
 
 
-
-.tagify__input {
+    .tagify__input {
     margin-top: 20px !important;
 }
 
 
-    .form-group {
-        margin-top: 20px;
-    }
+.form-group {
+    margin-top: 20px;
+}
 
 button {
     padding: 10px;
@@ -155,7 +155,6 @@ button {
     font-size: 18px;
     color: #333;
     outline: none;
-    padding: 10px;
     border-bottom: 1px solid #ccc;
     transition: border-color 0.3s;
     text-align: left;
@@ -278,7 +277,7 @@ button {
     transition: border-color 0.3s;
     text-align: left;
     width: 100%;
-    margin-top: 30px; 
+    margin-top: 30px;
 }
 
 #labelTags {
@@ -286,7 +285,7 @@ button {
     top: 0;
     left: 0;
     margin-left: 10px;
-    margin-top: 5px; 
+    margin-top: 5px;
     font-size: 14px;
     color: #333;
 }
@@ -351,6 +350,10 @@ button {
         color: #FF8C00;
         font-size: 24px;
     }
+
+.hidden {
+    display: none;
+}
 
 
 @keyframes rotateGasto {

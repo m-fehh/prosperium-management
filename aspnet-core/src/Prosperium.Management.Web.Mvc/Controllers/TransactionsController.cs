@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
+using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Subcategories;
 using Prosperium.Management.OpenAPI.V1.Subcategories.Dto;
@@ -15,11 +16,13 @@ namespace Prosperium.Management.Web.Controllers
     {
         private readonly ICategoryAppService _categoryAppService;
         private readonly ISubcategoryAppService _subcategoryAppService;
+        private readonly IAccountAppService _accountAppService;
 
-        public TransactionsController(ICategoryAppService categoryAppService, ISubcategoryAppService subcategoryAppService)
+        public TransactionsController(ICategoryAppService categoryAppService, ISubcategoryAppService subcategoryAppService, IAccountAppService accountAppService)
         {
             _categoryAppService = categoryAppService;
             _subcategoryAppService = subcategoryAppService;
+            _accountAppService = accountAppService;
         }
 
         public IActionResult Index()
@@ -60,12 +63,19 @@ namespace Prosperium.Management.Web.Controllers
         {
             return await _subcategoryAppService.GetByCategoryIdAsync(categoryId);
         }
+
+        [HttpGet("GetAccounts")]
+        public async Task<ActionResult> GetAccounts()
+        {
+            var allAccounts = await _accountAppService.GetAllListAsync();
+            var model = new SelectAccountModalViewModel
+            {
+                Accounts = allAccounts,
+            };
+
+            return PartialView("_SelectAccountModal", model);
+        }
     }
-
-    //public async Task<ActionResult> SelectAccount()
-    //{
-    //    var allAccounts = await _transactionAppService.
-
-    //    return PartialView("_SelectAccountModal");
-    //}
 }
+
+

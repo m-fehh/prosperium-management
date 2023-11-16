@@ -62,27 +62,53 @@ var monthYearInput;
             },
             {
                 targets: 2,
-                data: 'transaction.categories',
+                data: 'transaction.account',
                 render: function (data, type, row) {
-                    if (data && data.name) {
+                    var accountNickname = data.accountNickname;
+                    var agencyNumber = data.agencyNumber;
+                    var accountNumber = data.accountNumber;
+                    var imageFullPath = abp.appPath + 'img/banks/' + data.bank.imagePath;
+
+                    if (data && data.accountNickname) {
                         return `
                 <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
                     <div>
-                        <i class="${data.iconPath}" style="margin-right: 10px; color: #FF8C00;"></i>
+                        <img src="${imageFullPath}" style="border-radius: 5px;" width="20" />
                     </div>
-                    <div>
-                        <h5 class="card-title">${data.name.toUpperCase()}</h5>
+                    <div style="margin-left: 10px;">
+                        <span style="font-size: 12px; color: #000; font-weight: 400;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</span>
                     </div>
                 </div>
             `;
                     } else {
-                        return ''; 
+                        return '';
                     }
                 },
                 sortable: false
             },
             {
                 targets: 3,
+                data: 'transaction.categories',
+                render: function (data, type, row) {
+                    if (data && data.name) {
+                        return `
+                                    <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                                        <div>
+                                            <i class="${data.iconPath}" style="margin-right: 10px; color: #FF8C00;"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="card-title">${data.name.toUpperCase()}</h5>
+                                        </div>
+                                    </div>
+                                `;
+                    } else {
+                        return '';
+                    }
+                },
+                sortable: false
+            },
+            {
+                targets: 4,
                 data: 'transaction.expenseValue',
                 render: function (data, type, row) {
                     var formattedValue = Math.abs(data).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -117,6 +143,36 @@ var monthYearInput;
     // ... (seu código existente)
 
 })(jQuery);
+
+$(document).ready(function () {
+    $('#FilterIcon').click(function (e) {
+        e.preventDefault();
+
+        abp.ajax({
+            url: abp.appPath + 'App/Extract/GetAllFilters',
+            type: 'GET',
+            dataType: 'html',
+            success: function (content) {
+                $('#filterModal div.modal-content').html(content);
+                $('#filterModal').modal('show');
+
+            },
+            error: function (e) { }
+        });
+    });
+});
+
+$(document).on('click', '.filterSubmit', function (e) {
+    e.preventDefault();
+
+    // Resgata os IDs selecionados
+    var selectedIds = getSelectedIds();
+
+    // Faça algo com os IDs, por exemplo, imprima no console
+    console.log("Selected Account IDs:", selectedIds.accountIds);
+    console.log("Selected Category IDs:", selectedIds.categoryIds);
+    console.log("Selected Transaction Type IDs:", selectedIds.typeIds);
+});
 
 function UpdateCardValues() {
     var filterValue = filterInput.val();

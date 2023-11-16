@@ -1,8 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Prosperium.Management.Controllers;
+using Prosperium.Management.OpenAPI.V1.Accounts;
+using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Transactions;
+using Prosperium.Management.Web.Models.Extract;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -11,9 +17,14 @@ namespace Prosperium.Management.Web.Controllers
     {
         private readonly ITransactionAppService _transactionAppService;
 
-        public ExtractController(ITransactionAppService transactionAppService)
+        private readonly ICategoryAppService _categoryAppService;
+        private readonly IAccountAppService _accountAppService;
+
+        public ExtractController(ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IAccountAppService accountAppService)
         {
             _transactionAppService = transactionAppService;
+            _categoryAppService = categoryAppService;
+            _accountAppService = accountAppService;
         }
 
         public IActionResult Index()
@@ -51,6 +62,30 @@ namespace Prosperium.Management.Web.Controllers
             var resultado = new { gastos, ganhos };
 
             return Json(resultado);
+        }
+
+        [HttpGet("GetAllFilters")]
+        public async Task<ActionResult> GetAllFilters()
+        {
+            var allAccounts = await _accountAppService.GetAllListAsync();
+            var allCategories = await _categoryAppService.GetAllListPerTenantAsync();
+            var allTransactionTypes = Enum.GetValues(typeof(TransactionType))
+                               .Cast<TransactionType>()
+                               .Select(tt => new SelectListItem
+                               {
+                                   Value = ((int)tt).ToString(),
+                                   Text = tt.ToString()
+                               })
+                               .ToList();
+
+            var model = new AllFiltersModalViewModel
+            {
+                Accounts = allAccounts,
+                Categories = allCategories,
+                TransactionType = allTransactionTypes
+            };
+
+            return PartialView("_FilterExtractModal", model);
         }
     }
 }

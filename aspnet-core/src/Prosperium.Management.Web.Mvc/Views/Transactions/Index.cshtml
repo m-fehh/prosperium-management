@@ -1,6 +1,6 @@
 ﻿<link rel="stylesheet" href="~/css/Transactions/style.css" />
 
-@model TransactionDto
+@model CreateTransactionDto
 @using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 @using Prosperium.Management.Web.Startup
 @{
@@ -54,6 +54,17 @@
             color: var(--placeholder-color-focus); /* Cor do texto do placeholder quando em foco */
         }
 
+    .tagify__tag{
+        display: inline-flex;
+        align-items: center;
+        margin: 20px 0 5px 5px !important;
+        position: relative;
+        z-index: 1;
+        outline: 0;
+        line-height: normal;
+        cursor: default;
+        transition: .13s ease-out;
+    }
 
     .tagify__tag:hover {
         opacity: 0.8;
@@ -125,6 +136,7 @@
             </div>
         </div>
 
+
         <div class="row">
             <div class="col-6">
                 <div class="campo-cartao">
@@ -165,7 +177,7 @@
             <div class="col-12">
                 <div class="campo-conta">
                     <label id="labelConta" for="conta">Conta *</label>
-                    <div id="conta" data-toggle="modal" data-target="#SelectAccountModal">
+                    <div id="conta" data-toggle="modal" data-target="#SelectAccountModal" style="display: flex; align-items: center; gap: 15px;">
                         <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="padding: 0; background: transparent; border: none;" readonly>
                     </div>
                 </div>
@@ -184,7 +196,7 @@
             <div class="col-12">
                 <div class="campo-tags">
                     <label id="labelTags" for="tags">Tags *</label>
-                    <input type="text" id="tags" name="Tags" class="tagify custom-tagify" placeholder="Adicione tag e pressione Enter" required />
+                    <input type="text" id="tags" name="Tags" class="tagify custom-tagify" placeholder="Adicione tag e pressione Enter" />
                 </div>
             </div>
         </div>
@@ -216,6 +228,10 @@
         var labelDescricao = document.getElementById('labelDescricao');
         var campoDescricao = document.getElementById('descricao');
         var btnSubmit = document.getElementById('btnSubmit');
+        var campoCategoria = document.getElementById('categoria');
+
+        campoCategoria.innerHTML = '';
+
 
         if (valor === 'gasto') {
             labelValor.textContent = 'Valor do gasto';
@@ -247,9 +263,18 @@
             btnSubmit.style.fontWeight = 'bold';
         }
 
-        mostrarCamposAdicionais(valor);
         tipoTransacaoSelecionado = valor;
+
+        // Adicionar novamente o campo de seleção da categoria
+        var campoCategoriaDiv = document.createElement('div');
+        campoCategoriaDiv.setAttribute('data-toggle', 'modal');
+        campoCategoriaDiv.setAttribute('data-target', '#SelectCategoryModal');
+        campoCategoriaDiv.innerHTML = '<input type="text" class="form-control custom-placeholder" placeholder="Selecione uma categoria" style="border: none; padding: 0; background: transparent; border: none;" readonly>';
+
+        // Adicionar o campo de seleção da categoria à div de contêiner
+        campoCategoria.appendChild(campoCategoriaDiv);
     }
+
 </script>
 
 @* Modal de categorias *@

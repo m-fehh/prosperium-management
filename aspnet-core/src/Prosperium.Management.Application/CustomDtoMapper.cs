@@ -24,6 +24,7 @@ namespace PayMetrix
             configuration.CreateMap<Category, CategoryDto>().ReverseMap();
             configuration.CreateMap<Subcategory, SubcategoryDto>().ReverseMap();
             configuration.CreateMap<Transaction, TransactionDto>().ReverseMap();
+            configuration.CreateMap<Transaction, CreateTransactionDto>().ReverseMap();
             configuration.CreateMap<Tag, TagDto>().ReverseMap();
             configuration.CreateMap<Bank, BankDto>().ReverseMap();
             configuration.CreateMap<AccountFinancial, AccountFinancialDto>().ReverseMap();

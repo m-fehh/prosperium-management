@@ -6,13 +6,13 @@ using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
+using System.Collections.Generic;
 
 namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
 {
     public class AccountFinancialDto : AuditedEntityDto<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
-        // Propriedades relacionadas ao banco
         public virtual long BankId { get; set; }
         public virtual BankDto Bank { get; set; }
         public string AccountNickname { get; set; }
@@ -26,6 +26,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
         public bool MainAccount { get; set; }
 
         // Propriedade de navegação para a transação
-        public virtual TransactionDto Transaction { get; set; }
+        public ICollection<CreateTransactionDto> Transaction { get; set; }
     }
 }

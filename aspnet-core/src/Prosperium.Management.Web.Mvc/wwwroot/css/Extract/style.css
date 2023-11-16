@@ -19,7 +19,31 @@ h2 {
     margin-bottom: 50px;
     text-align: left;
     border-bottom: 2px solid rgba(204, 204, 204, 0.5);
-    padding: 30px 0;
+    padding: 30px 0 30px 0;
+}
+
+.custom-button {
+    background-color: #FF8C00;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px 0;
+}
+
+    .custom-button:hover {
+        transform: scale(1.05);
+    }
+
+
+a:hover {
+    color: #fff;
 }
 
 .table {
@@ -60,7 +84,7 @@ h2 {
     border: 1px solid #ddd;
     padding: 10px; /* Reduzindo o preenchimento */
     margin: 10px;
-    text-align: center;
+    text-align: start;
     margin-bottom: 20px; /* Reduzindo a margem inferior */
     transition: transform 0.3s ease-in-out;
     border-radius: 10px;

@@ -8,7 +8,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 {
     public interface ITransactionAppService : IApplicationService
     {
-        Task CreateAsync(TransactionDto input);
+        Task CreateAsync(CreateTransactionDto input);
         Task<TransactionDto> GetByIdAsync(long id);
         Task<List<TransactionDto>> GetAllListAsync();
         Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input);
