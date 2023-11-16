@@ -217,8 +217,7 @@ $(document).on('click', '#instituicao', function (e) {
 
         _accountService.create(account).done(function () {
             abp.notify.info(l('SavedSuccessfully'));
-            abp.nav.menus.refresh();
-            abp.nav.menus.openActiveMenuItem({ url: '/app/Accounts' });
+            window.location.href = '/app/Accounts';
         }).fail(function (error) {
             console.error('Erro ao criar transação:', error);
         });

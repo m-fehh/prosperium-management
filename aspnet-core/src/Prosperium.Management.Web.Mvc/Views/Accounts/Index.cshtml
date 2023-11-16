@@ -131,14 +131,13 @@
         </a>
     </div>
 
-    <div id="card-container"></div>
+    <div id="card-container" style="/* display: flex; justify-content: space-around; */ padding: 40px 10px;"></div>
 </div>
 
 <script>
     $(document).ready(function () {
         UpdateCardValues();
     });
-
 
     function UpdateCardValues() {
         var cardContainer = $('#card-container');
@@ -149,46 +148,80 @@
             success: function (data) {
                 $('#card-container').empty();
 
+                var cardHtml = '<div class="row">';
+
                 data.result.forEach(function (account, index) {
-
-                    // Abre uma nova linha a cada dois cards
-                    if (index % 2 === 0) {
-                        cardContainer.append('<div class="row">');
-                    }
-
-                    console.log(account);
-
-                    // <div class="icon">
-                    //     <img src="${account.institution.imagePath}" width="60"/>
-                    // </div>
-                    var cardHtml = `
-                            <div class="col-6"> 
-                                <div class="card">
-                                    <div class="card-content">
-                                        <div class="text-content">
-                                            <h3>${account.accountNickname}</h3>
-                                            <hr class="divider">
-                                            <p class="saldo-label">Saldo:</p>
-                                            <p class="saldo-valor">R$ ${account.balanceAvailable.toFixed(2)}</p>
+                    cardHtml += `
+                                    <div class="col-6">
+                                        <div class="card">
+                                            <div class="card-content" style="cursor:pointer;">
+                                                <div class="text-content">
+                                                            <div class="row" style="display: flex; align-items: baseline; justify-content: flex-start; width: 100%;">
+                                                            <div class="col-10" style="margin-left: -15px;display: flex;padding-left: 30px;float: left;">
+                                                                <h3 style="font-size: 19px; font-weight: bold;">${account.accountNickname}</h3>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <div class="icon">
+                                                                <img src="/img/banks/${account.bank.imagePath}" width="40"  style="border-radius: 10px; margin-top: 5px;" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <hr class="divider">
+                                                    <div class="row" style="width:100%;">
+                                                        <div class="col-11">
+                                                            <p class="saldo-label">Saldo atual:</p>
+                                                            <p class="saldo-valor">R$ ${account.balanceAvailable.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                        <p class="saldo-label" style="padding-left: 15px;">Tipo de Conta: ${getAccountTypeName(account.accountType)}</p>
+                                                        </div>
+                                                        <div class="col-1 d-flex align-items-center">
+                                                            <div class="ml-auto arrow-right">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="color: #FF8C00;" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                                                    <path d="M11.354 8.354a.5.5 0 0 0 0-.708L9.172 5.464a.5.5 0 1 1 .707-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.707-.708L11.354 8.354z" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>`;
+                                    </div>`;
 
-
-                    // Adiciona o card à linha atual
-                    cardContainer.append(cardHtml);
-
-                    // Fecha a linha a cada dois cards
-                    if (index % 2 === 1 || index === data.length - 1) {
-                        cardContainer.append('</div>');
+                    // Se o índice é ímpar ou é o último card, fecha a linha
+                    if (index % 2 !== 0 || index === data.length - 1) {
+                        cardHtml += '</div>'; // Fecha a linha
+                        // Se não for o último card, inicia uma nova linha
+                        if (index !== data.length - 1) {
+                            cardHtml += '<div class="row">';
+                        }
                     }
                 });
 
+                cardContainer.append(cardHtml);
             },
             error: function (error) {
                 console.error('Erro na requisição:', error);
             }
         });
     }
+
+    function getAccountTypeName(accountType) {
+        switch (accountType) {
+            case 1:
+                return 'Corrente';
+            case 2:
+                return 'Poupança';
+            case 3:
+                return 'Investimento';
+            case 4:
+                return 'Outros';
+            case 5:
+                return 'Indefinido';
+            case 6:
+                return 'Benefícios';
+            default:
+                return 'Desconhecido';
+        }
+    }
 </script>
+
+

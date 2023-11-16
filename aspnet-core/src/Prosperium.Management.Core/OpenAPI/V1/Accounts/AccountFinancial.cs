@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Prosperium.Management.Banks;
+using Prosperium.Management.OpenAPI.V1.Transactions;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +13,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
     public class AccountFinancial : AuditedEntity<long>, IMustHaveTenant
     {
         public int TenantId { get; set; }
-        public virtual long InstitutionId { get; set; }
+        public virtual long BankId { get; set; }
+        public virtual Bank Bank { get; set; }
         public string AccountNickname { get; set; }
         public string AgencyNumber { get; set; }
         public string AccountNumber { get; set; }
@@ -22,5 +24,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         public decimal BalanceAvailable { get; set; } // Saldo disponível na conta
         public AccountType AccountType { get; set; }
         public bool MainAccount { get; set; }
+        public Transaction Transaction { get; set; }
     }
 }

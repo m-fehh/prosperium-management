@@ -1683,13 +1683,13 @@ namespace Prosperium.Management.Migrations
                     b.Property<decimal>("BalanceAvailable")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<long>("BankId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
                     b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("InstitutionId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("LastModificationTime")
@@ -1705,6 +1705,8 @@ namespace Prosperium.Management.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankId");
 
                     b.ToTable("Pxp_Accounts");
                 });
@@ -1836,7 +1838,8 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.HasIndex("CategoryId");
 
@@ -2088,6 +2091,17 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("LastModifierUser");
                 });
 
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", b =>
+                {
+                    b.HasOne("Prosperium.Management.Banks.Bank", "Bank")
+                        .WithMany()
+                        .HasForeignKey("BankId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bank");
+                });
+
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>
                 {
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Category")
@@ -2109,8 +2123,8 @@ namespace Prosperium.Management.Migrations
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
                 {
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
+                        .WithOne("Transaction")
+                        .HasForeignKey("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -2194,6 +2208,11 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("Settings");
 
                     b.Navigation("Tokens");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", b =>
+                {
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Categories.Category", b =>

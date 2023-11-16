@@ -45,7 +45,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         [HttpGet]
         public async Task<List<AccountFinancialDto>> GetAllListAsync()
         {
-            List<AccountFinancial> allAccounts = await _accountFinancialRepository.GetAllListAsync();
+            List<AccountFinancial> allAccounts = await _accountFinancialRepository.GetAll().Include(x => x.Bank).ToListAsync();
             return ObjectMapper.Map<List<AccountFinancialDto>>(allAccounts);
         }
 

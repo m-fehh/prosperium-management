@@ -85,7 +85,7 @@ var monthYearInput;
                 targets: 3,
                 data: 'transaction.expenseValue',
                 render: function (data, type, row) {
-                    var formattedValue = 'R$ ' + Math.abs(data).toFixed(2).replace(/\./g, ',').replace(/\d(?=(\d{3})+,)/g, '$&,');
+                    var formattedValue = Math.abs(data).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                     if (row.transaction.transactionType === 1 /* Gastos */ || row.transaction.transactionType === 3 /* Transferência */) {
                         formattedValue = '-' + formattedValue;
