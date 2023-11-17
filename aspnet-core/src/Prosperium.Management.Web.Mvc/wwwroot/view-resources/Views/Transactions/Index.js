@@ -123,9 +123,8 @@ $(document).on('click', '.institution-modal', function (e) {
 
     var imageFullPath = abp.appPath + 'img/banks/' + imagePath;
 
-    // Adiciona a miniatura do logo, o nickname e a agência/conta no elemento #conta
     $('#conta').html(`
-        <img src="${imageFullPath}" style="border-radius: 10px; padding: 10px;" width="50" />
+        <img src="${imageFullPath}" style="padding-bottom: 10px; margin-left: 10px;" width="40" />
         <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${accountNickname}</span>
         <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</p>
     `);
@@ -182,11 +181,13 @@ $(document).on('click', '.categoria-modal', function (e) {
         // Obter dados da subcategoria clicada
         subcategoriaSelecionada = $(this).data('subcategoria');
 
+        var imageFullPath = abp.appPath + 'img/categories/' + categoryIcon;
+
         // Usar categoriaSelecionada e subcategoriaSelecionada conforme necessário
         $('#categoria').html(`
             <div style="padding: 10px; display: flex; align-items: center; gap: 15px;">
-                <i class="${categoryIcon}" style="margin-right: 10px; float: left; color: #FF8C00"></i>
-                <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${categoriaSelecionadaTemp}</span>
+                <img src="${imageFullPath}" style="padding-bottom: 10px;" width="40" />
+                <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${categoriaSelecionadaTemp}</span>
                 <p style="font-size: 13px; color: #999; margin: 0;">Subcategoria: ${subcategoriaSelecionada}</p>
             </div>
         `);
@@ -224,16 +225,18 @@ function updateModalSubcategories(subcategories, categoryIcon) {
                     <div class="row">
         `;
 
+        var imageFullPath = abp.appPath + 'img/categories/' + categoryIcon;
+
         for (var i = 0; i < subcategories.length; i++) {
             subcategoriasHtml += `
                         <div class="col-md-12">
                             <div class="card categoria-modal subcategoria" data-subcategoria="${subcategories[i].name}" data-subcategoria-id="${subcategories[i].id}" data-categoria-id="${selectedCategoryId}">
                                 <div class="card-body d-flex align-items-center" style="width: 100%;">
                                     <div class="col-1">
-                                        <i class="${categoryIcon}" style="margin-right: 10px; float: left; color: #FF8C00"></i>
+                                        <img src="${imageFullPath}" style="border-radius: 10px;" width="50" />
                                     </div>
-                                    <div class="col-10">
-                                        <h5 class="card-title">${subcategories[i].name}</h5>
+                                    <div class="col-10 d-flex align-items-center" style="display: flex; align-items: center; justify-content: space-between;">
+                                        <h3 class="card-title" style="color: #000; font-weight: bold; margin-left: 10px;">${subcategories[i].name}</h3>
                                     </div>  
                                     <div class="col-1">
                                         <div class="ml-auto arrow-right">

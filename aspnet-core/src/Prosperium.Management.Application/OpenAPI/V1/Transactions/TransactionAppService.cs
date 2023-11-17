@@ -35,6 +35,12 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public async Task CreateAsync(CreateTransactionDto input)
         {
             Transaction transaction = ObjectMapper.Map<Transaction>(input);
+
+            if(transaction.TransactionType == TransactionType.Gastos || transaction.TransactionType == TransactionType.Transferência)
+            {
+                transaction.ExpenseValue = -Math.Abs(transaction.ExpenseValue);
+            }
+
             await _transactionRepository.InsertAsync(transaction);
         }
 

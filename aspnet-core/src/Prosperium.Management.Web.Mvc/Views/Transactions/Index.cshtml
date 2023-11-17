@@ -242,6 +242,11 @@
             btnSubmit.style.background = '#FF8C00';
             btnSubmit.style.color = 'white';
             btnSubmit.style.fontWeight = 'bold';
+
+            $(".campo-categoria").css("display", "flex");
+            $(".campo-cartao").css("display", "flex");
+            $(".campo-condicoes").css("display", "flex");
+
         } else if (valor === 'ganho') {
             labelValor.textContent = 'Valor do ganho';
             campoValor.style.color = 'green';
@@ -251,6 +256,11 @@
             btnSubmit.style.background = '#FF8C00';
             btnSubmit.style.color = 'white';
             btnSubmit.style.fontWeight = 'bold';
+
+            $(".campo-categoria").css("display", "flex");
+            $(".campo-cartao").css("display", "flex");
+            $(".campo-condicoes").css("display", "flex");
+
         } else if (valor === 'transferencia') {
             labelValor.textContent = 'Valor da transferência';
             campoValor.style.borderColor = '';
@@ -261,6 +271,10 @@
             btnSubmit.style.background = '#FF8C00';
             btnSubmit.style.color = 'white';
             btnSubmit.style.fontWeight = 'bold';
+
+            $(".campo-categoria").css("display", "none");
+            $(".campo-cartao").css("display", "none");
+            $(".campo-condicoes").css("display", "none");
         }
 
         tipoTransacaoSelecionado = valor;

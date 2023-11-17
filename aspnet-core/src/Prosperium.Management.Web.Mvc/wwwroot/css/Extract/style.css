@@ -54,7 +54,7 @@ a:hover {
 }
 
     .table th, .table td {
-        padding: 60px;
+        padding: 80px;
     }
 
     .table th {
@@ -62,7 +62,7 @@ a:hover {
         color: black;
         font-weight: bold;
         border: none;
-        padding: 30px;
+        padding: 50px;
     }
 
     .table tbody tr:nth-child(odd) {

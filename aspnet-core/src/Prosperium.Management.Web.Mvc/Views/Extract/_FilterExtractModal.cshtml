@@ -22,10 +22,6 @@
         padding: 15px;
     }
 
-    /*     .card-title {
-                font-size: 1.2rem;
-                margin-bottom: 10px;
-            } */
 
     .card-text {
         color: #555;
@@ -45,7 +41,7 @@
             background-color: #267bb5;
         }
 
-    .selected-card {
+    .selected {
         border-color: #28a745 !important;
         box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
     }
@@ -97,11 +93,11 @@
                 <div class="row account-row" data-card-type="account">
                     @foreach (var account in Model.Accounts)
                     {
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="card" data-conta-id="@account.Id" data-selected="false">
-                                <img src="~/img/banks/@account.Bank.ImagePath" width="50" alt="@account.AccountNickname">
+                                <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
                                 <div class="card-body">
-                                    <p style="font-size: 11px; color: #999; margin: 0;">Ag&ecirc;ncia: @account.AgencyNumber Conta: @account.AccountNumber</p>
+                                    <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: @account.AgencyNumber Conta: @account.AccountNumber</p>
                                 </div>
                             </div>
                         </div>
@@ -112,11 +108,11 @@
                 <div class="row category-row" data-card-type="category">
                     @foreach (var category in Model.Categories)
                     {
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id" data-selected="false">
-                                <i class="@category.IconPath" style="color: #FF8C00; font-size: 30px;"></i>
+                                <img src="~/img/categories/@category.IconPath" width="45" alt="@category.Name">
                                 <div class="card-body">
-                                    <p style="font-size: 16px; color: #999; margin: 0;">@category.Name</p>
+                                    <p style="font-size: 13px; color: #999; margin: 0;">@category.Name</p>
                                 </div>
                             </div>
                         </div>
@@ -127,11 +123,11 @@
                 <div class="row transaction-type-row" data-card-type="type">
                     @foreach (var type in Model.TransactionType)
                     {
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <div class="card" style="padding-top: 20px; display: flex;" data-tipo-id="@type.Value" data-selected="false">
                                 <i class="fas fa-chart-line" style="color: #FF8C00; font-size: 30px;"></i>
                                 <div class="card-body">
-                                    <p style="font-size: 16px; color: #999; margin: 0;">@type.Text</p>
+                                    <p style="font-size: 13px; color: #999; margin: 0;">@type.Text</p>
                                 </div>
                             </div>
                         </div>
@@ -151,35 +147,35 @@
 <script src="~/view-resources/Views/Extract/_FilterExtractModal.js" asp-append-version="true"></script>
 
 <script>
+    $(document).ready(function () {
+        $('.card').click(function () {
+            var card = $(this);
+            var cardType = card.closest('.row').data('card-type');
+            var itemId = card.data(cardType + '-id');
 
-    $('.card').click(function () {
-        var card = $(this);
-        var cardType = card.closest('.row').data('card-type');
-        var itemId = card.data(cardType + '-id');
+            if (cardType === 'account') {
+                // Se o tipo for 'account', desmarque outros cards desse tipo
+                $('.row.' + cardType + '-row .card').not(card).removeClass('selected').data('selected', 'false').find('.checkmark').remove();
+            }
 
-        if (cardType === 'account') {
-            // Se o tipo for 'account', desmarque outros cards desse tipo
-            $('.row.' + cardType + '-row .card').not(card).removeClass('selected').data('selected', 'false').find('.checkmark').remove();
+            toggleSelection(card);
+        });
+
+        function toggleSelection(card) {
+            card.toggleClass('selected');
+            var isSelected = card.hasClass('selected');
+            card.data('selected', isSelected.toString()); // Atualiza o atributo data-selected
+            addCheckmark(card);
         }
 
-        toggleSelection(card);
+        function addCheckmark(card) {
+            card.find('.checkmark').remove();
+
+            if (card.hasClass('selected')) {
+                card.append('<span class="checkmark">&#10003;</span>');
+            }
+        }
     });
-
-    function toggleSelection(card) {
-        card.toggleClass('selected');
-        var isSelected = card.hasClass('selected');
-        card.data('selected', isSelected.toString()); // Atualiza o atributo data-selected
-        addCheckmark(card);
-    }
-
-    function addCheckmark(card) {
-        card.find('.checkmark').remove();
-
-        if (card.hasClass('selected')) {
-            card.append('<span class="checkmark">&#10003;</span>');
-        }
-    }
-
 </script>
 
 

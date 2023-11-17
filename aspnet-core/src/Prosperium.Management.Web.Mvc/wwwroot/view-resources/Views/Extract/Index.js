@@ -81,7 +81,7 @@ var monthYearInput;
                         return `
                 <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
                     <div>
-                        <img src="${imageFullPath}" style="border-radius: 5px;" width="20" />
+                        <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                     </div>
                     <div style="margin-left: 10px;">
                         <span style="font-size: 12px; color: #000; font-weight: 400;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</span>
@@ -98,17 +98,19 @@ var monthYearInput;
                 targets: 3,
                 data: 'transaction.categories',
                 render: function (data, type, row) {
+                    var imageFullPath = abp.appPath + 'img/categories/' + data.iconPath;
+
                     if (data && data.name) {
                         return `
-                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                    <div>
-                        <i class="${data.iconPath}" style="margin-right: 10px; color: #FF8C00;"></i>
-                    </div>
-                    <div>
-                        <h5 class="card-title">${data.name.toUpperCase()}</h5>
-                    </div>
-                </div>
-            `;
+                            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                                <div>
+                                    <img src="${imageFullPath}" style="padding: 10px;" width="50" />
+                                </div>
+                                <div>
+                                    <h5 class="card-title">${data.name.toUpperCase()}</h5>
+                                </div>
+                            </div>
+                        `;
                     } else {
                         return '';
                     }
@@ -163,8 +165,20 @@ var monthYearInput;
     });
 
     abp.event.on('filter.applied', () => {
+        $("#btnLimparFiltro").css("visibility", "visible");
+
         $('#FilterModal').modal('hide');
         _$extractTable.ajax.reload();
+    });
+
+    $(document).on('click', '#btnLimparFiltro', function () {
+        $('#selectedAccount').val('');
+        $('#selectedCategory').val('');
+        $('#selectedType').val('');
+
+        _$extractTable.ajax.reload();
+
+        $("#btnLimparFiltro").css("visibility", "hidden");
     });
 
 })(jQuery);
@@ -182,7 +196,7 @@ function UpdateCardValues() {
         data: { filter: filterValue, monthYear: monthYearValue },
         dataType: 'json',
         success: function (data) {
-            var gastosString = (data.result.gastos !== undefined) ? "R$ " + data.result.gastos.toFixed(2) : "R$ 0,00";
+            var gastosString = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2) : "R$ 0,00";
             var ganhosString = (data.result.ganhos !== undefined) ? "R$ " + data.result.ganhos.toFixed(2) : "R$ 0,00";
 
             $('#gastosValue').text(gastosString);

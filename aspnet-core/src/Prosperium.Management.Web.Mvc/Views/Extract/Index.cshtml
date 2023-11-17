@@ -29,7 +29,7 @@
 <div class="form-container" id="ExtractCreate">
     <h2 class="title">@ViewData["Title"]</h2>
 
-        <!-- Inputs ocultos para armazenar os IDs selecionados -->
+    <!-- Inputs ocultos para armazenar os IDs selecionados -->
     <input type="hidden" id="selectedAccount" name="selectedAccount" />
     <input type="hidden" id="selectedCategory" name="selectedCategory" />
     <input type="hidden" id="selectedType" name="selectedType" />
@@ -76,16 +76,21 @@
         </div>
     </div>
 
-    <div class="row" style="display: flex; justify-content: flex-end; margin: 0;">
+    <div class="row" style="display: flex; justify-content: space-between; margin: 0;">
+        <button id="btnLimparFiltro" style="background: transparent; border: none; color: #FF8C00; font-weight: bold;  visibility: hidden;">
+            <i class="fas fa-times"></i> &nbsp; Limpar Filtro
+        </button>
         <a href="@Url.Action("Index", "Transactions")" class="custom-button">
             <i class="fa fa-plus"></i> &nbsp; Adicionar Nova Transação
         </a>
     </div>
 
+
+
     <table id="ExtractTable" class="table" style="cursor:default;">
         <thead>
             <tr>
-                <th>Data</th>
+                <th width="50">Data</th>
                 <th>Descrição</th>
                 <th>Conta</th>
                 <th>Categoria</th>
