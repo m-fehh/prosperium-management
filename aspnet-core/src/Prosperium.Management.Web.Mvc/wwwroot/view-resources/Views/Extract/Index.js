@@ -22,6 +22,14 @@ var monthYearInput;
                 formData.filter = filterInput.val();
                 formData.monthYear = monthYearInput.val();
 
+                // Filtro avançado:
+                formData.filteredAccounts = $("#selectedAccount").val();
+                formData.filteredCategories = $("#selectedCategory").val();
+                formData.filteredTypes = $("#selectedType").val();
+
+
+                console.log(formData);
+
                 return _transactionService.getAll(formData);
             },
             inputFilter: function () {
@@ -92,15 +100,15 @@ var monthYearInput;
                 render: function (data, type, row) {
                     if (data && data.name) {
                         return `
-                                    <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                                        <div>
-                                            <i class="${data.iconPath}" style="margin-right: 10px; color: #FF8C00;"></i>
-                                        </div>
-                                        <div>
-                                            <h5 class="card-title">${data.name.toUpperCase()}</h5>
-                                        </div>
-                                    </div>
-                                `;
+                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                    <div>
+                        <i class="${data.iconPath}" style="margin-right: 10px; color: #FF8C00;"></i>
+                    </div>
+                    <div>
+                        <h5 class="card-title">${data.name.toUpperCase()}</h5>
+                    </div>
+                </div>
+            `;
                     } else {
                         return '';
                     }
@@ -140,12 +148,7 @@ var monthYearInput;
         });
     });
 
-    // ... (seu código existente)
-
-})(jQuery);
-
-$(document).ready(function () {
-    $('#FilterIcon').click(function (e) {
+    $(document).on('click', '#FilterIcon', function (e) {
         e.preventDefault();
 
         abp.ajax({
@@ -153,26 +156,21 @@ $(document).ready(function () {
             type: 'GET',
             dataType: 'html',
             success: function (content) {
-                $('#filterModal div.modal-content').html(content);
-                $('#filterModal').modal('show');
-
+                $('#FilterModal div.modal-content').html(content);
             },
             error: function (e) { }
         });
     });
-});
 
-$(document).on('click', '.filterSubmit', function (e) {
-    e.preventDefault();
+    abp.event.on('filter.applied', () => {
+        $('#FilterModal').modal('hide');
+        _$extractTable.ajax.reload();
+    });
 
-    // Resgata os IDs selecionados
-    var selectedIds = getSelectedIds();
+})(jQuery);
 
-    // Faça algo com os IDs, por exemplo, imprima no console
-    console.log("Selected Account IDs:", selectedIds.accountIds);
-    console.log("Selected Category IDs:", selectedIds.categoryIds);
-    console.log("Selected Transaction Type IDs:", selectedIds.typeIds);
-});
+
+
 
 function UpdateCardValues() {
     var filterValue = filterInput.val();

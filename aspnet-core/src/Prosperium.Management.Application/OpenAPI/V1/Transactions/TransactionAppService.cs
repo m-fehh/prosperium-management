@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions
 {
@@ -67,6 +69,29 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                     .ThenInclude(x => x.Bank)
                 .WhereIf(!string.IsNullOrEmpty(input.Filter), x => x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
 
+            // Filtros avançados
+            if (!string.IsNullOrEmpty(input.FilteredAccounts))
+            {
+                var accountIds = input.FilteredAccounts.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransaction = allTransaction.Where(x => accountIds.Contains(x.AccountId));
+            }
+
+            if (!string.IsNullOrEmpty(input.FilteredCategories))
+            {
+                var categoryIds = input.FilteredCategories.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransaction = allTransaction.Where(x => categoryIds.Contains(x.CategoryId));
+            }
+
+            if (!string.IsNullOrEmpty(input.FilteredTypes))
+            {
+                var transactionTypes = input.FilteredTypes.Split(',').Select(type => Enum.Parse(typeof(TransactionType), type)).Cast<TransactionType>().ToList();
+
+                allTransaction = allTransaction.Where(x => transactionTypes.Contains(x.TransactionType));
+            }
+
+
+
+            // Filtro por calendário
             if (!string.IsNullOrEmpty(input.MonthYear))
             {
                 var parts = input.MonthYear.Split('/');

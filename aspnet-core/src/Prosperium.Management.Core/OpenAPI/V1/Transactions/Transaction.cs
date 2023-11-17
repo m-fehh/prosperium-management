@@ -35,5 +35,4 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public DateTime Date { get; set; }
         public ICollection<Tag> Tags { get; set; }
     }
-
 }

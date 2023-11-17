@@ -125,7 +125,7 @@ $(document).on('click', '.institution-modal', function (e) {
 
     // Adiciona a miniatura do logo, o nickname e a agência/conta no elemento #conta
     $('#conta').html(`
-        <img src="${imageFullPath}" style="border-radius: 10px;" width="35" />
+        <img src="${imageFullPath}" style="border-radius: 10px; padding: 10px;" width="50" />
         <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${accountNickname}</span>
         <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</p>
     `);

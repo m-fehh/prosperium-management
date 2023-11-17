@@ -11,9 +11,5 @@ namespace Prosperium.Management.Web.Models.Extract
         public List<AccountFinancialDto> Accounts { get; set; }
         public List<CategoryDto> Categories { get; set; }
         public List<SelectListItem> TransactionType { get; set; }
-
-        public long? SelectedAccount { get; set; }
-        public long? SelectedCategory { get; set; }
-        public long? SelectedTransactionType { get; set; }
     }
 }

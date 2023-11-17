@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services.Dto;
 using System;
+using System.Collections.Generic;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
 {
@@ -7,5 +8,9 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
     {
         public string Filter { get; set; }
         public string MonthYear { get; set; }
+
+        public string FilteredAccounts { get; set; }
+        public string FilteredCategories { get; set; }
+        public string FilteredTypes { get; set; }
     }
 }

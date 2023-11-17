@@ -1,10 +1,7 @@
 ﻿<link rel="stylesheet" href="~/css/Extract/style.css" />
-
-
 <link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
-
 
 
 @using Prosperium.Management.Web.Startup
@@ -25,10 +22,17 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <div class="form-container" id="ExtractCreate">
     <h2 class="title">@ViewData["Title"]</h2>
+
+        <!-- Inputs ocultos para armazenar os IDs selecionados -->
+    <input type="hidden" id="selectedAccount" name="selectedAccount" />
+    <input type="hidden" id="selectedCategory" name="selectedCategory" />
+    <input type="hidden" id="selectedType" name="selectedType" />
 
     <div class="row">
         <div class="col-6" style="display: flex; align-items: center;">
@@ -37,7 +41,7 @@
         <div class="col-6" style="display: flex; width: 100%; align-items: center; justify-content: flex-start;">
             <form id="ExtractSearchForm" class="form-horizontal" style="width: 85%;">
                 <div style="position: relative; display: flex; align-items: center;">
-                    <i class="fas fa-funnel-dollar" style="font-size: 28px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="FilterIcon"></i>
+                    <i class="fas fa-funnel-dollar" data-toggle="modal" data-target="#FilterModal" style="font-size: 28px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="FilterIcon"></i>
                     <i class="far fa-calendar-alt" style="font-size: 28px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="calendarIcon"></i>
                     <input type="text" name="Filter" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 30px;" oninput="HandleSearchInput(this)" id="filterInput" />
                     <input type="text" name="MonthYear" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 30px; display: none;" oninput="HandleSearchInput(this)" id="monthYearInput" />
@@ -93,7 +97,7 @@
 </div>
 
 
-<div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" data-backdrop="static">
+<div class="modal fade" id="FilterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         </div>
