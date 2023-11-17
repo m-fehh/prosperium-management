@@ -67,6 +67,9 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                 Description = $"Saldo da conta: {input.AccountNickname}",
                 ExpenseValue = input.BalanceAvailable,
                 AccountId = account.Id,
+                TransactionType = TransactionConsts.TransactionType.Saldo,
+                PaymentTerm = TransactionConsts.PaymentTerms.Saldo,
+                PaymentType = TransactionConsts.PaymentType.Saldo,
                 CategoryId = _categoryRepository.FirstOrDefaultAsync(x => x.Name == "Saldo da Conta").Result.Id,
             };
 
