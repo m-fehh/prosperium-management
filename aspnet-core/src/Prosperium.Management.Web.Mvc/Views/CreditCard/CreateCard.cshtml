@@ -1,0 +1,94 @@
+﻿@model CreditCardDto
+@using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
+@using Prosperium.Management.Web.Startup
+
+@{
+    ViewData["Title"] = "Conectar cartão";
+    ViewBag.CurrentPageName = PageNames.CreditCards;
+}
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/CreditCard/CreateCard.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/CreditCard/CreateCard.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<link rel="stylesheet" href="~/css/CreditCard/style.css" />
+
+<div class="form-container" id="CardCreate">
+    <h2>@ViewData["Title"]</h2>
+
+    <form method="post">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="campo-apelido">
+                    <label id="labelApelido" for="apelido">Nome do cartão *</label>
+                    <input type="text" id="apelido" name="CardName" placeholder="Digite sua descrição" required />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-9">
+                <div class="campo-valor">
+                    <label id="labelValor" for="valor">Limite mensal *</label>
+                    <input type="text" id="valor" style="font-weight: bold;" name="Limit" placeholder="R$ 0,00" oninput="formatarValor(this)" required />
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="campo-dia">
+                    <label id="labelDiaVencimento" for="diaVencimento">Dia de Vencimento *</label>
+                    <input type="text" id="diaVencimento" name="DueDayInput" placeholder="01" min="1" max="31" maxlength="2" required />
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-6">
+                <div class="campo-conta">
+                    <label id="labelConta" for="conta">Conta *</label>
+                    <div id="conta" data-toggle="modal" data-target="#SelectAccountModal" style="display: flex; align-items: center; gap: 15px;">
+                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="background: transparent; border: none;" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="campo-bandeira">
+                    <label id="labelBandeira" for="bandeira">Bandeira *</label>
+                    <div id="bandeira" data-toggle="modal" data-target="#SelectFlagModal" style="display: flex; align-items: center; gap: 15px;">
+                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione a bandeira" style="background: transparent; border: none;" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" id="btnSubmit" class="cardSubmit">
+                Adicionar cartão
+            </button>
+        </div>
+    </form>
+</div>
+
+@* Modal de bandeiras *@
+<div class="modal fade" id="SelectFlagModal" tabindex="-1" role="dialog" aria-labelledby="SelectFlagModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+@* Modal de contas *@
+<div class="modal fade" id="SelectAccountModal" tabindex="-1" role="dialog" aria-labelledby="SelectAccountModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>

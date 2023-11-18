@@ -79,7 +79,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             if (!string.IsNullOrEmpty(input.FilteredAccounts))
             {
                 var accountIds = input.FilteredAccounts.Split(',').Select(id => long.Parse(id)).ToList();
-                allTransaction = allTransaction.Where(x => accountIds.Contains(x.AccountId));
+                allTransaction = allTransaction.Where(x => accountIds.Contains(x.AccountId.Value));
             }
 
             if (!string.IsNullOrEmpty(input.FilteredCategories))

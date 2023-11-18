@@ -18,6 +18,7 @@
 
             new DefaultCategoriesAndSubcategoriesCreator(_context).Create();
             new DefaultBanksCreator(_context).Create();
+            new DefaultFlagsCreator(_context).Create();
 
             _context.SaveChanges();
         }

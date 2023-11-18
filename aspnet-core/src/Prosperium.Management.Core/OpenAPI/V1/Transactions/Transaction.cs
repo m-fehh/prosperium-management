@@ -2,6 +2,7 @@
 using Abp.Domain.Entities.Auditing;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Categories;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Tags;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,15 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
 
-        public virtual long AccountId { get; set; }
+        public virtual long? AccountId { get; set; }
 
         [ForeignKey("AccountId")]
         public AccountFinancial Account { get; set; }
+
+        public virtual long? CreditCardId { get; set; }
+
+        [ForeignKey("CreditCardId")]
+        public CreditCard CreditCard { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Tag> Tags { get; set; }
     }

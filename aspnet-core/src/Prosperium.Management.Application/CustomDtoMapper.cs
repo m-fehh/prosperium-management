@@ -6,6 +6,10 @@ using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
+using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
+using Prosperium.Management.OpenAPI.V1.Flags;
+using Prosperium.Management.OpenAPI.V1.Flags.Dto;
 using Prosperium.Management.OpenAPI.V1.Subcategories;
 using Prosperium.Management.OpenAPI.V1.Subcategories.Dto;
 using Prosperium.Management.OpenAPI.V1.Tags;
@@ -28,6 +32,8 @@ namespace PayMetrix
             configuration.CreateMap<Tag, TagDto>().ReverseMap();
             configuration.CreateMap<Bank, BankDto>().ReverseMap();
             configuration.CreateMap<AccountFinancial, AccountFinancialDto>().ReverseMap();
+            configuration.CreateMap<CreditCard, CreditCardDto>().ReverseMap();
+            configuration.CreateMap<FlagCard, FlagCardDto>().ReverseMap();
 
             configuration.CreateMap<Role, RoleDto>().ReverseMap();
             configuration.CreateMap<User, UserDto>().ReverseMap();

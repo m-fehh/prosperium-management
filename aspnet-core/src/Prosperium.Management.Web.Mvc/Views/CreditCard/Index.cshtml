@@ -1,0 +1,212 @@
+﻿@using Prosperium.Management.Web.Startup;
+
+@{
+    ViewData["Title"] = "Meus cartões";
+    ViewBag.CurrentPageName = PageNames.CreditCards;
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 30px 0;
+    }
+
+    .custom-button {
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+        .custom-button:hover {
+            transform: scale(1.05);
+        }
+
+    a:hover {
+        color: #fff;
+    }
+
+    .card {
+        background: #f2f4f8;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+        border-radius: 10px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .icon {
+        font-size: 36px;
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .text-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    hr.divider {
+        width: 100%;
+        margin: 10px 0;
+        border: 1px solid rgba(204, 204, 204, 0.5);
+    }
+
+    .saldo-label {
+        font-size: 14px;
+        margin: 0;
+        color: #555;
+    }
+
+    .saldo-valor {
+        font-size: 18px;
+        margin: 0;
+        font-weight: bold;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="~/css/CreditCard/style.css" />
+
+<div class="form-container" id="AccountCreate">
+    <h2>@ViewData["Title"]</h2>
+    <div class="row" style="display: flex; justify-content: flex-end;">
+        <a href="@Url.Action("CreateCard", "CreditCard")" class="custom-button" id="bnt-adicionar-conta">
+            <i class="fa fa-plus"></i> &nbsp; Adicionar Nova Conta
+        </a>
+    </div>
+
+    <div id="card-container" style="/* display: flex; justify-content: space-around; */ padding: 40px 10px;"></div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        UpdateCardValues();
+    });
+
+    function UpdateCardValues() {
+        var cardContainer = $('#card-container');
+        $.ajax({
+            url: '/App/CreditCard/GetCards',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                $('#card-container').empty();
+
+                var cardHtml = '<div class="row">';
+
+                if (data.result.length > 0) {
+                    data.result.forEach(function (card, index) {
+                        cardHtml += `
+                                                            <div class="col-6">
+                                                                <div class="card">
+                                                                    <div class="card-content" style="cursor:pointer;">
+                                                                        <div class="text-content">
+                                                                                                <div class="row" style="display: flex; justify-content:flex-start; align-items: center; justify-content: flex-start; width: 100%; padding: 0 10px;">
+                                                                                    <div class="col-11" style="margin-left: -15px;display: flex;padding-left: 30px;float: left;">
+                                                                                            <h3 style="font-size: 19px; font-weight: bold;">${card.cardName}</h3>
+                                                                                </div>
+                                                                                <div class="col-1">
+                                                                                    <div class="icon" style="display: flex; gap: 10px;">
+                                                                                        <img src="/img/flags/${card.flagCard.iconPath}" width="50"  style="border-radius: 10px;" />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr class="divider">
+                                                                            <div class="row" style="width:100%;">
+                                                                                <div class="col-11">
+                                                                                    <p class="saldo-label">Limite:</p>
+                                                                                            <p class="saldo-valor">R$ ${card.limit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                                                </div>
+                                                                                <div class="col-1 d-flex align-items-center">
+                                                                                    <div class="ml-auto arrow-right">
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="color: #FF8C00;" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                                                                            <path d="M11.354 8.354a.5.5 0 0 0 0-.708L9.172 5.464a.5.5 0 1 1 .707-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.707-.708L11.354 8.354z" />
+                                                                                        </svg>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>`;
+
+
+                        // Se o índice é ímpar ou é o último card, fecha a linha
+                        if (index % 2 !== 0 || index === data.length - 1) {
+                            cardHtml += '</div>'; // Fecha a linha
+                            // Se não for o último card, inicia uma nova linha
+                            if (index !== data.length - 1) {
+                                cardHtml += '<div class="row">';
+                            }
+                        }
+                    });
+
+                    cardContainer.append(cardHtml);
+                }
+
+                else {
+                    $("#bnt-adicionar-conta").hide();
+                    $("#card-container").css("padding", "0");
+
+
+                    var emptyCardHtml = `
+                                                        <div class="row justify-content-center align-items-center" style="padding-bottom: 30px;">
+                                                            <div class="col-md-10">
+                                                                    <div class="card shadow p-4 rounded text-center" style="height: 100%; border: 0.5px solid #FF8C00"">
+                                                                                <h3 style="font-size: 25px; font-weight: bold;">Parece que você ainda não tem nenhum cartão cadastrado. &#128577;</h3>
+                                                                    <p class="lead"></p>
+                                                                    <p class="lead bm-2">Vamos começar adicionando um cartão!</p>
+                                                                                <div class="row" style="display: flex; justify-content: flex-end; margin-top: 10px;">
+                                                                           <a href="@Url.Action("CreateCard", "CreditCard")" class="custom-button" id="bnt-adicionar-cartao">
+                                                                           <i class="fa fa-plus"></i> &nbsp; Adicionar Cartão
+                                                                       </a>
+                                                                   </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>`;
+                    cardContainer.append(emptyCardHtml);
+                }
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+</script>

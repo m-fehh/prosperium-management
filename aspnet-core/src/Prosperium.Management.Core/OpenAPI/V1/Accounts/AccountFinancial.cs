@@ -1,6 +1,7 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Prosperium.Management.Banks;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using System;
 using System.Collections.Generic;
@@ -28,5 +29,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         public AccountType AccountType { get; set; }
         public bool MainAccount { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
+        public CreditCard CreditCard { get; set; }
     }
 }

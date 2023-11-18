@@ -1738,6 +1738,73 @@ namespace Prosperium.Management.Migrations
                     b.ToTable("Pxp_Categories");
                 });
 
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AccountId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("CardName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("DueDayInput")
+                        .HasColumnType("int");
+
+                    b.Property<long>("FlagCardId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Limit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.HasIndex("FlagCardId");
+
+                    b.ToTable("Pxp_Cards");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Flags.FlagCard", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("IconPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pxp_Flags");
+                });
+
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>
                 {
                     b.Property<long>("Id")
@@ -1791,7 +1858,7 @@ namespace Prosperium.Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("AccountId")
+                    b.Property<long?>("AccountId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("CategoryId")
@@ -1801,6 +1868,9 @@ namespace Prosperium.Management.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("CreditCardId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("Date")
@@ -1841,6 +1911,8 @@ namespace Prosperium.Management.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("CreditCardId");
 
                     b.ToTable("Pxp_Transactions");
                 });
@@ -2101,6 +2173,25 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("Bank");
                 });
 
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", b =>
+                {
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
+                        .WithOne("CreditCard")
+                        .HasForeignKey("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", "AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Flags.FlagCard", "FlagCard")
+                        .WithMany()
+                        .HasForeignKey("FlagCardId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("FlagCard");
+                });
+
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>
                 {
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Category")
@@ -2124,18 +2215,24 @@ namespace Prosperium.Management.Migrations
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
                         .WithMany("Transactions")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Categories")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", "CreditCard")
+                        .WithMany("Transactions")
+                        .HasForeignKey("CreditCardId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Account");
 
                     b.Navigation("Categories");
+
+                    b.Navigation("CreditCard");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>
@@ -2211,12 +2308,19 @@ namespace Prosperium.Management.Migrations
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", b =>
                 {
+                    b.Navigation("CreditCard");
+
                     b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Categories.Category", b =>
                 {
                     b.Navigation("Subcategories");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", b =>
+                {
+                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
