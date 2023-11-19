@@ -18,9 +18,20 @@ var monthYearInput;
         },
         listAction: {
             ajaxFunction: function (input) {
+                var currentDate = new Date();
+                var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
                 var formData = $('#ExtractSearchForm').serializeFormToObject(true);
                 formData.filter = filterInput.val();
                 formData.monthYear = monthYearInput.val();
+
+                if (!formData.monthYear || formData.monthYear.trim() === "") {
+
+
+                    formData.monthYear = currentMonthYear;
+                }
+
+
 
                 // Filtro avançado:
                 formData.filteredAccounts = $("#selectedAccount").val();
@@ -84,7 +95,7 @@ var monthYearInput;
                                     <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                                 </div>
                                 <div style="margin-left: 10px;">
-                                    <span style="font-size: 12px; color: #000; font-weight: 400;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</span>
+                                    <span style="font-size: 12px; color: #000; font-weight: 400;">Ag&ecirc;ncia: ${agencyNumber} | Conta: ${accountNumber}</span>
                                 </div>
                             </div>
                         `;
@@ -102,7 +113,7 @@ var monthYearInput;
                                     <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                                 </div>
                                 <div style="margin-left: 10px;">
-                                    <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} - ${parcelTransaction}</span>
+                                    <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} | Parcela: ${parcelTransaction}</span>
                                 </div>
                             </div>
                         `;
@@ -202,121 +213,123 @@ var monthYearInput;
         UpdateCardValues();
     });
 
+
+    function UpdateCardValues() {
+        // Obtém a data atual
+        var currentDate = new Date();
+        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+
+        accountId = $("#selectedAccount").val();
+        cardId = $("#selectedCard").val();
+        categoryId = $("#selectedCategory").val();
+        typeId = $("#selectedType").val();
+
+        var filterValue = filterInput.val();
+        var monthYearValue = monthYearInput.val();
+
+        if (!monthYearValue || monthYearValue.trim() === "") {
+            monthYearValue = currentMonthYear;
+        }
+
+        $.ajax({
+            url: '/App/Extract/GetValuesTotals',
+            type: 'GET',
+            data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredCategories: categoryId, filteredTypes: typeId },
+            dataType: 'json',
+            success: function (data) {
+                var gastosString = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2) : "R$ 0,00";
+                var ganhosString = (data.result.ganhos !== undefined) ? "R$ " + data.result.ganhos.toFixed(2) : "R$ 0,00";
+
+                $('#gastosValue').text(gastosString);
+                $('#ganhosValue').text(ganhosString);
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+
+    // Função para lidar com a entrada de pesquisa
+    function HandleSearchInput() {
+        Debounce(function () {
+            _$extractTable.draw();
+            UpdateCardValues();
+        }, 500)();
+    }
+
+    // Função de Debounce para controlar a frequência de chamadas
+    function Debounce(func, wait) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            const later = function () {
+                timeout = null;
+                func.apply(context, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    $(document).ready(function () {
+        UpdateCardValues();
+
+        var monthYearInput = $("#monthYearInput");
+        var calendarIcon = $("#calendarIcon");
+        var resumoTitle = $("#resumoTitle");
+
+        // Obtém a data atual
+        var currentDate = new Date();
+        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+        // Define o valor padrão do input de mês/ano
+        monthYearInput.val(currentMonthYear);
+        UpdateResumoTitle(currentDate);
+
+        calendarIcon.datepicker({
+            format: "mm/yyyy",
+            startView: "months",
+            minViewMode: "months",
+            autoclose: true,
+            language: "pt-BR",
+            orientation: "bottom",
+            defaultViewDate: { year: currentDate.getFullYear(), month: currentDate.getMonth() }
+        }).on('changeDate', function (e) {
+            monthYearInput.val(e.format(0, 'mm/yyyy'));
+            UpdateResumoTitle(e.date);
+            HandleSearchInput();
+        });
+
+        monthYearInput.on('change', function () {
+            UpdateResumoTitle(new Date(monthYearInput.val()));
+            HandleSearchInput();
+            UpdateCardValues();
+        });
+
+        // Evento de input para o campo de filtro
+        filterInput.on('input', function () {
+            HandleSearchInput();
+        });
+
+        calendarIcon.css({
+            "font-size": "28px",
+            "color": "#FF8C00",
+            "margin-right": "10px",
+            "cursor": "pointer"
+        });
+
+        // Função para atualizar o texto do título
+        function UpdateResumoTitle(date) {
+            var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
+            resumoTitle.text(formattedDate);
+        }
+    });
+
 })(jQuery);
 
 
 
 
-function UpdateCardValues() {
-    // Obtém a data atual
-    var currentDate = new Date();
-    var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-
-    accountId = $("#selectedAccount").val();
-    cardId = $("#selectedCard").val();
-    categoryId = $("#selectedCategory").val();
-    typeId = $("#selectedType").val();
-
-    var filterValue = filterInput.val();
-    var monthYearValue = monthYearInput.val();
-
-    if (!monthYearValue || monthYearValue.trim() === "") {
-        monthYearValue = currentMonthYear;
-    }
-
-    $.ajax({
-        url: '/App/Extract/GetValuesTotals',
-        type: 'GET',
-        data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredCategories: categoryId, filteredTypes: typeId },
-        dataType: 'json',
-        success: function (data) {
-            var gastosString = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2) : "R$ 0,00";
-            var ganhosString = (data.result.ganhos !== undefined) ? "R$ " + data.result.ganhos.toFixed(2) : "R$ 0,00";
-
-            $('#gastosValue').text(gastosString);
-            $('#ganhosValue').text(ganhosString);
-        },
-        error: function (error) {
-            console.error('Erro na requisição:', error);
-        }
-    });
-}
-
-// Função para lidar com a entrada de pesquisa
-function HandleSearchInput() {
-    Debounce(function () {
-        _$extractTable.draw();
-        UpdateCardValues();
-    }, 500)();
-}
-
-// Função de Debounce para controlar a frequência de chamadas
-function Debounce(func, wait) {
-    let timeout;
-    return function () {
-        const context = this;
-        const args = arguments;
-        const later = function () {
-            timeout = null;
-            func.apply(context, args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-$(document).ready(function () {
-    UpdateCardValues();
-
-    var monthYearInput = $("#monthYearInput");
-    var calendarIcon = $("#calendarIcon");
-    var resumoTitle = $("#resumoTitle");
-
-    // Obtém a data atual
-    var currentDate = new Date();
-    var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-    // Define o valor padrão do input de mês/ano
-    monthYearInput.val(currentMonthYear);
-    UpdateResumoTitle(currentDate);
-
-    calendarIcon.datepicker({
-        format: "mm/yyyy",
-        startView: "months",
-        minViewMode: "months",
-        autoclose: true,
-        language: "pt-BR",
-        orientation: "bottom",
-        defaultViewDate: { year: currentDate.getFullYear(), month: currentDate.getMonth() }
-    }).on('changeDate', function (e) {
-        monthYearInput.val(e.format(0, 'mm/yyyy'));
-        UpdateResumoTitle(e.date);
-        HandleSearchInput();
-    });
-
-    monthYearInput.on('change', function () {
-        UpdateResumoTitle(new Date(monthYearInput.val()));
-        HandleSearchInput();
-        UpdateCardValues();
-    });
-
-    // Evento de input para o campo de filtro
-    filterInput.on('input', function () {
-        HandleSearchInput();
-    });
-
-    calendarIcon.css({
-        "font-size": "28px",
-        "color": "#FF8C00",
-        "margin-right": "10px",
-        "cursor": "pointer"
-    });
-
-    // Função para atualizar o texto do título
-    function UpdateResumoTitle(date) {
-        var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
-        resumoTitle.text("Resumo de " + formattedDate);
-    }
-});

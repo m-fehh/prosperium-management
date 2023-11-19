@@ -173,7 +173,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                 allTransaction = allTransaction.Where(x => x.Date.Month == month && x.Date.Year == year);
             }
 
-            var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "id desc").PageBy(input);
+            var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "date desc").PageBy(input);
 
             var transactions = from o in pagedAndFilteredTransaction
                                select new GetTransactionForViewDto()
