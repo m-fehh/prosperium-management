@@ -120,13 +120,16 @@
                 @foreach (var item in Model.Cards)
                 {
                     <div class="col-md-12">
-                        <div class="card card-modal" data-cartao-id="@item.Id" data-cartao-icon="@item.FlagCard.IconPath" data-vencimento="@item.DueDayInput" data-banco-name="@item.Account.Bank.Name" style="cursor: pointer;">
+                        <div class="card card-modal" data-cartao-id="@item.Id" data-cartao-icon="@item.FlagCard.IconPath" data-card-numero="@item.CardNumber" data-vencimento="@item.DueDayInput" data-banco-name="@item.Account.Bank.Name" style="cursor: pointer;">
                             <div class="card-body d-flex align-items-center">
                                 <div class="col-1 d-flex align-items-center">
                                     <img src="~/img/flags/@item.FlagCard.IconPath" style="border-radius: 10px;" width="50" />
                                 </div>
                                 <div class="col-10 d-flex align-items-center" style="display: flex; align-items: center; justify-content: space-between;">
                                     <h3 class="card-title" style="color: #000; font-weight: bold; margin-left: 10px;">@item.CardName</h3>
+                                    <div style="margin-left: 10px; font-size: 12px; color: #999;">
+                                        <p style="margin: 0;">@item.CardNumber</p>
+                                    </div>
                                 </div>
                                 <div class="col-1 d-flex align-items-center">
                                     <div class="ml-auto arrow-right">

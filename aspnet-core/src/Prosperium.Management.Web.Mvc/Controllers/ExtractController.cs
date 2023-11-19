@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Categories;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.Web.Models.Extract;
 using System;
@@ -19,12 +20,14 @@ namespace Prosperium.Management.Web.Controllers
 
         private readonly ICategoryAppService _categoryAppService;
         private readonly IAccountAppService _accountAppService;
+        private readonly ICreditCardAppService _creditCardAppService;
 
-        public ExtractController(ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IAccountAppService accountAppService)
+        public ExtractController(ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService)
         {
             _transactionAppService = transactionAppService;
             _categoryAppService = categoryAppService;
             _accountAppService = accountAppService;
+            _creditCardAppService = creditCardAppService;
         }
 
         public IActionResult Index()
@@ -34,15 +37,50 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpGet]
         [Route("GetValuesTotals")]
-        public async Task<IActionResult> GetValuesTotals(string filter, string monthYear)
+        public async Task<IActionResult> GetValuesTotals(string filter, string monthYear, string filteredAccounts, string filteredCards, string filteredCategories, string filteredTypes)
         {
             var allTransactions = await _transactionAppService.GetAllListAsync();
+
+            // Aplicar filtros semelhantes aos do método GetAllAsync
 
             if (!string.IsNullOrEmpty(filter))
             {
                 allTransactions = allTransactions
                     .Where(x => x.Description.ToLower().Trim().Contains(filter.ToLower().Trim()))
                     .ToList();
+            }
+
+
+            if (!string.IsNullOrEmpty(filteredAccounts))
+            {
+                monthYear = null;
+
+                var accountIds = filteredAccounts.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransactions = allTransactions.Where(x => x.AccountId.HasValue && accountIds.Contains(x.AccountId.Value)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filteredCards))
+            {
+                monthYear = null;
+
+                var cardIds = filteredCards.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransactions = allTransactions.Where(x => x.CreditCardId.HasValue && cardIds.Contains(x.CreditCardId.Value)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filteredCategories))
+            {
+                monthYear = null;
+
+                var categoryIds = filteredCategories.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransactions = allTransactions.Where(x => categoryIds.Contains(x.CategoryId)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(filteredTypes))
+            {
+                monthYear = null;
+
+                var transactionTypes = filteredTypes.Split(',').Select(type => Enum.Parse(typeof(TransactionType), type)).Cast<TransactionType>().ToList();
+                allTransactions = allTransactions.Where(x => transactionTypes.Contains(x.TransactionType)).ToList();
             }
 
             if (!string.IsNullOrEmpty(monthYear))
@@ -64,10 +102,12 @@ namespace Prosperium.Management.Web.Controllers
             return Json(resultado);
         }
 
+
         [HttpGet("GetAllFilters")]
         public async Task<ActionResult> GetAllFilters()
         {
             var allAccounts = await _accountAppService.GetAllListAsync();
+            var allCards = await _creditCardAppService.GetAllListAsync();
             var allCategories = await _categoryAppService.GetAllListPerTenantAsync();
             var allTransactionTypes = Enum.GetValues(typeof(TransactionType))
                                .Cast<TransactionType>()
@@ -81,6 +121,7 @@ namespace Prosperium.Management.Web.Controllers
             var model = new AllFiltersModalViewModel
             {
                 Accounts = allAccounts,
+                Cards = allCards,
                 Categories = allCategories,
                 TransactionType = allTransactionTypes
             };

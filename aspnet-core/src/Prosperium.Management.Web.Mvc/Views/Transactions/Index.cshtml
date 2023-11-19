@@ -195,14 +195,16 @@
         </div>
 
         <div class="row">
-            <div class="col-6">
+            <div class="col-12">
                 <div class="campo-parcela" style="display: none;">
                     <label id="labelParcela" for="parcela">Parcelas *</label>
                     <input type="text" id="parcela" name="Installments" placeholder="Digite o número de parcelas" required oninput="calcularParcelas()" />
                     <div id="resultadoParcelas" style="color: red; font-weight: bold; margin-top: 10px;"></div>
                 </div>
             </div>
-            <div class="col-6">
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="campo-mes" style="display: none;">
                     <label id="labelMes" for="mes">Primeira fatura *</label>
                     <select id="mes" name="Months" required disabled></select>

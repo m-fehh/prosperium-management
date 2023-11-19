@@ -15,6 +15,10 @@
             return $(this).data('conta-id');
         }).get();
 
+        var selectedCardIds = $('.row.creditcard-row .card.selected').map(function () {
+            return $(this).data('cartao-id');
+        }).get();
+
         var selectedCategoryIds = $('.row.category-row .card.selected').map(function () {
             return $(this).data('categoria-id');
         }).get();
@@ -23,11 +27,11 @@
             return $(this).data('tipo-id');
         }).get();
 
-        console.log(selectedAccountIds);
-        console.log(selectedCategoryIds);
-        console.log(selectedTypeIds);
+
+        console.log(selectedCardIds);
 
         $('#selectedAccount').val(selectedAccountIds.join(','));
+        $('#selectedCard').val(selectedCardIds.join(','));
         $('#selectedCategory').val(selectedCategoryIds.join(','));
         $('#selectedType').val(selectedTypeIds.join(','));
 

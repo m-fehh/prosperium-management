@@ -89,43 +89,87 @@
         <div role="tabpanel" class="tab-pane container" id="select-filters">
             <div role="tabpanel" class="tab-pane container" id="select-filters">
 
-                <label for="selectedAccount">Filtrar por conta:</label>
-                <div class="row account-row" data-card-type="account">
-                    @foreach (var account in Model.Accounts)
-                    {
-                        <div class="col-md-6 mb-3">
-                            <div class="card" data-conta-id="@account.Id" data-selected="false">
-                                <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
-                                <div class="card-body">
-                                    <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: @account.AgencyNumber Conta: @account.AccountNumber</p>
+                @if (Model.Accounts.Count > 0)
+                {
+                    <label for="selectedAccount">Filtrar por conta:</label>
+                    <div class="row account-row" data-card-type="account">
+                        @foreach (var account in Model.Accounts)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card" data-conta-id="@account.Id" data-selected="false">
+                                    <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
+                                    <div class="card-body">
+                                        <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: @account.AgencyNumber Conta: @account.AccountNumber</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
+                        }
+                    </div>
+                }
 
-                <label for="selectedCategory">Filtrar por categorias:</label>
-                <div class="row category-row" data-card-type="category">
-                    @foreach (var category in Model.Categories)
-                    {
-                        <div class="col-md-6 mb-3">
-                            <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id" data-selected="false">
-                                <img src="~/img/categories/@category.IconPath" width="45" alt="@category.Name">
-                                <div class="card-body">
-                                    <p style="font-size: 13px; color: #999; margin: 0;">@category.Name</p>
+                @if (Model.Cards.Count > 0)
+                {
+                    <label for="selectedCard">Filtrar por cartão:</label>
+                    <div class="row creditcard-row" data-card-type="card">
+                        @foreach (var card in Model.Cards)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card" data-cartao-id="@card.Id" data-selected="false">
+                                    <img src="~/img/flags/@card.FlagCard.IconPath" width="40" alt="@card.CardName">
+                                    <div class="card-body">
+                                        <p style="font-size: 13px; color: #999; margin: 0;">@card.CardNumber</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Categories.Count > 0)
+                {
+                    <label for="selectedCategory">Filtrar por categorias:</label>
+                    <div class="row category-row" data-card-type="category">
+                        @foreach (var category in Model.Categories)
+                        {
+                            <div class="col-md-6 mb-3">
+                                <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id" data-selected="false">
+                                    <img src="~/img/categories/@category.IconPath" width="45" alt="@category.Name">
+                                    <div class="card-body">
+                                        <p style="font-size: 13px; color: #999; margin: 0;">@category.Name</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
 
                 <label for="selectedCategory">Filtrar por Tipo:</label>
                 <div class="row transaction-type-row" data-card-type="type">
                     @foreach (var type in Model.TransactionType)
                     {
+                        var image = string.Empty;
+                        @if (type.Text == "Gastos")
+                        {
+                            image = "gastos.png";
+                        }
+
+                        else if (type.Text == "Ganhos")
+                        {
+                            image = "ganhos.png";
+                        }
+
+                        else if (type.Text == "Transferência")
+                        {
+                            image = "transferencia.png";
+                        }
+                        else
+                        {
+                            image = "saldo.png";
+                        }
+
                         <div class="col-md-6 mb-3">
                             <div class="card" style="padding-top: 20px; display: flex;" data-tipo-id="@type.Value" data-selected="false">
-                                <i class="fas fa-chart-line" style="color: #FF8C00; font-size: 30px;"></i>
+                                <img src="~/img/transactionTypes/@image" width="45" alt="@type.Text">
                                 <div class="card-body">
                                     <p style="font-size: 13px; color: #999; margin: 0;">@type.Text</p>
                                 </div>

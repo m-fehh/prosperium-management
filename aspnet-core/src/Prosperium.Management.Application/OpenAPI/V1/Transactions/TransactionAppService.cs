@@ -46,6 +46,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             // Se for crédito a vista
             if (input.PaymentType == PaymentType.Crédito && input.PaymentTerm == PaymentTerms.Imediatamente)
             {
+                transaction.CurrentInstallment = "1/1";
                 await _transactionRepository.InsertAsync(transaction);
             }
 
@@ -105,7 +106,13 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         [Route("list-transaction")]
         public async Task<List<TransactionDto>> GetAllListAsync()
         {
-            List<Transaction> allTransactions = await _transactionRepository.GetAllListAsync();
+            List<Transaction> allTransactions = await _transactionRepository
+                .GetAll().Include(x => x.Categories)
+                    .ThenInclude(x => x.Subcategories)
+                .Include(x => x.Account)
+                    .ThenInclude(x => x.Bank)
+                .Include(x => x.CreditCard)
+                    .ThenInclude(x => x.FlagCard).ToListAsync();
             return ObjectMapper.Map<List<TransactionDto>>(allTransactions);
         }
 
@@ -124,20 +131,33 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             // Filtros avançados
             if (!string.IsNullOrEmpty(input.FilteredAccounts))
             {
+                input.MonthYear = null;
+
                 var accountIds = input.FilteredAccounts.Split(',').Select(id => long.Parse(id)).ToList();
                 allTransaction = allTransaction.Where(x => accountIds.Contains(x.AccountId.Value));
             }
 
+            if (!string.IsNullOrEmpty(input.filteredCards))
+            {
+                input.MonthYear = null;
+
+                var cardIds = input.filteredCards.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransaction = allTransaction.Where(x => cardIds.Contains(x.CreditCardId.Value));
+            }
+
             if (!string.IsNullOrEmpty(input.FilteredCategories))
             {
+                input.MonthYear = null;
+
                 var categoryIds = input.FilteredCategories.Split(',').Select(id => long.Parse(id)).ToList();
                 allTransaction = allTransaction.Where(x => categoryIds.Contains(x.CategoryId));
             }
 
             if (!string.IsNullOrEmpty(input.FilteredTypes))
             {
-                var transactionTypes = input.FilteredTypes.Split(',').Select(type => Enum.Parse(typeof(TransactionType), type)).Cast<TransactionType>().ToList();
+                input.MonthYear = null;
 
+                var transactionTypes = input.FilteredTypes.Split(',').Select(type => Enum.Parse(typeof(TransactionType), type)).Cast<TransactionType>().ToList();
                 allTransaction = allTransaction.Where(x => transactionTypes.Contains(x.TransactionType));
             }
 

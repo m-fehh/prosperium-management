@@ -1,6 +1,21 @@
 var selectedFlagId = null;
 var selectedAccountId = null;
 
+function formatarCartao(input) {
+    // Remove caracteres não numéricos
+    let numeros = input.value.replace(/\D/g, '');
+
+    // Adiciona a máscara se houver pelo menos 8 dígitos
+    if (numeros.length >= 8) {
+        input.value = numeros.replace(/(\d{4})(\d{4})(\d{0,8})/, '$1 **** **** $2');
+    } else if (numeros.length > 4) {
+        // Adiciona um espaço após o quarto caractere
+        input.value = numeros.replace(/(\d{4})/, '$1 ').trim();
+    } else {
+        input.value = numeros;
+    }
+}
+
 $(document).ready(function () {
     const diaVencimentoInput = document.getElementById('diaVencimento');
 
@@ -19,7 +34,6 @@ $(document).ready(function () {
             event.target.value = event.target.value.padStart(2, '0');
         }
     });
-
 
     // Seleciona a conta:
     $(document).on('click', '#conta', function (e) {

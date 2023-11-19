@@ -10,6 +10,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
         public string MonthYear { get; set; }
 
         public string FilteredAccounts { get; set; }
+        public string filteredCards { get; set; }
         public string FilteredCategories { get; set; }
         public string FilteredTypes { get; set; }
     }

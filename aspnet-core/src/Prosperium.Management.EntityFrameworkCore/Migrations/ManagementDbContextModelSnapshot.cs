@@ -1752,6 +1752,9 @@ namespace Prosperium.Management.Migrations
                     b.Property<string>("CardName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CardNumber")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 

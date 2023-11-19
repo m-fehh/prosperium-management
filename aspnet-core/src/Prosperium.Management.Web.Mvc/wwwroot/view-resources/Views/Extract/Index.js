@@ -24,11 +24,9 @@ var monthYearInput;
 
                 // Filtro avançado:
                 formData.filteredAccounts = $("#selectedAccount").val();
+                formData.filteredCards = $("#selectedCard").val();
                 formData.filteredCategories = $("#selectedCategory").val();
                 formData.filteredTypes = $("#selectedType").val();
-
-
-                console.log(formData);
 
                 return _transactionService.getAll(formData);
             },
@@ -72,8 +70,6 @@ var monthYearInput;
                 targets: 2,
                 data: 'transaction',
                 render: function (data, type, row) {
-                    console.log(data);
-
                     if (data.account != null)
                     {
                         var accountNickname = data.account.accountNickname;
@@ -96,7 +92,7 @@ var monthYearInput;
                             return '';
                         }
                     } else {
-                        var cardName = data.creditCard.cardName;
+                        var cardNumber = data.creditCard.cardNumber;
                         var parcelTransaction = data.currentInstallment;
                         var imageFullPath = abp.appPath + 'img/flags/' + data.creditCard.flagCard.iconPath;
 
@@ -106,7 +102,7 @@ var monthYearInput;
                                     <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                                 </div>
                                 <div style="margin-left: 10px;">
-                                    <span style="font-size: 12px; color: #000; font-weight: 400;">${cardName} - ${parcelTransaction}</span>
+                                    <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} - ${parcelTransaction}</span>
                                 </div>
                             </div>
                         `;
@@ -189,16 +185,21 @@ var monthYearInput;
 
         $('#FilterModal').modal('hide');
         _$extractTable.ajax.reload();
+
+        UpdateCardValues();
     });
 
     $(document).on('click', '#btnLimparFiltro', function () {
         $('#selectedAccount').val('');
+        $('#selectedCard').val('');
         $('#selectedCategory').val('');
         $('#selectedType').val('');
 
         _$extractTable.ajax.reload();
 
         $("#btnLimparFiltro").css("visibility", "hidden");
+
+        UpdateCardValues();
     });
 
 })(jQuery);
@@ -207,13 +208,27 @@ var monthYearInput;
 
 
 function UpdateCardValues() {
+    // Obtém a data atual
+    var currentDate = new Date();
+    var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+
+    accountId = $("#selectedAccount").val();
+    cardId = $("#selectedCard").val();
+    categoryId = $("#selectedCategory").val();
+    typeId = $("#selectedType").val();
+
     var filterValue = filterInput.val();
     var monthYearValue = monthYearInput.val();
+
+    if (!monthYearValue || monthYearValue.trim() === "") {
+        monthYearValue = currentMonthYear;
+    }
 
     $.ajax({
         url: '/App/Extract/GetValuesTotals',
         type: 'GET',
-        data: { filter: filterValue, monthYear: monthYearValue },
+        data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredCategories: categoryId, filteredTypes: typeId },
         dataType: 'json',
         success: function (data) {
             var gastosString = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2) : "R$ 0,00";

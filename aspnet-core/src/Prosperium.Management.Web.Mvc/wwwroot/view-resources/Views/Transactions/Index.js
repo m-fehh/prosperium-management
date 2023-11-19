@@ -184,6 +184,8 @@ function marcarOpcaoCartao(elemento, tipoCartao) {
         campoConta.style.display = 'none';
         botaoParcelado.style.pointerEvents = 'auto';
         botaoAVista.style.pointerEvents = 'auto';
+
+        campoMes.style.display = 'flex';
     } else if (tipoCartao === 'debito') {
         campoParcelas.style.display = 'none';
         campoMes.style.display = 'none';
@@ -315,6 +317,7 @@ $(document).on('click', '.card-modal', function (e) {
     var cardId = $(this).data('cartao-id');
     var imagePath = $(this).data('cartao-icon');
     var bankName = $(this).data('banco-name');
+    var cardNumber = $(this).data('card-numero');
     var cardName = $(this).find('.card-title').text();
     var vencimentoCartao = $(this).data('vencimento');
 
@@ -328,7 +331,7 @@ $(document).on('click', '.card-modal', function (e) {
     $('#cartao').html(`
         <img src="${imageFullPath}" style="padding-bottom: 10px; margin-left: 10px;" width="40" />
         <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${cardName}</span>
-        <p style="font-size: 13px; color: #999; margin: 0;">Banco: ${bankName}</p>
+        <p style="font-size: 13px; color: #999; margin: 0;">${cardNumber}</p>
     `);
 
     $('#SelectCardModal').modal('hide');
