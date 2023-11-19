@@ -2,6 +2,7 @@
 using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Categories;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Subcategories;
 using Prosperium.Management.OpenAPI.V1.Subcategories.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
@@ -17,12 +18,14 @@ namespace Prosperium.Management.Web.Controllers
         private readonly ICategoryAppService _categoryAppService;
         private readonly ISubcategoryAppService _subcategoryAppService;
         private readonly IAccountAppService _accountAppService;
+        private readonly ICreditCardAppService _creditCardAppService;
 
-        public TransactionsController(ICategoryAppService categoryAppService, ISubcategoryAppService subcategoryAppService, IAccountAppService accountAppService)
+        public TransactionsController(ICategoryAppService categoryAppService, ISubcategoryAppService subcategoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService)
         {
             _categoryAppService = categoryAppService;
             _subcategoryAppService = subcategoryAppService;
             _accountAppService = accountAppService;
+            _creditCardAppService = creditCardAppService;
         }
 
         public IActionResult Index()
@@ -74,6 +77,18 @@ namespace Prosperium.Management.Web.Controllers
             };
 
             return PartialView("_SelectAccountModal", model);
+        }
+
+        [HttpGet("GetCards")]
+        public async Task<ActionResult> GetCards()
+        {
+            var allCard = await _creditCardAppService.GetAllListAsync();
+            var model = new SelectCreditCardModalViewModel
+            {
+                Cards = allCard,
+            };
+
+            return PartialView("_SelectCreditCardModal", model);
         }
     }
 }

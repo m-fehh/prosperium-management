@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
 using Abp.Linq.Extensions;
 using Abp.MultiTenancy;
 using Abp.Runtime.Session;
@@ -21,28 +22,71 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
     [Route("v1/transactions")]
     public class TransactionAppService : ManagementAppServiceBase, ITransactionAppService
     {
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IRepository<Transaction, long> _transactionRepository;
         private readonly IRepository<AccountFinancial, long> _accountRepository;
 
-        public TransactionAppService(IRepository<Transaction, long> transactionRepository, IRepository<AccountFinancial, long> accountRepository)
+        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<AccountFinancial, long> accountRepository)
         {
+            _unitOfWorkManager = unitOfWorkManager;
             _transactionRepository = transactionRepository;
             _accountRepository = accountRepository;
         }
-            //transaction.Account = await _accountRepository.GetAsync(input.AccountId);
 
         [HttpPost]
         public async Task CreateAsync(CreateTransactionDto input)
         {
-            Transaction transaction = ObjectMapper.Map<Transaction>(input);
+            var transaction = ObjectMapper.Map<Transaction>(input);
 
-            if(transaction.TransactionType == TransactionType.Gastos || transaction.TransactionType == TransactionType.Transferência)
+            if (transaction.TransactionType == TransactionType.Gastos || transaction.TransactionType == TransactionType.Transferência)
             {
                 transaction.ExpenseValue = -Math.Abs(transaction.ExpenseValue);
             }
 
-            await _transactionRepository.InsertAsync(transaction);
+            // Se for crédito a vista
+            if (input.PaymentType == PaymentType.Crédito && input.PaymentTerm == PaymentTerms.Imediatamente)
+            {
+                await _transactionRepository.InsertAsync(transaction);
+            }
+
+            // Se for crédito parcelado
+            if (input.PaymentType == PaymentType.Crédito && input.PaymentTerm == PaymentTerms.Parcelado)
+            {
+                decimal installmentValue = transaction.ExpenseValue / transaction.Installments.Value;
+
+                for (int i = 1; i <= transaction.Installments; i++)
+                {
+                    var parcelTransaction = ObjectMapper.Map<Transaction>(input); 
+
+                    if (i > 1)
+                    {
+                        parcelTransaction.Date = transaction.Date.AddMonths(i - 1);
+                    }
+
+                    parcelTransaction.ExpenseValue = installmentValue;
+                    parcelTransaction.CurrentInstallment = $"{i}/{transaction.Installments}";
+
+                    using (var uow = _unitOfWorkManager.Begin())
+                    {
+                        await _transactionRepository.InsertAsync(parcelTransaction);  
+                        uow.Complete(); 
+                    }
+                }
+            }
+
+            // Se for crédito recorrente
+            if (input.PaymentType == PaymentType.Crédito && input.PaymentTerm == PaymentTerms.Recorrente) { }
+
+            // Se for débito a vista
+            if (input.PaymentType == PaymentType.Débito && input.PaymentTerm == PaymentTerms.Imediatamente)
+            {
+                await _transactionRepository.InsertAsync(transaction);
+            }
+
+            // Se for crédito recorrente
+            if (input.PaymentType == PaymentType.Débito && input.PaymentTerm == PaymentTerms.Recorrente) { }
         }
+
 
         [HttpGet("{id}")]
         public async Task<TransactionDto> GetByIdAsync(long id)
@@ -73,6 +117,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                     .ThenInclude(x => x.Subcategories)
                 .Include(x => x.Account)
                     .ThenInclude(x => x.Bank)
+                .Include(x => x.CreditCard)
+                    .ThenInclude(x => x.FlagCard)
                 .WhereIf(!string.IsNullOrEmpty(input.Filter), x => x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
 
             // Filtros avançados

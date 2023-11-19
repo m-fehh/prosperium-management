@@ -1,3 +1,98 @@
+// Pega os meses subsequentes
+
+document.addEventListener('DOMContentLoaded', function () {
+    var paymentTypeInput = document.querySelector('input[name="PaymentType"]:checked');
+    var paymentTermInput = document.querySelector('input[name="PaymentTerm"]:checked');
+    var mesInput = document.getElementById('mes');
+
+
+
+    function updateMesOptions() {
+        var today = new Date();
+        var currentMonth = today.getMonth();
+        var currentYear = today.getFullYear();
+
+        if (paymentTypeInput && paymentTermInput && mesInput) {
+            // Limpa as opções existentes
+            mesInput.innerHTML = '';
+
+            // Adiciona uma opção vazia como placeholder
+            var placeholderOption = document.createElement('option');
+            placeholderOption.value = '';
+            placeholderOption.text = 'Selecione a fatura'; 
+            placeholderOption.classList.add('custom-placeholder');
+
+            // Adiciona estilos diretamente ao placeholder
+            placeholderOption.style.fontSize = '16px';
+            placeholderOption.style.color = '#aaa';
+
+            mesInput.appendChild(placeholderOption);
+
+            for (var i = 0; i < 3; i++) {
+                var nextMonth = (currentMonth + i) % 12;
+                var nextYear = currentYear + Math.floor((currentMonth + i) / 12);
+
+                var option = document.createElement('option');
+
+                // Atribui o valor no formato desejado (mês/ano)
+                var monthValue = (nextMonth + 1).toString().padStart(2, '0'); // adiciona zero à esquerda se necessário
+                option.value = monthValue + '/' + nextYear;
+
+                // Formata o texto da opção
+                var monthName = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date(nextYear, nextMonth, 1));
+                option.textContent = monthName.charAt(0).toUpperCase() + monthName.slice(1) + '/' + nextYear;
+
+                mesInput.appendChild(option);
+            }
+        }
+    }
+
+
+    updateMesOptions();
+
+    document.querySelectorAll('input[name="PaymentType"], input[name="PaymentTerm"]').forEach(function (input) {
+        input.addEventListener('change', updateMesOptions);
+    });
+
+});
+
+
+// Faz o calculo da parcela
+function formatarMoeda(valor) {
+    return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function tratarValor(valorInput) {
+    return parseFloat(valorInput
+        .replace('R$', '')
+        .replace(/\./g, '')
+        .replace(',', '.')) || 0;
+}
+
+function calcularParcelas() {
+    var valorInput = document.getElementById('valor').value;
+
+    var valor = tratarValor(valorInput);
+
+    var parcelas = parseInt(document.getElementById('parcela').value) || 1;
+
+    var valorParcela = valor / parcelas;
+
+    var resultado = parcelas + 'x = ' + formatarMoeda(valorParcela);
+    document.getElementById('resultadoParcelas').innerText = resultado;
+}
+
+document.getElementById('valor').addEventListener('input', calcularParcelas);
+document.getElementById('parcela').addEventListener('input', calcularParcelas);
+
+document.getElementById('valor').addEventListener('change', function () {
+    document.getElementById('valor').value = formatarMoeda(tratarValor(document.getElementById('valor').value));
+    calcularParcelas();
+});
+
+document.getElementById('parcela').addEventListener('change', calcularParcelas);
+
+
 document.addEventListener('DOMContentLoaded', function () {
     // Calendar
     flatpickr("#data", {
@@ -69,7 +164,46 @@ function mostrarCamposAdicionais(tipoTransacao) {
 }
 
 
+
 function marcarOpcaoCartao(elemento, tipoCartao) {
+    var radioBtn = elemento.querySelector('input[type="radio"]');
+    if (radioBtn) {
+        radioBtn.checked = true;
+    }
+
+    var campoCartao = document.querySelector('.campo-cartao');
+    var campoConta = document.querySelector('.campo-conta');
+    var botaoParcelado = document.querySelector('.opcao-condicao-btn[onclick="marcarOpcaoCondicao(this, \'parcelado\')"]');
+    var botaoParceladoSelecionado = document.querySelector('.opcao-condicao-btn.opcao-selecionada');
+    var botaoAVista = document.querySelector('.opcao-condicao-btn[onclick="marcarOpcaoCondicao(this, \'avista\')"]');
+    var campoParcelas = document.querySelector('.campo-parcela');
+    var campoMes = document.querySelector('.campo-mes');
+
+    if (tipoCartao === 'credito') {
+        campoCartao.style.display = 'flex';
+        campoConta.style.display = 'none';
+        botaoParcelado.style.pointerEvents = 'auto';
+        botaoAVista.style.pointerEvents = 'auto';
+    } else if (tipoCartao === 'debito') {
+        campoParcelas.style.display = 'none';
+        campoMes.style.display = 'none';
+        botaoParcelado.style.pointerEvents = 'none';
+        campoCartao.style.display = 'none';
+        campoConta.style.display = 'flex';
+
+        // Desmarcar a opção parcelada se estiver selecionada
+        if (botaoParceladoSelecionado) {
+            botaoParceladoSelecionado.classList.remove('opcao-selecionada');
+        }
+
+        // Selecionar a opção À Vista
+        if (botaoAVista) {
+            botaoAVista.classList.add('opcao-selecionada');
+        }
+
+        $("#data").val('');
+    }
+
     var botoesCartao = document.querySelectorAll('.opcao-cartao-btn');
     botoesCartao.forEach(function (botao) {
         botao.classList.remove('opcao-selecionada');
@@ -78,8 +212,25 @@ function marcarOpcaoCartao(elemento, tipoCartao) {
     elemento.classList.add('opcao-selecionada');
 }
 
+
 function marcarOpcaoCondicao(elemento, tipoCondicao) {
+    var radioBtn = elemento.querySelector('input[type="radio"]');
+    if (radioBtn) {
+        radioBtn.checked = true;
+    }
+
     var botoesCondicao = document.querySelectorAll('.opcao-condicao-btn');
+    var campoParcelas = document.querySelector('.campo-parcela');
+    var campoMes = document.querySelector('.campo-mes');
+
+    if (tipoCondicao === 'parcelado') {
+        campoParcelas.style.display = 'flex';
+        campoMes.style.display = 'flex';
+    } else {
+        campoParcelas.style.display = 'none';
+        campoMes.style.display = 'none';
+    }
+
     botoesCondicao.forEach(function (botao) {
         botao.classList.remove('opcao-selecionada');
     });
@@ -130,6 +281,58 @@ $(document).on('click', '.institution-modal', function (e) {
     `);
 
     $('#SelectAccountModal').modal('hide');
+});
+
+var selectedCardId = '';
+$(document).on('click', '#cartao', function (e) {
+    e.preventDefault();
+
+    abp.ajax({
+        url: abp.appPath + 'App/Transactions/GetCards',
+        type: 'GET',
+        dataType: 'html',
+        success: function (content) {
+            $('#SelectCardModal div.modal-content').html(content);
+        },
+        error: function (e) { }
+    });
+});
+
+$('#mes').change(function () {
+    var valorSelecionado = $(this).val();
+
+    var dataFormatada = dataFaturaCartaoTransacao + '/' + valorSelecionado;
+
+    $("#data").val(dataFormatada);
+});
+
+
+dataFaturaCartaoTransacao = '';
+
+$(document).on('click', '.card-modal', function (e) {
+    e.preventDefault();
+
+    var cardId = $(this).data('cartao-id');
+    var imagePath = $(this).data('cartao-icon');
+    var bankName = $(this).data('banco-name');
+    var cardName = $(this).find('.card-title').text();
+    var vencimentoCartao = $(this).data('vencimento');
+
+    console.log(vencimentoCartao);
+
+    dataFaturaCartaoTransacao = vencimentoCartao;
+    selectedCardId = cardId;
+
+    var imageFullPath = abp.appPath + 'img/flags/' + imagePath;
+
+    $('#cartao').html(`
+        <img src="${imageFullPath}" style="padding-bottom: 10px; margin-left: 10px;" width="40" />
+        <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${cardName}</span>
+        <p style="font-size: 13px; color: #999; margin: 0;">Banco: ${bankName}</p>
+    `);
+
+    $('#SelectCardModal').modal('hide');
+    $('#mes').prop('disabled', false);
 });
 
 
@@ -279,14 +482,33 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
     $(document).on('click', '#btnSubmit', function (e) {
         e.preventDefault();
 
+
         if (!_$form.valid()) {
             return;
         }
 
+
         var transactionDto = _$form.serializeFormToObject();
+
+        var selectedPaymentType = $('input[name="PaymentType"]:checked').val();
+        var selectedPaymentTerm = $('input[name="PaymentTerm"]:checked').val();
+
+        // Garante que os valores são números inteiros
+        transactionDto['PaymentType'] = parseInt(selectedPaymentType);
+        transactionDto['PaymentTerm'] = parseInt(selectedPaymentTerm);
+
+
+        
+
+        console.log(selectedPaymentType);
+        console.log(transactionDto);
+        console.log(selectedPaymentTerm);
 
         transactionDto['CategoryId'] = selectedCategoryId;
         transactionDto['AccountId'] = selectedAccountId;
+        transactionDto['CreditCardId'] = selectedCardId;
+
+        transactionDto['Installments'] = +transactionDto['Installments'];
 
         // Ajuste para o campo ExpenseValue
         var expenseValueString = transactionDto['ExpenseValue']

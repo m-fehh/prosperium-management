@@ -70,26 +70,46 @@ var monthYearInput;
             },
             {
                 targets: 2,
-                data: 'transaction.account',
+                data: 'transaction',
                 render: function (data, type, row) {
-                    var accountNickname = data.accountNickname;
-                    var agencyNumber = data.agencyNumber;
-                    var accountNumber = data.accountNumber;
-                    var imageFullPath = abp.appPath + 'img/banks/' + data.bank.imagePath;
+                    console.log(data);
 
-                    if (data && data.accountNickname) {
-                        return `
-                <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
-                    <div>
-                        <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
-                    </div>
-                    <div style="margin-left: 10px;">
-                        <span style="font-size: 12px; color: #000; font-weight: 400;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</span>
-                    </div>
-                </div>
-            `;
+                    if (data.account != null)
+                    {
+                        var accountNickname = data.account.accountNickname;
+                        var agencyNumber = data.account.agencyNumber;
+                        var accountNumber = data.account.accountNumber;
+                        var imageFullPath = abp.appPath + 'img/banks/' + data.account.bank.imagePath;
+
+                        if (data.account && data.account.accountNickname) {
+                            return `
+                            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                                <div>
+                                    <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
+                                </div>
+                                <div style="margin-left: 10px;">
+                                    <span style="font-size: 12px; color: #000; font-weight: 400;">Ag&ecirc;ncia: ${agencyNumber} Conta: ${accountNumber}</span>
+                                </div>
+                            </div>
+                        `;
+                        } else {
+                            return '';
+                        }
                     } else {
-                        return '';
+                        var cardName = data.creditCard.cardName;
+                        var parcelTransaction = data.currentInstallment;
+                        var imageFullPath = abp.appPath + 'img/flags/' + data.creditCard.flagCard.iconPath;
+
+                        return `
+                            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                                <div>
+                                    <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
+                                </div>
+                                <div style="margin-left: 10px;">
+                                    <span style="font-size: 12px; color: #000; font-weight: 400;">${cardName} - ${parcelTransaction}</span>
+                                </div>
+                            </div>
+                        `;
                     }
                 },
                 sortable: false

@@ -1,4 +1,4 @@
-﻿@model CreditCardDto
+﻿@model CreateCreditCardDto
 @using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 @using Prosperium.Management.Web.Startup
 
@@ -43,7 +43,7 @@
             <div class="col-3">
                 <div class="campo-dia">
                     <label id="labelDiaVencimento" for="diaVencimento">Dia de Vencimento *</label>
-                    <input type="text" id="diaVencimento" name="DueDayInput" placeholder="01" min="1" max="31" maxlength="2" required />
+                    <input type="text" id="diaVencimento" name="DueDay" placeholder="01" min="01" max="31" maxlength="2" required />
                 </div>
             </div>
         </div>

@@ -38,6 +38,9 @@ h2 {
     color: white;
 }
 
+.campo-mes,
+.campo-data,
+.campo-parcela,
 .campo-tags,
 .campo-valor,
 .campo-descricao {
@@ -48,6 +51,9 @@ h2 {
     width: 100%;
 }
 
+#labelMes,
+#labelData,
+#labelParcela,
 #labelTags,
 #labelValor,
 #labelDescricao {
@@ -59,6 +65,9 @@ h2 {
     width: 100%;
 }
 
+#mes,
+#data,
+#parcela,
 #tags,
 #valor,
 #descricao {
@@ -67,7 +76,7 @@ h2 {
     font-size: 16px;
     color: #333;
     outline: none;
-    padding: 10px;
+    padding: 10px 0;
     border-bottom: 1px solid #ccc;
     transition: border-color 0.3s;
     text-align: left;
@@ -76,6 +85,9 @@ h2 {
 
     .custom-placeholder::placeholder,
     #valor::placeholder,
+    #mes::placeholder,
+    #data::placeholder,
+    #parcela::placeholder,
     #tags::placeholder,
     #data::placeholder,
     #descricao::placeholder {
@@ -124,9 +136,10 @@ button {
         filter: brightness(90%);
     }
 
+.campo-cartao,
 .campo-categoria,
 .campo-conta,
-.campo-cartao,
+.campo-tipo-cartao,
 .campo-condicoes {
     margin-top: 20px;
     display: flex;
@@ -134,8 +147,10 @@ button {
     align-items: flex-start;
 }
 
+#labelTags,
+#labelCartao,
 #labelCategoria,
-#LabelConta,
+#labelConta,
 #labelCartao,
 #labelCondicoes {
     margin-bottom: 10px;
@@ -146,6 +161,9 @@ button {
     width: 100%;
 }
 
+
+
+#cartao,
 #categoria,
 #conta,
 #tipoCartao,
@@ -161,6 +179,8 @@ button {
     width: 100%;
 }
 
+
+    #cartao:hover,
     #categoria:hover,
     #conta:hover,
     #categoria:focus,
@@ -210,7 +230,7 @@ button {
     color: white;
 }
 
-.campo-cartao,
+.campo-tipo-cartao,
 .campo-condicoes {
     display: flex;
     flex-direction: row;
@@ -219,7 +239,7 @@ button {
     flex-wrap: wrap;
 }
 
-    .campo-cartao .opcao-btn,
+    .campo-tipo-cartao .opcao-btn,
     .campo-condicoes .opcao-btn {
         margin-right: 10px;
     }
@@ -251,44 +271,8 @@ button {
         color: #fff;
     }
 
-.campo-data, .campo-tags {
-    margin-top: 20px;
-    position: relative;
-}
 
-#labelData {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 10px;
-    margin-top: 5px; /* Ajuste conforme necessário para alinhamento vertical */
-    font-size: 14px;
-    color: #333;
-}
 
-#data {
-    border: none;
-    background: transparent;
-    font-size: 18px;
-    color: #333;
-    outline: none;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    transition: border-color 0.3s;
-    text-align: left;
-    width: 100%;
-    margin-top: 30px;
-}
-
-#labelTags {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-left: 10px;
-    margin-top: 5px;
-    font-size: 14px;
-    color: #333;
-}
 
 /* Estilos para o modal */
 #SelectCategoryModal .modal-content {
@@ -416,3 +400,4 @@ button {
     to {
         transform: scale(1);
     }
+}

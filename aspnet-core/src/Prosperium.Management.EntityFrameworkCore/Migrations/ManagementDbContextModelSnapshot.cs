@@ -1758,7 +1758,7 @@ namespace Prosperium.Management.Migrations
                     b.Property<long?>("CreatorUserId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("DueDayInput")
+                    b.Property<int>("DueDay")
                         .HasColumnType("int");
 
                     b.Property<long>("FlagCardId")
@@ -1873,6 +1873,9 @@ namespace Prosperium.Management.Migrations
                     b.Property<long?>("CreditCardId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CurrentInstallment")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -1881,6 +1884,9 @@ namespace Prosperium.Management.Migrations
 
                     b.Property<decimal>("ExpenseValue")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("Installments")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");

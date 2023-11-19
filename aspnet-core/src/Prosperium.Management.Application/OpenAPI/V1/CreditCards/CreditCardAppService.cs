@@ -6,6 +6,7 @@ using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.Flags.Dto;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -44,7 +45,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         }
 
         [HttpPost]
-        public async Task CreateAsync(CreditCardDto input)
+        public async Task CreateAsync(CreateCreditCardDto input)
         {
             CreditCard card = ObjectMapper.Map<CreditCard>(input);
             await _creditCardRepository.InsertAsync(card);

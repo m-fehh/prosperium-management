@@ -1,15 +1,10 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
-using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
-using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
@@ -26,7 +21,9 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
         public virtual long CategoryId { get; set; }
         public PaymentType PaymentType { get; set; }
         public PaymentTerms PaymentTerm { get; set; }
-        public virtual long AccountId { get; set; }
+        public virtual long? AccountId { get; set; }
+        public virtual int? Installments { get; set; }
+        public virtual long? CreditCardId { get; set; }
         public DateTime Date { get; set; }
         public ICollection<TagDto> Tags { get; set; }
     }

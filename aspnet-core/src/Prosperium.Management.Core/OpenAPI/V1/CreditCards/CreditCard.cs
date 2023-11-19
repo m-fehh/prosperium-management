@@ -27,12 +27,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Limit { get; set; }
-
-        [Range(1, 31, ErrorMessage = "O dia de vencimento deve estar entre 1 e 31.")]
-        public int DueDayInput { get; set; }
-
-        // Propriedade de string para exibição formatada
-        public string DueDay => DueDayInput.ToString("D2");
+        public int DueDay { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
     }
 }

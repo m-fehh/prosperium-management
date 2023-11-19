@@ -20,12 +20,6 @@ $(document).ready(function () {
         }
     });
 
-    diaVencimentoInput.addEventListener('input', function (event) {
-        if (event.target.value === '') {
-            event.target.value = '1';
-        }
-    });
-
 
     // Seleciona a conta:
     $(document).on('click', '#conta', function (e) {
@@ -124,6 +118,8 @@ function formatarValor(elemento) {
 
         cardDto['FlagCardId'] = selectedFlagId;
         cardDto['AccountId'] = selectedAccountId;
+
+        console.log(cardDto);
 
         var limitString = cardDto['Limit']
             .replace('R$', '')

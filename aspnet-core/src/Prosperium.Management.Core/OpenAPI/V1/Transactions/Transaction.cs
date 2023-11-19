@@ -33,6 +33,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
         [ForeignKey("AccountId")]
         public AccountFinancial Account { get; set; }
+        public virtual int? Installments { get; set; }
+        public virtual string CurrentInstallment { get; set; }
 
         public virtual long? CreditCardId { get; set; }
 

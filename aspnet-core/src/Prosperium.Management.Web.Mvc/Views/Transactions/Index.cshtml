@@ -37,11 +37,11 @@
         transition: border-color 0.3s;
         text-align: left;
         width: 100%;
-        margin-top: 20px;
+        margin-top: -20px;
     }
 
     .custom-tagify {
-        --placeholder-color: #aaa; 
+        --placeholder-color: #aaa;
         --placeholder-color-focus: #FF8C00;
     }
 
@@ -54,7 +54,7 @@
             color: var(--placeholder-color-focus); /* Cor do texto do placeholder quando em foco */
         }
 
-    .tagify__tag{
+    .tagify__tag {
         display: inline-flex;
         align-items: center;
         margin: 20px 0 5px 5px !important;
@@ -66,9 +66,9 @@
         transition: .13s ease-out;
     }
 
-    .tagify__tag:hover {
-        opacity: 0.8;
-    }
+        .tagify__tag:hover {
+            opacity: 0.8;
+        }
 
     .tagify--maxTags, .tagify--invalid {
         border-color: red;
@@ -87,7 +87,6 @@
         font-size: 16px;
         color: #aaa;
     }
-
 
 </style>
 
@@ -139,7 +138,7 @@
 
         <div class="row">
             <div class="col-6">
-                <div class="campo-cartao">
+                <div class="campo-tipo-cartao">
                     <label id="labelCartao">Cartão de Crédito/Débito *</label>
                     <div class="opcao-cartao-btn" onclick="marcarOpcaoCartao(this, 'credito')">
                         <input type="radio" name="PaymentType" value="1" style="display: none;" />
@@ -160,7 +159,7 @@
                         <div class="opcao">À Vista</div>
                     </div>
 
-                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')">
+                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')" style="pointerEvents:none;">
                         <input type="radio" name="PaymentTerm" value="2" style="display: none;" />
                         <div class="opcao">Parcelado</div>
                     </div>
@@ -173,24 +172,6 @@
             </div>
         </div>
 
-        @*
-
-        SE FOR PARCELADO 
-            EXIBIR QUANTIDADE DE PARCELAS
-
-        RECORRENTE
-            EXIBIR QUANTIDADE DE VEZES QUE O GASTO SE REPETE 
-            EXIBIR ATÉ QUANDO
-
-        CADASTRAR CARTÃO DE CRÉDITO 
-            VINCULADO A CONTA 
-            PRIMEIRA FATURA 
-
-        TRANSFERENCIA:
-            CONTA PARA - APENAS EXIBIR QUE SAIU DA MINHA CONTA 
-
-        *@
-
         <div class="row">
             <div class="col-12">
                 <div class="campo-conta">
@@ -201,6 +182,34 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="campo-cartao" style="display: none;">
+                    <label id="labelCartao" for="cartao">Cartão *</label>
+                    <div id="cartao" data-toggle="modal" data-target="#SelectCardModal" style="display: flex; align-items: center; gap: 15px;">
+                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione um cartão" style="padding: 0; background: transparent; border: none;" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="campo-parcela" style="display: none;">
+                    <label id="labelParcela" for="parcela">Parcelas *</label>
+                    <input type="text" id="parcela" name="Installments" placeholder="Digite o número de parcelas" required oninput="calcularParcelas()" />
+                    <div id="resultadoParcelas" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="campo-mes" style="display: none;">
+                    <label id="labelMes" for="mes">Primeira fatura *</label>
+                    <select id="mes" name="Months" required disabled></select>
+                </div>
+            </div>
+        </div>
+
 
         <div class="row">
             <div class="col-12">
@@ -228,7 +237,12 @@
 
 
 <script>
+    // Altera a opção:
+
     var tipoTransacaoSelecionado = 'gasto';
+
+    var botaoParcelado = document.querySelector('.opcao-condicao-btn[onclick="marcarOpcaoCondicao(this, \'parcelado\')"]');
+    botaoParcelado.style.pointerEvents = 'none';
 
     function marcarOpcao(elemento, valor) {
         var botoes = document.querySelectorAll('.opcao-btn');
@@ -262,8 +276,9 @@
             btnSubmit.style.fontWeight = 'bold';
 
             $(".campo-categoria").css("display", "flex");
-            $(".campo-cartao").css("display", "flex");
+            $(".campo-tipo-cartao").css("display", "flex");
             $(".campo-condicoes").css("display", "flex");
+
 
         } else if (valor === 'ganho') {
             labelValor.textContent = 'Valor do ganho';
@@ -276,8 +291,9 @@
             btnSubmit.style.fontWeight = 'bold';
 
             $(".campo-categoria").css("display", "flex");
-            $(".campo-cartao").css("display", "flex");
-            $(".campo-condicoes").css("display", "flex");
+            $(".campo-tipo-cartao").css("display", "none");
+            $(".campo-condicoes").css("display", "none");
+            $(".campo-cartao").css("display", "none");
 
         } else if (valor === 'transferencia') {
             labelValor.textContent = 'Valor da transferência';
@@ -291,8 +307,9 @@
             btnSubmit.style.fontWeight = 'bold';
 
             $(".campo-categoria").css("display", "none");
-            $(".campo-cartao").css("display", "none");
+            $(".campo-tipo-cartao").css("display", "none");
             $(".campo-condicoes").css("display", "none");
+            $(".campo-cartao").css("display", "none");
         }
 
         tipoTransacaoSelecionado = valor;
@@ -319,6 +336,14 @@
 
 @* Modal de contas *@
 <div class="modal fade" id="SelectAccountModal" tabindex="-1" role="dialog" aria-labelledby="SelectAccountModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+@* Modal de cartões *@
+<div class="modal fade" id="SelectCardModal" tabindex="-1" role="dialog" aria-labelledby="SelectCardModalLabel" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         </div>

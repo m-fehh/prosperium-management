@@ -33,6 +33,7 @@ namespace PayMetrix
             configuration.CreateMap<Bank, BankDto>().ReverseMap();
             configuration.CreateMap<AccountFinancial, AccountFinancialDto>().ReverseMap();
             configuration.CreateMap<CreditCard, CreditCardDto>().ReverseMap();
+            configuration.CreateMap<CreditCard, CreateCreditCardDto>().ReverseMap();
             configuration.CreateMap<FlagCard, FlagCardDto>().ReverseMap();
 
             configuration.CreateMap<Role, RoleDto>().ReverseMap();

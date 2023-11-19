@@ -3,7 +3,6 @@ using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
-using Prosperium.Management.Web.Models.Accounts;
 using Prosperium.Management.Web.Models.CreditCard;
 using Prosperium.Management.Web.Models.Transactions;
 using System.Threading.Tasks;
@@ -30,7 +29,7 @@ namespace Prosperium.Management.Web.Controllers
         [Route("Create", Name = "CreateCard")]
         public async Task<IActionResult> CreateCard()
         {
-            var viewModel = new CreditCardDto();
+            var viewModel = new CreateCreditCardDto();
             return View(viewModel);
         }
 
