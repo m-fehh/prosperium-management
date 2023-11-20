@@ -159,16 +159,12 @@
                         <div class="opcao">À Vista</div>
                     </div>
 
-                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')" style="pointerEvents:none;">
+                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')">
                         <input type="radio" name="PaymentTerm" value="2" style="display: none;" />
                         <div class="opcao">Parcelado</div>
                     </div>
-
-                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'recorrente')">
-                        <input type="radio" name="PaymentTerm" value="3" style="display: none;" />
-                        <div class="opcao">Recorrente</div>
-                    </div>
                 </div>
+                <p id="info-campo-condicao" style="display: flex; font-size: 13px; color: orange; padding: 5px; margin: 0;">O parcelamento está disponível apenas para cartões de crédito.</p>
             </div>
         </div>
 
@@ -199,7 +195,7 @@
                 <div class="campo-parcela" style="display: none;">
                     <label id="labelParcela" for="parcela">Parcelas *</label>
                     <input type="text" id="parcela" name="Installments" placeholder="Digite o número de parcelas" required oninput="calcularParcelas()" />
-                    <div id="resultadoParcelas" style="color: red; font-weight: bold; margin-top: 10px;"></div>
+                    <div id="resultadoParcelas" style="color: orange; font-weight: bold; margin-top: 10px;"></div>
                 </div>
             </div>
         </div>
@@ -245,6 +241,7 @@
 
     var botaoParcelado = document.querySelector('.opcao-condicao-btn[onclick="marcarOpcaoCondicao(this, \'parcelado\')"]');
     botaoParcelado.style.pointerEvents = 'none';
+
 
     function marcarOpcao(elemento, valor) {
         var botoes = document.querySelectorAll('.opcao-btn');
@@ -296,6 +293,7 @@
             $(".campo-tipo-cartao").css("display", "none");
             $(".campo-condicoes").css("display", "none");
             $(".campo-cartao").css("display", "none");
+            $("#info-campo-condicao").css("display", "none");
 
         } else if (valor === 'transferencia') {
             labelValor.textContent = 'Valor da transferência';
@@ -312,6 +310,7 @@
             $(".campo-tipo-cartao").css("display", "none");
             $(".campo-condicoes").css("display", "none");
             $(".campo-cartao").css("display", "none");
+            $("#info-campo-condicao").css("display", "none");
         }
 
         tipoTransacaoSelecionado = valor;

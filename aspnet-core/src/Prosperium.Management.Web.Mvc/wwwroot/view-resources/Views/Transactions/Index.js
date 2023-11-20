@@ -185,6 +185,8 @@ function marcarOpcaoCartao(elemento, tipoCartao) {
         botaoParcelado.style.pointerEvents = 'auto';
         botaoAVista.style.pointerEvents = 'auto';
 
+        $("#info-campo-condicao").css("display", "none");
+
         campoMes.style.display = 'flex';
     } else if (tipoCartao === 'debito') {
         campoParcelas.style.display = 'none';
@@ -192,6 +194,8 @@ function marcarOpcaoCartao(elemento, tipoCartao) {
         botaoParcelado.style.pointerEvents = 'none';
         campoCartao.style.display = 'none';
         campoConta.style.display = 'flex';
+
+        $("#info-campo-condicao").css("display", "flex");
 
         // Desmarcar a opção parcelada se estiver selecionada
         if (botaoParceladoSelecionado) {
@@ -439,7 +443,7 @@ function updateModalSubcategories(subcategories, categoryIcon) {
                             <div class="card categoria-modal subcategoria" data-subcategoria="${subcategories[i].name}" data-subcategoria-id="${subcategories[i].id}" data-categoria-id="${selectedCategoryId}">
                                 <div class="card-body d-flex align-items-center" style="width: 100%;">
                                     <div class="col-1">
-                                        <img src="${imageFullPath}" style="border-radius: 10px;" width="50" />
+                                        <img src="${imageFullPath}" width="50" />
                                     </div>
                                     <div class="col-10 d-flex align-items-center" style="display: flex; align-items: center; justify-content: space-between;">
                                         <h3 class="card-title" style="color: #000; font-weight: bold; margin-left: 10px;">${subcategories[i].name}</h3>

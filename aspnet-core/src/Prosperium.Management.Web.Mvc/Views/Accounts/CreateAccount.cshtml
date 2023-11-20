@@ -194,7 +194,6 @@
     .custom-placeholder {
         font-size: 16px;
         color: #aaa;
-        margin-left:-12px;
     }
 </style>
 
@@ -202,29 +201,16 @@
     <h2>@ViewData["Title"]</h2>
 
     <form method="post">
-
         <div class="row">
             <div class="col-12">
                 <div class="campo-instituicao">
                     <label id="labelInstituicao" for="instituicao">Instituição financeira</label>
-                    <div class="col-12">
-                        <div class="d-flex align-items-center">
-                            <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal" class="col-11">
-                                <div class="col-12">
-                                    <span class="custom-placeholder">Selecione a Instituição</span>
-                                </div>
-                            </div>
-                            <div class="col-1" style="display: flex; align-items: center; justify-content: flex-end;">
-                                <img id="instituicaoLogo" src="/img/banks/nubank.png" alt="Instituição Logo" style="border-radius: 10px; display: none;" width="50" />
-                            </div>
-                        </div>
+                    <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal">
+                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma instituição" style="padding: 0; background: transparent; border: none;" readonly>
                     </div>
-                    <input type="hidden" id="selectedBankId" name="BankId" value="" />
                 </div>
             </div>
         </div>
-
-
 
         <div class="row" id="camposAgenciaConta" style="display: none;">
             <div class="col-6">

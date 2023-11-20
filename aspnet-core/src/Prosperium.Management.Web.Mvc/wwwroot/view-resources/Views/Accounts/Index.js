@@ -5,7 +5,7 @@ function formatarValor(elemento) {
 }
 
 function mostrarCamposAgenciaConta(bankName) {
-    var instituicaoSelecionada = document.getElementById('selectedBankId').value;
+    var instituicaoSelecionada = selectedBankId;
     var camposAgenciaConta = document.getElementById('camposAgenciaConta');
 
 
@@ -23,8 +23,8 @@ function aplicarMascaras(banco) {
     switch (banco) {
         case 'Nubank':
             $('#agencia').mask('0000');
-            $('#conta').mask('00000000-0');
-            $('#conta').attr('maxlength', '10');
+            $('#conta').mask('000000-0');
+            $('#conta').attr('maxlength', '8');
             break;
         case 'Itaú':
             $('#agencia').mask('0000');
@@ -33,13 +33,13 @@ function aplicarMascaras(banco) {
             break;
         case 'Bradesco':
             $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
+            $('#conta').mask('0000000-0');
+            $('#conta').attr('maxlength', '9');
             break;
         case 'Caixa':
             $('#agencia').mask('0000');
-            $('#conta').mask('000000000-0');
-            $('#conta').attr('maxlength', '11');
+            $('#conta').mask('00000000000-0');
+            $('#conta').attr('maxlength', '13');
             break;
         case 'Santander':
             $('#agencia').mask('0000');
@@ -47,24 +47,24 @@ function aplicarMascaras(banco) {
             $('#conta').attr('maxlength', '10');
             break;
         case 'Inter':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000000-0');
-            $('#conta').attr('maxlength', '10');
+            $('#agencia').mask('000');
+            $('#conta').mask('0000-0');
+            $('#conta').attr('maxlength', '6');
             break;
         case 'Mercado Pago':
             $('#agencia').mask('0000');
-            $('#conta').mask('00000000');
-            $('#conta').attr('maxlength', '8');
+            $('#conta').mask('0000000000000-0');
+            $('#conta').attr('maxlength', '15');
             break;
         case 'C6':
             $('#agencia').mask('0000');
             $('#conta').mask('000000-0');
-            $('#conta').attr('maxlength', '7');
+            $('#conta').attr('maxlength', '8');
             break;
         case 'Neon':
             $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
+            $('#conta').mask('000000-0');
+            $('#conta').attr('maxlength', '8');
             break;
         case 'BMG':
             $('#agencia').mask('0000');
@@ -95,10 +95,14 @@ function aplicarMascaras(banco) {
             // Adicione as máscaras e limites de caracteres para o PayPal
             break;
         case 'PicPay':
-            // Adicione as máscaras e limites de caracteres para o PicPay
+            $('#agencia').mask('0000');
+            $('#conta').mask('00000000');
+            $('#conta').attr('maxlength', '8');
             break;
         case 'Safra':
-            // Adicione as máscaras e limites de caracteres para o Safra
+            $('#agencia').mask('00000');
+            $('#conta').mask('00000000-0');
+            $('#conta').attr('maxlength', '10');
             break;
         case 'Sicredi':
             $('#agencia').mask('0000');
@@ -110,13 +114,27 @@ function aplicarMascaras(banco) {
     }
 }
 
-function selectBank(bankId, bankName, imagePath) {
-    var institutionElement = document.getElementById('instituicao');
-    var selectedBankIdElement = document.getElementById('selectedBankId');
-    var imageElement = document.getElementById('instituicaoLogo');
+var selectedBankId = '';
 
-    institutionElement.innerText = bankName;
-    selectedBankIdElement.value = bankId;
+$(document).on('click', '.institution-modal', function (e) {
+    e.preventDefault();
+
+    var bankName = $(this).data('banco-nome');
+    var bankId = $(this).data('banco-id');
+    var imagePath = $(this).data('banco-imagem');
+
+    selectedBankId = bankId;
+
+    var imageFullPath = abp.appPath + 'img/banks/' + imagePath;
+
+    $('#instituicao').html(`
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="${imageFullPath}"  width="40" />
+            <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${bankName}</span>
+        </div>
+    `);
+
+    $('#SelectInstitutionModal').modal('hide');
 
     // Mapeamento de nomes informais para os oficiais
     const nomeOficial = obterNomeOficial(bankName);
@@ -124,23 +142,8 @@ function selectBank(bankId, bankName, imagePath) {
     // Inserir o nome oficial no campo de apelido
     document.getElementById('apelido').value = nomeOficial;
 
-    // Obter o nome do arquivo da imagem atual
-    var currentImageSrc = imageElement.src;
-    var currentImageName = currentImageSrc.substring(currentImageSrc.lastIndexOf("/") + 1);
-
-    var newImageSrc = currentImageSrc.replace(currentImageName, imagePath);
-
-    // Atualizar a imagem na col-2
-    imageElement.src = newImageSrc;
-
-    // Tornar a imagem visível
-    imageElement.style.display = 'block';
-
-    $('#SelectInstitutionModal').modal('hide');
-
     mostrarCamposAgenciaConta(bankName);
-}
-
+});
 
 
 function obterNomeOficial(nomeInformal) {
@@ -204,6 +207,8 @@ $(document).on('click', '#instituicao', function (e) {
 
         // Convertendo "on" para true e "off" para false
         account["MainAccount"] = account["MainAccount"] === "on";
+
+        account["BankId"] = selectedBankId;
 
         // Ajustando o campo de BalanceAvailable
         var BalanceAvailableString = account['BalanceAvailable']
