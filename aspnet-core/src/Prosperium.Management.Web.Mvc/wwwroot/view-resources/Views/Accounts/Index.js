@@ -227,4 +227,19 @@ $(document).on('click', '#instituicao', function (e) {
             console.error('Erro ao criar transação:', error);
         });
     });
+
+
+    // Index.js - Desativa e ativar conta
+    $(document).on('click', '#bntChangeStatus', function (e) {
+        e.preventDefault
+
+        var accountId = $(this).data('conta-id');
+        var statusChange = $(this).data('status-conta');
+
+        _accountService.statusChangeAccount(accountId, !statusChange).done(function () {
+            abp.notify.info(l('SavedSuccessfully'));
+            window.location.reload();
+        });
+    });
 })(jQuery);
+

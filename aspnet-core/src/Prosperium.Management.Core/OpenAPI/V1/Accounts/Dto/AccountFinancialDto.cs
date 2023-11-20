@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using System.Collections.Generic;
+using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 
 namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
 {
@@ -25,7 +26,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
         public AccountType AccountType { get; set; }
         public bool MainAccount { get; set; }
 
-        // Propriedade de navegação para a transação
         public ICollection<CreateTransactionDto> Transaction { get; set; }
+        public CreditCardDto CreditCard { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.Web.Models.Accounts;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.Web.Controllers
@@ -32,9 +33,11 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpGet]
         [Route("GetAccounts")]
-        public async Task<IActionResult> GetAccounts()
+        public async Task<IActionResult> GetAccounts(bool isActive)
         {
             var allAccounts = await _accountsAppService.GetAllListAsync();
+            allAccounts = allAccounts.Where(x => x.IsActive == isActive).ToList();
+
             return Json(allAccounts);
         }
 

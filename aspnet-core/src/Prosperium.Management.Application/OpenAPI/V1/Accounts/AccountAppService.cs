@@ -56,6 +56,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
+                account.IsActive = true;
                 await _accountFinancialRepository.InsertAndGetIdAsync(account);
                 uow.Complete();
             }
@@ -74,6 +75,15 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             };
 
             await _transactionAppService.CreateAsync(extractCreated);
+        }
+
+        [HttpPut]
+        public async Task StatusChangeAccountAsync(long id, bool statusChange)
+        {
+            var account = await _accountFinancialRepository.FirstOrDefaultAsync(id);
+            account.IsActive = statusChange;
+
+            await _accountFinancialRepository.UpdateAsync(account);
         }
     }
 }
