@@ -46,6 +46,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="wwwroot\css\Layout\" />
     <Folder Include="wwwroot\libs\" />
     <Folder Include="wwwroot\view-resources\Views\Accounts\" />
     <Folder Include="wwwroot\view-resources\Views\CreditCard\" />

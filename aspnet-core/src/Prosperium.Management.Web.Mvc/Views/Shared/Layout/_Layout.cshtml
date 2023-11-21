@@ -11,7 +11,7 @@
     AbpAntiForgeryManager.SetCookie(Context);
 
     var pageTitle = !string.IsNullOrWhiteSpace(ViewBag.Title) ? ViewBag.Title + " / " : "";
-    pageTitle += "Management";
+    pageTitle += "Prosperium";
 }
 <!DOCTYPE html>
 <html lang="@LanguageManager.CurrentLanguage.Name">
@@ -25,10 +25,10 @@
     @await Html.PartialAsync("_Styles.cshtml")
     @RenderSection("styles", required: false)
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini sidebar-collapse">
     <div class="wrapper">
         @await Html.PartialAsync("_Header.cshtml")
-        @await Html.PartialAsync("_SideBar.cshtml")
+        @await Html.PartialAsync("_PxpNavigation.cshtml")
         <div class="content-wrapper">
             @await Html.PartialAsync("_Alerts.cshtml")
             @RenderBody()
