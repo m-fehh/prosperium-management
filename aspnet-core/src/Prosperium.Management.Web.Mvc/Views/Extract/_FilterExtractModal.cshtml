@@ -95,7 +95,7 @@
                     <div class="row account-row" data-card-type="account">
                         @foreach (var account in Model.Accounts)
                         {
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-1">
                                 <div class="card" data-conta-id="@account.Id" data-selected="false">
                                     <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
                                     <div class="card-body">
@@ -113,7 +113,7 @@
                     <div class="row creditcard-row" data-card-type="card">
                         @foreach (var card in Model.Cards)
                         {
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-1">
                                 <div class="card" data-cartao-id="@card.Id" data-selected="false">
                                     <img src="~/img/flags/@card.FlagCard.IconPath" width="40" alt="@card.CardName">
                                     <div class="card-body">
@@ -131,7 +131,7 @@
                     <div class="row category-row" data-card-type="category">
                         @foreach (var category in Model.Categories)
                         {
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-2 mb-1">
                                 <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id" data-selected="false">
                                     <img src="~/img/categories/@category.IconPath" width="45" alt="@category.Name">
                                     <div class="card-body">
@@ -149,7 +149,7 @@
                     <div class="row tags-row" data-card-type="tag">
                         @foreach (var tag in Model.Tags)
                         {
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-2 mb-1">
                                 <div class="card" style="padding-top: 20px; display: flex;" data-tags-id="@tag.Id" data-selected="false">
                                     <img src="~/img/transactionTypes/tag.png" width="45" alt="@tag.Name">
                                     <div class="card-body">
@@ -187,7 +187,7 @@
                                 image = "saldo.png";
                             }
 
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-3 mb-1">
                                 <div class="card" style="padding-top: 20px; display: flex;" data-tipo-id="@type.Value" data-selected="false">
                                     <img src="~/img/transactionTypes/@image" width="45" alt="@type.Text">
                                     <div class="card-body">

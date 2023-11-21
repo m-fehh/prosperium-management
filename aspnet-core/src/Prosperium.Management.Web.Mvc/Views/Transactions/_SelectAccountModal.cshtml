@@ -119,9 +119,9 @@
 <form name="SelectAccountModal" role="form" class="form-horizontal">
     <div class="modal-body">
         <div role="tabpanel" class="tab-pane container" id="select-account">
-            @foreach (var item in Model.Accounts)
+            @foreach (var item in Model.Accounts )
             {
-                @if (item.IsActive)
+                @if (item.IsActive )
                 {
                     <div class="row">
                         <div class="col-md-12">
@@ -150,7 +150,7 @@
                         </div>
                     </div>
                 }
-                else
+                else if (!Model.Accounts.Any(x => x.IsActive == true))
                 {
                     <div class="row" style="display: flex;justify-content: center;">
                         <div class="row justify-content-center align-items-center" >
