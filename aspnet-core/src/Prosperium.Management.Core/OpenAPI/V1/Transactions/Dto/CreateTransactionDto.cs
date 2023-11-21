@@ -1,11 +1,11 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
-using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
+using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
 {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
+using Prosperium.Management.OpenAPI.V1.Tags;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Transactions;
@@ -17,17 +18,18 @@ namespace Prosperium.Management.Web.Controllers
     public class ExtractController : ManagementControllerBase
     {
         private readonly ITransactionAppService _transactionAppService;
-
         private readonly ICategoryAppService _categoryAppService;
         private readonly IAccountAppService _accountAppService;
         private readonly ICreditCardAppService _creditCardAppService;
+        private readonly ITagAppService _tagAppService;
 
-        public ExtractController(ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService)
+        public ExtractController(ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService, ITagAppService tagAppService)
         {
             _transactionAppService = transactionAppService;
             _categoryAppService = categoryAppService;
             _accountAppService = accountAppService;
             _creditCardAppService = creditCardAppService;
+            _tagAppService = tagAppService;
         }
 
         public IActionResult Index()
@@ -37,7 +39,7 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpGet]
         [Route("GetValuesTotals")]
-        public async Task<IActionResult> GetValuesTotals(string filter, string monthYear, string filteredAccounts, string filteredCards, string filteredCategories, string filteredTypes)
+        public async Task<IActionResult> GetValuesTotals(string filter, string monthYear, string filteredAccounts, string filteredCards, string filteredTags, string filteredCategories, string filteredTypes)
         {
             var allTransactions = await _transactionAppService.GetAllListAsync();
 
@@ -75,6 +77,12 @@ namespace Prosperium.Management.Web.Controllers
                 allTransactions = allTransactions.Where(x => categoryIds.Contains(x.CategoryId)).ToList();
             }
 
+            if (!string.IsNullOrEmpty(filteredTags))
+            {
+                var tagIds = filteredTags.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransactions = allTransactions.Where(x => x.Tags.Any(tag => tagIds.Contains(tag.Id))).ToList();
+            }
+
             if (!string.IsNullOrEmpty(filteredTypes))
             {
                 monthYear = null;
@@ -106,8 +114,11 @@ namespace Prosperium.Management.Web.Controllers
         [HttpGet("GetAllFilters")]
         public async Task<ActionResult> GetAllFilters()
         {
+            var allTransactions = await _transactionAppService.GetAllListAsync();
+
             var allAccounts = await _accountAppService.GetAllListAsync();
             var allCards = await _creditCardAppService.GetAllListAsync();
+            var allTags = await _tagAppService.GetTagsListAsync();
             var allCategories = await _categoryAppService.GetAllListPerTenantAsync();
             var allTransactionTypes = Enum.GetValues(typeof(TransactionType))
                                .Cast<TransactionType>()
@@ -122,8 +133,10 @@ namespace Prosperium.Management.Web.Controllers
             {
                 Accounts = allAccounts,
                 Cards = allCards,
+                Tags = allTags,
                 Categories = allCategories,
-                TransactionType = allTransactionTypes
+                TransactionType = allTransactionTypes,
+                TransactionQuantity = allTransactions.Count()
             };
 
             return PartialView("_FilterExtractModal", model);

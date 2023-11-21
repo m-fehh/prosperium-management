@@ -5,10 +5,10 @@ using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
 using System.Collections.Generic;
-using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
+using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
 {

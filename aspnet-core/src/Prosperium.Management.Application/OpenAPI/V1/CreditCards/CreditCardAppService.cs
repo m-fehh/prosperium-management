@@ -48,7 +48,17 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         public async Task CreateAsync(CreateCreditCardDto input)
         {
             CreditCard card = ObjectMapper.Map<CreditCard>(input);
+            card.IsActive = true;
             await _creditCardRepository.InsertAsync(card);
+        }
+
+        [HttpPut]
+        public async Task StatusChangeCardAsync(long id, bool statusChange)
+        {
+            var card = await _creditCardRepository.FirstOrDefaultAsync(id);
+            card.IsActive = statusChange;
+
+            await _creditCardRepository.UpdateAsync(card);
         }
     }
 }

@@ -19,6 +19,10 @@
             return $(this).data('cartao-id');
         }).get();
 
+        var selectedTagsIds = $('.row.tags-row .card.selected').map(function () {
+            return $(this).data('tags-id');
+        }).get();
+
         var selectedCategoryIds = $('.row.category-row .card.selected').map(function () {
             return $(this).data('categoria-id');
         }).get();
@@ -33,7 +37,10 @@
         $('#selectedAccount').val(selectedAccountIds.join(','));
         $('#selectedCard').val(selectedCardIds.join(','));
         $('#selectedCategory').val(selectedCategoryIds.join(','));
+        $('#selectedTag').val(selectedTagsIds.join(','));
         $('#selectedType').val(selectedTypeIds.join(','));
+
+        console.log("iu", $('#selectedTag').val());
 
         filter();
     });

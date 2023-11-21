@@ -10,6 +10,7 @@ using Prosperium.Management.Banks;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
+using Prosperium.Management.OpenAPI.V1.Tags;
 
 namespace Prosperium.Management.EntityFrameworkCore
 {
@@ -22,6 +23,7 @@ namespace Prosperium.Management.EntityFrameworkCore
         public DbSet<AccountFinancial> Accounts { get; set; }
         public DbSet<FlagCard> Flags { get; set; }
         public DbSet<CreditCard> CreditCards { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         public ManagementDbContext(DbContextOptions<ManagementDbContext> options)
             : base(options)
@@ -58,46 +60,49 @@ namespace Prosperium.Management.EntityFrameworkCore
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Account)
-                .WithMany(a => a.Transactions) 
+                .WithMany(a => a.Transactions)
                 .HasForeignKey(t => t.AccountId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.CreditCard)
-                .WithMany(a => a.Transactions)
+                .WithMany(c => c.Transactions)
                 .HasForeignKey(t => t.CreditCardId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Categories)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(t => t.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
             modelBuilder.Entity<AccountFinancial>()
-                .HasMany(a => a.Transactions)  
+                .HasMany(a => a.Transactions)
                 .WithOne(t => t.Account)
                 .HasForeignKey(t => t.AccountId);
 
             modelBuilder.Entity<AccountFinancial>()
+                .HasMany(a => a.CreditCards)
+                .WithOne(c => c.Account)
+                .HasForeignKey(c => c.AccountId);
+
+            modelBuilder.Entity<CreditCard>()
+                .HasOne(c => c.Account)
+                .WithMany(a => a.CreditCards)
+                .HasForeignKey(c => c.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<AccountFinancial>()
                 .HasOne(a => a.Bank)
-                .WithMany() 
+                .WithMany()
                 .HasForeignKey(a => a.BankId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
             modelBuilder.Entity<CreditCard>()
-                .HasOne(t => t.Account)
-                .WithOne(a => a.CreditCard) 
-                .HasForeignKey<CreditCard>(t => t.AccountId)
-                .OnDelete(DeleteBehavior.Restrict); ;
-
-            modelBuilder.Entity<CreditCard>()
-                .HasOne(t => t.FlagCard)
+                .HasOne(c => c.FlagCard)
                 .WithMany()
-                .HasForeignKey(t => t.FlagCardId)
-                .OnDelete(DeleteBehavior.Restrict); ;
+                .HasForeignKey(c => c.FlagCardId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

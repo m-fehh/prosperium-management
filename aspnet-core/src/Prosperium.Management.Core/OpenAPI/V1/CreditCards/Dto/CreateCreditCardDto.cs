@@ -18,5 +18,6 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
         [Column(TypeName = "decimal(18,2)")]
         public decimal Limit { get; set; }
         public int DueDay { get; set; }
+        public bool IsActive { get; set; }
     }
 }

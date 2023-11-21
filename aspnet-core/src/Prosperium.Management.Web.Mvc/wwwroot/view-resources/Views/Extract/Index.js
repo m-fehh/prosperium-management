@@ -37,6 +37,7 @@ var monthYearInput;
                 formData.filteredAccounts = $("#selectedAccount").val();
                 formData.filteredCards = $("#selectedCard").val();
                 formData.filteredCategories = $("#selectedCategory").val();
+                formData.filteredTags = $("#selectedTag").val();
                 formData.filteredTypes = $("#selectedType").val();
 
                 return _transactionService.getAll(formData);
@@ -204,6 +205,7 @@ var monthYearInput;
         $('#selectedAccount').val('');
         $('#selectedCard').val('');
         $('#selectedCategory').val('');
+        $('#selectedTag').val('');
         $('#selectedType').val('');
 
         _$extractTable.ajax.reload();
@@ -223,6 +225,7 @@ var monthYearInput;
         accountId = $("#selectedAccount").val();
         cardId = $("#selectedCard").val();
         categoryId = $("#selectedCategory").val();
+        tagId = $("#selectedTag").val();
         typeId = $("#selectedType").val();
 
         var filterValue = filterInput.val();
@@ -235,7 +238,7 @@ var monthYearInput;
         $.ajax({
             url: '/App/Extract/GetValuesTotals',
             type: 'GET',
-            data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredCategories: categoryId, filteredTypes: typeId },
+            data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredTags: tagId, filteredCategories: categoryId, filteredTypes: typeId },
             dataType: 'json',
             success: function (data) {
                 var gastosString = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2) : "R$ 0,00";

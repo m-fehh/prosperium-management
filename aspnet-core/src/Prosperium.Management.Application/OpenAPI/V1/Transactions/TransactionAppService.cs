@@ -3,12 +3,9 @@ using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.Linq.Extensions;
-using Abp.MultiTenancy;
-using Abp.Runtime.Session;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using System;
 using System.Collections.Generic;
@@ -24,13 +21,11 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
     {
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IRepository<Transaction, long> _transactionRepository;
-        private readonly IRepository<AccountFinancial, long> _accountRepository;
 
-        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<AccountFinancial, long> accountRepository)
+        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _transactionRepository = transactionRepository;
-            _accountRepository = accountRepository;
         }
 
         [HttpPost]
@@ -57,7 +52,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
                 for (int i = 1; i <= transaction.Installments; i++)
                 {
-                    var parcelTransaction = ObjectMapper.Map<Transaction>(input); 
+                    var parcelTransaction = ObjectMapper.Map<Transaction>(input);
 
                     if (i > 1)
                     {
@@ -69,8 +64,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
                     using (var uow = _unitOfWorkManager.Begin())
                     {
-                        await _transactionRepository.InsertAsync(parcelTransaction);  
-                        uow.Complete(); 
+                        await _transactionRepository.InsertAsync(parcelTransaction);
+                        uow.Complete();
                     }
                 }
             }
@@ -117,6 +112,21 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         }
 
         [HttpGet]
+        [Route("list-transaction-per-account")]
+        public async Task<List<TransactionDto>> GetAllTransactionPerAccount(long accountId)
+        {
+            List<Transaction> allTransactions = await _transactionRepository
+                .GetAll().Include(x => x.Categories)
+                    .ThenInclude(x => x.Subcategories)
+                .Include(x => x.Account)
+                    .ThenInclude(x => x.Bank)
+                .Include(x => x.CreditCard)
+                    .ThenInclude(x => x.FlagCard).Where(x => x.AccountId == accountId)
+                .ToListAsync();
+            return ObjectMapper.Map<List<TransactionDto>>(allTransactions);
+        }
+
+        [HttpGet]
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input)
         {
             var allTransaction = _transactionRepository.GetAll()
@@ -151,6 +161,14 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
                 var categoryIds = input.FilteredCategories.Split(',').Select(id => long.Parse(id)).ToList();
                 allTransaction = allTransaction.Where(x => categoryIds.Contains(x.CategoryId));
+            }
+
+            if (!string.IsNullOrEmpty(input.FilteredTags))
+            {
+                input.MonthYear = null;
+
+                var tagsIds = input.FilteredTags.Split(',').Select(id => long.Parse(id)).ToList();
+                allTransaction = allTransaction.Where(x => x.Tags.Any(tag => tagsIds.Contains(tag.Id)));
             }
 
             if (!string.IsNullOrEmpty(input.FilteredTypes))

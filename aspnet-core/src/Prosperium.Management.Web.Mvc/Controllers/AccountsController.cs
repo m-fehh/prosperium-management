@@ -2,6 +2,7 @@
 using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.Web.Models.Accounts;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,10 +13,12 @@ namespace Prosperium.Management.Web.Controllers
     public class AccountsController : ManagementControllerBase
     {
         private readonly IAccountAppService _accountsAppService;
+        private readonly ITransactionAppService _transactionAppService;
 
-        public AccountsController(IAccountAppService accountsAppService)
+        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService)
         {
             _accountsAppService = accountsAppService;
+            _transactionAppService = transactionAppService;
         }
 
         public IActionResult Index()
@@ -53,6 +56,21 @@ namespace Prosperium.Management.Web.Controllers
             };
 
             return PartialView("_SelectInstitutionModal", model);
+        }
+
+        [HttpGet]
+        [Route("GetValuesTotals")]
+        public async Task<IActionResult> GetValuesTotals(long accountId)
+        {
+            var allTransactions = await _transactionAppService.GetAllTransactionPerAccount(accountId);
+
+
+            decimal gastos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue);
+            decimal ganhos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue);
+
+            var resultado = new { gastos, ganhos };
+
+            return Json(resultado);
         }
     }
 }

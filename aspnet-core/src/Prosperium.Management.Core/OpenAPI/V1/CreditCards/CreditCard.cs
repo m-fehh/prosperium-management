@@ -30,5 +30,6 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         public decimal Limit { get; set; }
         public int DueDay { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
+        public bool IsActive { get; set; }
     }
 }

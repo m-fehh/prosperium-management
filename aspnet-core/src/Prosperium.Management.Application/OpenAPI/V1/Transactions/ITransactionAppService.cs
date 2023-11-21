@@ -11,6 +11,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         Task CreateAsync(CreateTransactionDto input);
         Task<TransactionDto> GetByIdAsync(long id);
         Task<List<TransactionDto>> GetAllListAsync();
+        Task<List<TransactionDto>> GetAllTransactionPerAccount(long accountId);
         Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input);
         Task UpdateAsync(TransactionDto input);
         Task DeleteAsync(long id);

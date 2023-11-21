@@ -25,9 +25,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
         public decimal BalanceAvailable { get; set; }
         public AccountType AccountType { get; set; }
         public bool MainAccount { get; set; }
-
-        public ICollection<CreateTransactionDto> Transaction { get; set; }
-        public CreditCardDto CreditCard { get; set; }
+        public ICollection<CreateTransactionDto> Transactions { get; set; }
+        public ICollection<CreditCardDto> CreditCards { get; set; }
         public bool IsActive { get; set; }
     }
 }

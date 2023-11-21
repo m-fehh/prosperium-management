@@ -1,9 +1,9 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Prosperium.Management.OpenAPI.V1.Accounts;
+using Prosperium.Management.OpenAPI.V1.Tags;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
-using Prosperium.Management.OpenAPI.V1.Tags;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

@@ -191,115 +191,136 @@
         }
     }
 
+    function CurrentBalancePerTransaction(accountId, currentBalance) {
+        return new Promise(function (resolve, reject) {
+            $.ajax({
+                url: '/App/Accounts/GetValuesTotals',
+                type: 'GET',
+                data: { accountId: accountId },
+                dataType: 'json',
+                success: function (data) {
+                    var gastosString = (data.result.gastos !== undefined) ? Math.abs(data.result.gastos).toFixed(2) : "0,00";
+                    var ganhosString = (data.result.ganhos !== undefined) ? Math.abs(data.result.ganhos).toFixed(2) : "0,00";
+
+                    var result = Math.abs(currentBalance).toFixed(2) + parseFloat(ganhosString) - parseFloat(gastosString);
+
+                    console.log(result);
+
+                    resolve(result);
+                },
+                error: function (error) {
+                    console.error('Erro na requisição:', error);
+
+                    reject(Math.abs(currentBalance).toFixed(2));
+                }
+            });
+        });
+    }
+
 
     $(document).ready(function () {
         UpdateCardValues(true);
     });
 
-    function UpdateCardValues(isActive) {
-        
-
+    async function UpdateCardValues(isActive) {
         var cardContainer = $('#card-container');
-        $.ajax({
-            url: '/App/Accounts/GetAccounts',
-            type: 'GET',
-            data: { isActive: isActive },
-            dataType: 'json',
-            success: function (data) {
-                $('#card-container').empty();
-                var textActive = (!isActive) ? "Ativar conta" : "Desativar conta";
-                var cardHtml = '<div class="row">';
+        try {
+            var data = await $.ajax({
+                url: '/App/Accounts/GetAccounts',
+                type: 'GET',
+                data: { isActive: isActive },
+                dataType: 'json',
+            });
 
-                if (data.result.length > 0) {
-                    data.result.forEach(function (account, index) {
+            $('#card-container').empty();
+            var textActive = (!isActive) ? "Ativar conta" : "Desativar conta";
+            var cardHtml = '<div class="row">';
 
-                        cardHtml += `
-                                            <div class="col-6">
-                                                <div class="card">
-                                                    <div class="card-content" style="cursor:pointer;">
-                                                        <div class="text-content">
-                                                                        <div class="row" style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
-                                                                            <div class="col-10" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center;">
-                                                                    <h3 style="font-size: 19px; font-weight: bold;">${account.accountNickname}</h3>
-                                                                        <p class="saldo-label" style="padding-left: 15px; font-size: 12px; color: #999;">Tipo de Conta: ${getAccountTypeName(account.accountType)}</p>
-                                                                </div>
-                                                                    <div class="col-2"  style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center;">
-                                                                    <div class="icon">
-                                                                        <img src="/img/banks/${account.bank.imagePath}" width="40"  style="margin-top: -15px;" />
-                                                                    </div>
-                                                                </div>
+            if (data.result.length > 0) {
+                for (let index = 0; index < data.result.length; index++) {
+                    try {
+                        var account = data.result[index];
+                        account.balanceAvailable = await CurrentBalancePerTransaction(account.id, account.balanceAvailable);
+
+                        cardHtml += `<div class="col-6">
+                                        <div class="card">
+                                            <div class="card-content" style="cursor:pointer;">
+                                                <div class="text-content">
+                                                    <div class="row" style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
+                                                        <div class="col-10" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center;">
+                                                            <h3 style="font-size: 19px; font-weight: bold;">${account.accountNickname}</h3>
+                                                            <p class="saldo-label" style="padding-left: 15px; font-size: 12px; color: #999;">Tipo de Conta: ${getAccountTypeName(account.accountType)}</p>
+                                                        </div>
+                                                        <div class="col-2" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center;">
+                                                            <div class="icon">
+                                                                <img src="/img/banks/${account.bank.imagePath}" width="40" style="margin-top: -15px;" />
                                                             </div>
-                                                            <hr class="divider">
-                                                            <div class="row" style="width:100%;">
-                                                                <div class="col-11">
-                                                                    <p class="saldo-label">Saldo atual:</p>
-                                                                    <p class="saldo-valor">R$ ${account.balanceAvailable.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-
+                                                        </div>
+                                                    </div>
+                                                    <hr class="divider">
+                                                    <div class="row" style="width:100%;">
+                                                        <div class="col-11">
+                                                            <p class="saldo-label">Saldo atual:</p>
+                                                                <p class="saldo-valor">R$ ${account.balanceAvailable.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                        </div>
+                                                        <div class="col-1 d-flex align-items-center">
+                                                            <div class="dropdown" style="margin-top: 10px;">
+                                                                <div id="menuIcon" class="ml-auto dropdown-toggle" data-toggle="dropdown" style="display: flex; align-items: center;">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                                                                        <path d="M2 11h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0-5h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0-5h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2z" />
+                                                                    </svg>
                                                                 </div>
-                                                                <div class="col-1 d-flex align-items-center">
-                                                                        <div class="dropdown" style="margin-top: 10px;">
-                                                                            <div id="menuIcon" class="ml-auto dropdown-toggle" data-toggle="dropdown" style="display: flex; align-items: center;">
-                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                                                                                <path d="M2 11h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0-5h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0-5h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2z"/>
-                                                                            </svg>
-                                                                        </div>
-                                                                        <div class="dropdown-menu dropdown-menu-right">
-                                                                                <button class="dropdown-item"  data-conta-id="${account.id}" data-status-conta="${isActive}" id="bntChangeStatus">${textActive}</button>
-                                                                        </div>
-                                                                    </div>
+                                                                <div class="dropdown-menu dropdown-menu-right">
+                                                                    <button class="dropdown-item" data-conta-id="${account.id}" data-status-conta="${isActive}" id="bntChangeStatus">${textActive}</button>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>`;
+                                            </div>
+                                        </div>
+                                    </div>`;
 
-                        // Se o índice é ímpar ou é o último card, fecha a linha
-                        if (index % 2 !== 0 || index === data.length - 1) {
-                            cardHtml += '</div>'; // Fecha a linha
-                            // Se não for o último card, inicia uma nova linha
-                            if (index !== data.length - 1) {
+                        if (index % 2 !== 0 || index === data.result.length - 1) {
+                            cardHtml += '</div>';
+                            if (index !== data.result.length - 1) {
                                 cardHtml += '<div class="row">';
                             }
                         }
+                    } catch (error) {
+                        console.error('Erro ao obter balanço:', error);
+                    }
+                }
+                cardContainer.append(cardHtml);
+            } else {
+                var textActive = (isActive) ? "ativa" : "inativa";
 
-                    });
+                console.log(!isActive);
 
-                    cardContainer.append(cardHtml);
+                if (!isActive) {
+                    $("#bnt-adicionar-conta").hide();
                 }
 
-                else {
-                    var textActive = (isActive) ? "ativa" : "inativa";
+                var emptyCardHtml = `
+                    <div class="row justify-content-center align-items-center" style="padding-bottom: 30px;">
+                        <div class="col-md-10">
+                            <div class="card shadow p-4 rounded text-center" style="height: 100%; border: 0.5px solid #FF8C00">
+                                <h3 style="font-size: 25px; font-weight: bold;">Parece que você ainda não tem nenhuma conta ${textActive}. &#128577;</h3>`;
 
-                    console.log(!isActive);
-
-                    if (!isActive) {
-                        $("#bnt-adicionar-conta").hide();
-                    }
-
-
-                    var emptyCardHtml = `
-                                                    <div class="row justify-content-center align-items-center" style="padding-bottom: 30px;">
-                                                        <div class="col-md-10">
-                                                                <div class="card shadow p-4 rounded text-center" style="height: 100%; border: 0.5px solid #FF8C00"">
-                                                                <h3 style="font-size: 25px; font-weight: bold;">Parece que você ainda não tem nenhuma conta ${textActive}. &#128577;</h3>`
-
-                    if (isActive == true) {
-                        emptyCardHtml += `
-                                <p class="lead"></p>
-                                <p class="lead bm-2">Vamos começar adicionando uma conta!</p>`
-                    }
-
-                    emptyCardHtml += `</div> </div > </div>`;
-                    cardContainer.append(emptyCardHtml);
+                if (isActive == true) {
+                    emptyCardHtml += `
+                        <p class="lead"></p>
+                        <p class="lead bm-2">Vamos começar adicionando uma conta!</p>`;
                 }
-            },
-            error: function (error) {
-                console.error('Erro na requisição:', error);
+
+                emptyCardHtml += `</div> </div > </div>`;
+                cardContainer.append(emptyCardHtml);
             }
-        });
-
+        } catch (error) {
+            console.error('Erro na requisição:', error);
+        }
     }
+
 
 
     function getAccountTypeName(accountType) {

@@ -150,4 +150,19 @@ function formatarValor(elemento) {
          });
 
     })
+
+    $(document).on('click', '#bntChangeStatus', function (e) {
+        e.preventDefault
+
+        var cardId = $(this).data('cartao-id');
+        var statusChange = $(this).data('status-cartao');
+
+        console.log("a", statusChange);
+        console.log("b", !statusChange);
+
+        _cardService.statusChangeCard(cardId, !statusChange).done(function () {
+            abp.notify.info(l('SavedSuccessfully'));
+            window.location.reload();
+        });
+    });
 })(jQuery);

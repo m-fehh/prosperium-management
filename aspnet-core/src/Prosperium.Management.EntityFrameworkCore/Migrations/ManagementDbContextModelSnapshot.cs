@@ -1770,6 +1770,9 @@ namespace Prosperium.Management.Migrations
                     b.Property<long>("FlagCardId")
                         .HasColumnType("bigint");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2");
 
@@ -1784,8 +1787,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId")
-                        .IsUnique();
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("FlagCardId");
 
@@ -1839,6 +1841,18 @@ namespace Prosperium.Management.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -2188,8 +2202,8 @@ namespace Prosperium.Management.Migrations
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", b =>
                 {
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
-                        .WithOne("CreditCard")
-                        .HasForeignKey("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", "AccountId")
+                        .WithMany("CreditCards")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -2320,7 +2334,7 @@ namespace Prosperium.Management.Migrations
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", b =>
                 {
-                    b.Navigation("CreditCard");
+                    b.Navigation("CreditCards");
 
                     b.Navigation("Transactions");
                 });

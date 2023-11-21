@@ -5,6 +5,7 @@ using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using Prosperium.Management.Web.Models.CreditCard;
 using Prosperium.Management.Web.Models.Transactions;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.Web.Controllers
@@ -35,9 +36,11 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpGet]
         [Route("GetCards")]
-        public async Task<IActionResult> GetCards()
+        public async Task<IActionResult> GetCards(bool isActive)
         {
             var allCard = await _creditCardAppService.GetAllListAsync();
+            allCard = allCard.Where(x => x.IsActive == isActive).ToList();
+
             return Json(allCard);
         }
 
