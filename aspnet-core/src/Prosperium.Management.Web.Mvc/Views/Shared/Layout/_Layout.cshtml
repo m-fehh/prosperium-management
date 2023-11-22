@@ -29,6 +29,9 @@
     <div class="wrapper">
         @await Html.PartialAsync("_Header.cshtml")
         @await Html.PartialAsync("_PxpNavigation.cshtml")
+
+
+
         <div class="content-wrapper">
             @await Html.PartialAsync("_Alerts.cshtml")
             @RenderBody()
@@ -41,3 +44,13 @@
     @WebResourceManager.RenderScripts()
 </body>
 </html>
+
+<style>
+    body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer, body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-header {
+        margin-left: 0 !important;
+    }
+
+    .form-container{
+        margin-top: -2px;  
+    }
+    </style>
