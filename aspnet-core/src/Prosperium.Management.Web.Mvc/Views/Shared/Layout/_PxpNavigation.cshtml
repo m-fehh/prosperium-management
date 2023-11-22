@@ -5,19 +5,22 @@
     }
 
     .nav-item {
-        padding-left: 4px;
+        padding-left: 6px;
     }
 
     .nav-link {
         padding: 10px;
+       display: flex;
+        align-items: center;
+        align-content: center;
     }
 
     .nav-item.active {
-        background-color: #FFA500;
+        border-left: 7px solid orange;
         margin: -10px 0;
-        padding: 0;
         width: 100vh;
-        padding: 10px 0;
+        padding: 14px 0;
+        padding-left: 2px;
     }
 
 
@@ -29,11 +32,17 @@
 
     #menu-icon {
         cursor: pointer;
+        display: flex;
         padding: 10px;
         text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
         background-color: #f4f4f4;
         top: 0;
         left: 0;
+        justify-content: center;
+        align-content: center;
+        align-items: flex-end;
     }
 
         #menu-icon img {
@@ -48,30 +57,28 @@
 
     .menu-text-visible {
         margin-left: 6vh;
-        color: #FFA500;
-        font-weight: bold
+        color: #000;
     }
 
     .nav-item.active .menu-text-visible {
-        color: white;
+        font-weight: bold;
     }
 
 </style>
 
 
-<aside class="main-sidebar elevation-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; align-items: center; position: fixed; height: 100%;">
-    <!-- Ícone sanduíche para expandir/recolher o menu -->
+<aside class="main-sidebar elevation-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; align-items: center; position: fixed; height: 100%; background: #f4f4f4;">
     <div id="menu-icon">
         <img src="~/img/menu/menu.png" alt="Menu" onclick="toggleMenu()">
     </div>
 
-    <div class="sidebar" style="box-shadow: none; width: 100%; overflow-x: hidden; display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 0">
+    <div class="sidebar" style="box-shadow: none;width: 100%;overflow-x: hidden;display: flex;margin-top: -22px;flex-direction: column;justify-content: flex-start;height: 100%;padding: 0">
         <ul class="nav flex-column" style="width: 100px; padding-top: 10px;">
             <hr class="divider-menu">
 
             <li class="nav-item">
                 <a class="nav-link" href="#" title="Dashboard">
-                    <img src="~/img/menu/dashboard.png" alt="Dashboard" width="45px" />
+                    <img src="~/img/menu/dashboard.png" alt="Dashboard" width="40px" />
                     <span class="menu-text-visible">Dashboard</span>
                 </a>
             </li>
@@ -80,7 +87,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("Index", "Transactions")" title="Transações">
-                    <img src="~/img/menu/transaction.png" alt="Transações" width="45px" />
+                    <img src="~/img/menu/transaction.png" alt="Transações" width="40px" />
                     <span class="menu-text-visible">Transação</span>
                 </a>
             </li>
@@ -89,7 +96,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("Index", "Accounts")" title="Contas">
-                    <img src="~/img/menu/account.png" alt="Contas" width="45px" />
+                    <img src="~/img/menu/account.png" alt="Contas" width="40px" />
                     <span class="menu-text-visible">Contas</span>
                 </a>
             </li>
@@ -98,7 +105,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("Index", "CreditCard")" title="Cartões">
-                    <img src="~/img/menu/cards.png" alt="Cartões" width="45px" />
+                    <img src="~/img/menu/cards.png" alt="Cartões" width="40px" />
                     <span class="menu-text-visible">Cartões</span>
                 </a>
             </li>
@@ -107,7 +114,7 @@
 
             <li class="nav-item">
                 <a class="nav-link" href="@Url.Action("Index", "Extract")" title="Extrato">
-                    <img src="~/img/menu/extract.png" alt="Extrato" width="45px" />
+                    <img src="~/img/menu/extract.png" alt="Extrato" width="40px" />
                     <span class="menu-text-visible">Extrato</span>
                 </a>
             </li>
