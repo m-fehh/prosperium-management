@@ -69,7 +69,8 @@ a:hover {
         background-color: #fff;
     }
 
-    .table tbody tr.gastos:hover {
+    .table tbody tr.gastos:hover,
+    .table tbody tr.transferencia:hover {
         background-color: #FFE6E6; /* Vermelho bem clarinho para gastos */
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
@@ -14,5 +15,6 @@ namespace Prosperium.Management.Users
         Task ChangeLanguage(ChangeUserLanguageDto input);
 
         Task<bool> ChangePassword(ChangePasswordDto input);
+        Task<List<UserDto>> GetUserByTenantId(int tenantId);
     }
 }

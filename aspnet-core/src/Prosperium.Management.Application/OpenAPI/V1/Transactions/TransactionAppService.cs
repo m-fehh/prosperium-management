@@ -6,6 +6,7 @@ using Abp.Linq.Extensions;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using System;
 using System.Collections.Generic;
@@ -21,11 +22,13 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
     {
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IRepository<Transaction, long> _transactionRepository;
+        private readonly IRepository<Category, long> _categoryRepository;
 
-        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository)
+        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<Category, long> categoryRepository)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _transactionRepository = transactionRepository;
+            _categoryRepository = categoryRepository;
         }
 
         [HttpPost]
@@ -36,6 +39,12 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             if (transaction.TransactionType == TransactionType.Gastos || transaction.TransactionType == TransactionType.Transferência)
             {
                 transaction.ExpenseValue = -Math.Abs(transaction.ExpenseValue);
+
+                if(transaction.TransactionType == TransactionType.Transferência)
+                {
+                    var categoryTransfer = await _categoryRepository.FirstOrDefaultAsync(x => x.Name.Equals("Transferência"));
+                    transaction.CategoryId = categoryTransfer.Id;
+                }
             }
 
             // Se for crédito a vista

@@ -30,6 +30,11 @@ using Prosperium.Management.MultiTenancy;
 using Prosperium.Management.Sessions;
 using Prosperium.Management.Web.Models.Account;
 using Prosperium.Management.Web.Views.Shared.Components.TenantChange;
+using Prosperium.Management.Authorization.Accounts;
+using Prosperium.Management.Authorization.Impersonate;
+using Prosperium.Management.Url;
+using Abp.AspNetCore.Mvc.Caching;
+using Abp.CachedUniqueKeys;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -47,6 +52,12 @@ namespace Prosperium.Management.Web.Controllers
         private readonly ITenantCache _tenantCache;
         private readonly INotificationPublisher _notificationPublisher;
 
+        private readonly IAccountAppService _accountAppService;
+        private readonly IWebUrlService _webUrlService;
+        private readonly IImpersonationManager _impersonationManager;
+        private readonly IGetScriptsResponsePerUserConfiguration _getScriptsResponsePerUserConfiguration;
+        private readonly ICachedUniqueKeyPerUser _cachedUniqueKeyPerUser;
+
         public AccountController(
             UserManager userManager,
             IMultiTenancyConfig multiTenancyConfig,
@@ -58,7 +69,12 @@ namespace Prosperium.Management.Web.Controllers
             UserRegistrationManager userRegistrationManager,
             ISessionAppService sessionAppService,
             ITenantCache tenantCache,
-            INotificationPublisher notificationPublisher)
+            INotificationPublisher notificationPublisher,
+            IAccountAppService accountAppService,
+            IWebUrlService webUrlService,
+            IImpersonationManager impersonationManager,
+            IGetScriptsResponsePerUserConfiguration getScriptsResponsePerUserConfiguration,
+            ICachedUniqueKeyPerUser cachedUniqueKeyPerUser)
         {
             _userManager = userManager;
             _multiTenancyConfig = multiTenancyConfig;
@@ -71,6 +87,11 @@ namespace Prosperium.Management.Web.Controllers
             _sessionAppService = sessionAppService;
             _tenantCache = tenantCache;
             _notificationPublisher = notificationPublisher;
+            _accountAppService = accountAppService;
+            _webUrlService = webUrlService;
+            _impersonationManager = impersonationManager;
+            _getScriptsResponsePerUserConfiguration = getScriptsResponsePerUserConfiguration;
+            _cachedUniqueKeyPerUser = cachedUniqueKeyPerUser;
         }
 
         #region Login / Logout
@@ -455,6 +476,60 @@ namespace Prosperium.Management.Web.Controllers
                  );
 
             return Content("Sent notification: " + message);
+        }
+
+        #endregion
+
+        #region Impersonation
+
+        //[AbpMvcAuthorize(AppPermissions.Pages_Administration_Users_Impersonation)]
+        public virtual async Task<JsonResult> Impersonate([FromBody] ImpersonateInput input)
+        {
+            var output = await _accountAppService.Impersonate(input);
+
+            await _signInManager.SignOutAsync();
+
+            return Json(new AjaxResponse
+            {
+                TargetUrl = _webUrlService.GetSiteRootAddress(output.TenancyName) + "Account/ImpersonateSignIn?tokenId=" + output.ImpersonationToken
+            });
+        }
+
+        [UnitOfWork]
+        public virtual async Task<ActionResult> ImpersonateSignIn(string tokenId)
+        {
+            await ClearGetScriptsResponsePerUserCache();
+
+            var result = await _impersonationManager.GetImpersonatedUserAndIdentity(tokenId);
+            await _signInManager.SignInAsync(result.Identity, false);
+            return RedirectToAppHome();
+        }
+
+        public virtual JsonResult IsImpersonatedLogin()
+        {
+            return Json(new AjaxResponse { Result = AbpSession.ImpersonatorUserId.HasValue });
+        }
+
+        private async Task ClearGetScriptsResponsePerUserCache()
+        {
+            if (!_getScriptsResponsePerUserConfiguration.IsEnabled)
+            {
+                return;
+            }
+
+            await _cachedUniqueKeyPerUser.RemoveKeyAsync(GetScriptsResponsePerUserCache.CacheName);
+        }
+
+        public virtual async Task<JsonResult> BackToImpersonator()
+        {
+            var output = await _accountAppService.BackToImpersonator();
+
+            await _signInManager.SignOutAsync();
+
+            return Json(new AjaxResponse
+            {
+                TargetUrl = _webUrlService.GetSiteRootAddress(output.TenancyName) + "Account/ImpersonateSignIn?tokenId=" + output.ImpersonationToken
+            });
         }
 
         #endregion

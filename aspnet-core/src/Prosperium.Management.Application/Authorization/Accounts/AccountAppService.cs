@@ -1,22 +1,27 @@
 using System.Threading.Tasks;
 using Abp.Configuration;
+using Abp.UI;
 using Abp.Zero.Configuration;
 using Prosperium.Management.Authorization.Accounts.Dto;
+using Prosperium.Management.Authorization.Impersonate;
 using Prosperium.Management.Authorization.Users;
+using Prosperium.Management.MultiTenancy;
 
 namespace Prosperium.Management.Authorization.Accounts
 {
     public class AccountAppService : ManagementAppServiceBase, IAccountAppService
     {
-        // from: http://regexlib.com/REDetails.aspx?regexp_id=1923
         public const string PasswordRegex = "(?=^.{8,}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\\s)[0-9a-zA-Z!@#$%^&*()]*$";
 
         private readonly UserRegistrationManager _userRegistrationManager;
+        private readonly IImpersonationManager _impersonationManager;
 
         public AccountAppService(
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager, IImpersonationManager impersonationManager)
         {
             _userRegistrationManager = userRegistrationManager;
+            _impersonationManager = impersonationManager;
+
         }
 
         public async Task<IsTenantAvailableOutput> IsTenantAvailable(IsTenantAvailableInput input)
@@ -51,6 +56,45 @@ namespace Prosperium.Management.Authorization.Accounts
             return new RegisterOutput
             {
                 CanLogin = user.IsActive && (user.IsEmailConfirmed || !isEmailConfirmationRequiredForLogin)
+            };
+        }
+
+        public virtual async Task<ImpersonateOutput> Impersonate(ImpersonateInput input)
+        {
+            return new ImpersonateOutput
+            {
+                ImpersonationToken = await _impersonationManager.GetImpersonationToken(input.UserId, input.TenantId),
+                TenancyName = await GetTenancyNameOrNullAsync(input.TenantId)
+            };
+        }
+
+        private async Task<string> GetTenancyNameOrNullAsync(int? tenantId)
+        {
+            return tenantId.HasValue ? (await GetActiveTenantAsync(tenantId.Value)).TenancyName : null;
+        }
+
+        private async Task<Tenant> GetActiveTenantAsync(int tenantId)
+        {
+            var tenant = await TenantManager.FindByIdAsync(tenantId);
+            if (tenant == null)
+            {
+                throw new UserFriendlyException(L("UnknownTenantId{0}", tenantId));
+            }
+
+            if (!tenant.IsActive)
+            {
+                throw new UserFriendlyException(L("TenantIdIsNotActive{0}", tenantId));
+            }
+
+            return tenant;
+        }
+
+        public virtual async Task<ImpersonateOutput> BackToImpersonator()
+        {
+            return new ImpersonateOutput
+            {
+                ImpersonationToken = await _impersonationManager.GetBackToImpersonatorToken(),
+                TenancyName = await GetTenancyNameOrNullAsync(AbpSession.ImpersonatorTenantId)
             };
         }
     }

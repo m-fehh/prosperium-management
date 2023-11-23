@@ -167,13 +167,15 @@ var monthYearInput;
             var data = this.data();
             var rowNode = this.node();
 
-            $(rowNode).removeClass('gastos ganhos');
+            $(rowNode).removeClass('gastos ganhos transferencia');
 
             // Adicione a classe correspondente ao TransactionType
             if (data.transaction.transactionType === 1 /* Gastos */) {
                 $(rowNode).addClass('gastos');
-            } else if (data.transaction.transactionType === 2 /* Ganhos */) {
+            } else if (data.transaction.transactionType === 2) {
                 $(rowNode).addClass('ganhos');
+            } else if (data.transaction.transactionType === 3) {
+                $(rowNode).addClass('transferencia');
             }
         });
     });

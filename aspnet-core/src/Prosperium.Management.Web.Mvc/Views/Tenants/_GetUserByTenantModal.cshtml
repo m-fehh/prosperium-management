@@ -1,0 +1,95 @@
+﻿﻿@using Prosperium.Management.MultiTenancy.Dto
+@using Prosperium.Management.Web.Models.Common.Modals
+@using Prosperium.Management.Users.Dto
+@model List<UserDto>
+@{
+    Layout = null;
+}
+
+<style>
+    .modal-dialog {
+        max-width: 600px; 
+        border-radius: 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        background-color: #FF8C00;
+        color: #fff;
+    }
+
+    .btn-primary {
+        background-color: #FF8C00; 
+        border-color: #FF8C00;
+    }
+
+        .btn-primary:hover {
+            background-color: #FF8C00; 
+            border-color: #FF8C00;
+        }
+
+    #userTable td:nth-child(3) {
+        width: 120px;
+        text-align: center;
+    }
+</style>
+
+<form name="SelectTenantModal" role="form" class="form-horizontal">
+    <div class="modal-body">
+        <div role="tabpanel" class="tab-pane container" id="select-Tenant">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-12">
+                        <div class="card institution-modal impersonate-tenant" data-user-id="@item.Id" data-tenant-id="@item.TenantId" style="cursor: pointer;">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="col-2 d-flex align-items-center">
+                                    <i class="fa fa-ghost"></i>
+                                </div>
+                                <div class="col-9 d-flex align-items-center">
+                                     <h5 class="card-title" style="color: #000; font-weight: bold;">@item.EmailAddress</h5> 
+                                </div>
+                                <div class="col-1 d-flex align-items-center">
+                                    @* <button type="button" class="btn btn-primary " ><i class="fa fa-unlock-alt"></i></button> *@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<script src="~/view-resources/Views/Tenants/Index.js" asp-append-version="true"></script>
+
+@* form name="TenantEditForm" role="form" class="form-horizontal">
+    <div class="modal-body">
+        <table id="userTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Acessar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.EmailAddress</td>
+                        <td>
+                            <button type="button" class="btn btn-primary impersonate-tenant" data-user-id="@user.Id" data-tenant-id="@user.TenantId"><i class="fa fa-unlock-alt"></i></button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</form> *@
+<script src="~/view-resources/Views/Tenants/Index.js" asp-append-version="true"></script>

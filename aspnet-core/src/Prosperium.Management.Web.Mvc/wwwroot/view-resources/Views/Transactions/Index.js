@@ -511,7 +511,7 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
         console.log(transactionDto);
         console.log(selectedPaymentTerm);
 
-        transactionDto['CategoryId'] = selectedCategoryId;
+        transactionDto['CategoryId'] = (selectedCategoryId == null) ? 0 : selectedCategoryId;
         transactionDto['AccountId'] = selectedAccountId;
         transactionDto['CreditCardId'] = selectedCardId;
 

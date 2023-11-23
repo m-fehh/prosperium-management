@@ -22,6 +22,7 @@ using Prosperium.Management.Roles.Dto;
 using Prosperium.Management.Users.Dto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Abp.Domain.Uow;
 
 namespace Prosperium.Management.Users
 {
@@ -31,6 +32,7 @@ namespace Prosperium.Management.Users
         private readonly UserManager _userManager;
         private readonly RoleManager _roleManager;
         private readonly IRepository<Role> _roleRepository;
+        private readonly IRepository<User, long> _userRepository;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IAbpSession _abpSession;
         private readonly LogInManager _logInManager;
@@ -40,6 +42,7 @@ namespace Prosperium.Management.Users
             UserManager userManager,
             RoleManager roleManager,
             IRepository<Role> roleRepository,
+            IRepository<User, long> userRepository,
             IPasswordHasher<User> passwordHasher,
             IAbpSession abpSession,
             LogInManager logInManager)
@@ -48,6 +51,7 @@ namespace Prosperium.Management.Users
             _userManager = userManager;
             _roleManager = roleManager;
             _roleRepository = roleRepository;
+            _userRepository = userRepository;
             _passwordHasher = passwordHasher;
             _abpSession = abpSession;
             _logInManager = logInManager;
@@ -245,6 +249,18 @@ namespace Prosperium.Management.Users
             }
 
             return true;
+        }
+
+        public async Task<List<UserDto>> GetUserByTenantId(int tenantId)
+        {
+            List<UserDto> userDto = new();
+            using (CurrentUnitOfWork.DisableFilter(AbpDataFilters.MayHaveTenant))
+            {
+                var user = await _userRepository.GetAll().Where(x => x.TenantId == tenantId).ToListAsync();
+                userDto = ObjectMapper.Map<List<UserDto>>(user);
+            }
+
+            return userDto;
         }
     }
 }
