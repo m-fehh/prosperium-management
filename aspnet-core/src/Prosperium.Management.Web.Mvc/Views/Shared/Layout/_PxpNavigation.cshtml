@@ -1,157 +1,6 @@
-﻿@*
-<style>
-    .nav-link img {
-        padding: 0;
-    }
+﻿<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    .nav-item {
-        padding-left: 6px;
-    }
-
-    .nav-link {
-        padding: 10px;
-       display: flex;
-        align-items: center;
-        align-content: center;
-    }
-
-    .nav-item.active {
-        border-left: 7px solid orange;
-        margin: -10px 0;
-        width: 100vh;
-        padding: 14px 0;
-        padding-left: 2px;
-    }
-
-
-    hr.divider-menu {
-        width: 100vh!important;
-        margin: 10px 0;
-        border: 1px solid rgba(204, 204, 204, 0.5);
-    }
-
-    #menu-icon {
-        cursor: pointer;
-        display: flex;
-        padding: 10px;
-        text-align: center;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        background-color: #f4f4f4;
-        top: 0;
-        left: 0;
-        justify-content: center;
-        align-content: center;
-        align-items: flex-end;
-    }
-
-        #menu-icon img {
-            width: 40px;
-            height: 40px;
-        }
-
-    .expanded {
-        width: 200px;
-        margin-left: 200px;
-    }
-
-    .menu-text-visible {
-        margin-left: 6vh;
-        color: #000;
-    }
-
-    .nav-item.active .menu-text-visible {
-        font-weight: bold;
-    }
-
-</style>
-
-
-<aside class="main-sidebar elevation-4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; display: flex; flex-direction: column; align-items: center; position: fixed; height: 100%; background: #f4f4f4;">
-    <div id="menu-icon">
-        <img src="~/img/menu/menu.png" alt="Menu" onclick="toggleMenu()">
-    </div>
-
-    <div class="sidebar" style="box-shadow: none;width: 100%;overflow-x: hidden;display: flex;margin-top: -22px;flex-direction: column;justify-content: flex-start;height: 100%;padding: 0">
-        <ul class="nav flex-column" style="width: 100px; padding-top: 10px;">
-            <hr class="divider-menu">
-
-            <li class="nav-item">
-                <a class="nav-link" href="#" title="Dashboard">
-                    <img src="~/img/menu/dashboard.png" alt="Dashboard" width="40px" />
-                    <span class="menu-text-visible">Dashboard</span>
-                </a>
-            </li>
-
-            <hr class="divider-menu">
-
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index", "Transactions")" title="Transações">
-                    <img src="~/img/menu/transaction.png" alt="Transações" width="40px" />
-                    <span class="menu-text-visible">Transação</span>
-                </a>
-            </li>
-
-            <hr class="divider-menu">
-
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index", "Accounts")" title="Contas">
-                    <img src="~/img/menu/account.png" alt="Contas" width="40px" />
-                    <span class="menu-text-visible">Contas</span>
-                </a>
-            </li>
-
-            <hr class="divider-menu">
-
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index", "CreditCard")" title="Cartões">
-                    <img src="~/img/menu/cards.png" alt="Cartões" width="40px" />
-                    <span class="menu-text-visible">Cartões</span>
-                </a>
-            </li>
-
-            <hr class="divider-menu">
-
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Index", "Extract")" title="Extrato">
-                    <img src="~/img/menu/extract.png" alt="Extrato" width="40px" />
-                    <span class="menu-text-visible">Extrato</span>
-                </a>
-            </li>
-            <hr class="divider-menu">
-        </ul>
-    </div>
-</aside>
-
-<script>
-
-    function toggleMenu() {
-        $(".sidebar").toggleClass("expanded");
-
-        $(".nav-item").each(function () {
-            var $this = $(this);
-            var text = $this.find(".menu-text").text();
-
-            if ($this.hasClass("expanded")) {
-                $this.find(".nav-link").append('<span class="menu-text-visible">' + text + '</span>');
-            } else {
-                $this.find(".menu-text-visible").remove();
-            }
-        });
-    }
-
-    $(document).ready(function () {
-        var currentPageUrl = window.location.pathname;
-        $('.nav-link[href="' + currentPageUrl + '"]').parent().addClass('active');
-    });
-</script>
-
-
- *@
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<ul class="nav nav-tabs" style="margin: 0 34px; margin-top: 30px;">
+<ul class="nav nav-tabs" style="margin: 0 34px; margin-top: 30px; background: transparent;">
     <li class="nav-item nav-style">
         <a class="nav-link" aria-current="page" href="@Url.Action("Index", "Transactions")">Transação</a>
     </li>
@@ -164,6 +13,18 @@
     <li class="nav-item nav-style">
         <a class="nav-link" href="@Url.Action("Index", "Extract")">Extrato</a>
     </li>
+    @if (IsGranted("Pages.Tenants"))
+    {
+        <li class="nav-item nav-style">
+            <a class="nav-link" href="@Url.Action("Index", "Tenants")">Tenants</a>
+        </li>
+    }
+    @if (IsGranted("Pages.Tenants"))
+    {
+        <li class="nav-item nav-style">
+            <a class="nav-link" href="@Url.Action("Index", "Users")">Usuários</a>
+        </li>
+    }
 </ul>
 
 <style>
@@ -185,7 +46,7 @@
         margin: 0;
     }
 
-    .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+    .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
         border-top: 2px solid #FFA500;
         font-weight: bold;
     }
@@ -201,7 +62,7 @@
 
     .nav-style:hover {
         background-color: #DCDCDC;
-        }
+    }
 
 </style>
 

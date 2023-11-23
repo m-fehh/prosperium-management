@@ -61,11 +61,11 @@
                 defaultContent: '',
                 render: (data, type, row, meta) => {
                     return [
-                        `   <button type="button" class="btn btn-sm bg-secondary edit-user" data-user-id="${row.id}" data-toggle="modal" data-target="#UserEditModal">`,
-                        `       <i class="fas fa-pencil-alt"></i> ${l('Edit')}`,
+                        `   <button type="button"  style="background: orange; border: 0; color: #fff;" class="btn btn-sm edit-user" data-user-id="${row.id}" data-toggle="modal" data-target="#UserEditModal">`,
+                        `       <i class="fas fa-pencil-alt"></i>`,
                         '   </button>',
-                        `   <button type="button" class="btn btn-sm bg-danger delete-user" data-user-id="${row.id}" data-user-name="${row.name}">`,
-                        `       <i class="fas fa-trash"></i> ${l('Delete')}`,
+                        `   <button type="button"  style="background: orange; border: 0; color: #fff;" class="btn btn-sm delete-user" data-user-id="${row.id}" data-user-name="${row.name}">`,
+                        `       <i class="fas fa-trash"></i>`,
                         '   </button>'
                     ].join('');
                 }
