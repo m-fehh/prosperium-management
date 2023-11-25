@@ -1,4 +1,9 @@
-﻿<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+﻿@using Abp.Runtime.Security
+@{
+    var isHostUser = AbpSession.TenantId == null;
+}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
 <div class="row" style="display: flex; align-items: baseline; justify-content: baseline; align-content: baseline;">
@@ -6,29 +11,37 @@
 
         <ul class="nav nav-tabs" style="margin-left: 150px; margin-top: 30px; background: transparent;">
             <li class="nav-item nav-style">
-                <a class="nav-link" aria-current="page" href="@Url.Action("Index", "Transactions")">Transação</a>
+                <a class="nav-link" aria-current="page" href="@Url.Action("Index", "Home")">Dashboard</a>
             </li>
-            <li class="nav-item nav-style">
-                <a class="nav-link" href="@Url.Action("Index", "Accounts")">Contas</a>
-            </li>
-            <li class="nav-item nav-style">
-                <a class="nav-link" href="@Url.Action("Index", "CreditCard")">Cartões</a>
-            </li>
-            <li class="nav-item nav-style">
-                <a class="nav-link" href="@Url.Action("Index", "Extract")">Extrato</a>
-            </li>
-            @if (IsGranted("Pages.Tenants"))
+
+            @if (!isHostUser)
             {
+                <li class="nav-item nav-style">
+                    <a class="nav-link" aria-current="page" href="@Url.Action("Index", "Transactions")">Transação</a>
+                </li>
+                <li class="nav-item nav-style">
+                    <a class="nav-link" href="@Url.Action("Index", "Accounts")">Contas</a>
+                </li>
+                <li class="nav-item nav-style">
+                    <a class="nav-link" href="@Url.Action("Index", "CreditCard")">Cartões</a>
+                </li>
+                <li class="nav-item nav-style">
+                    <a class="nav-link" href="@Url.Action("Index", "Extract")">Extrato</a>
+                </li>
+            }
+
+            @if (isHostUser)
+            {
+
                 <li class="nav-item nav-style">
                     <a class="nav-link" href="@Url.Action("Index", "Tenants")">Tenants</a>
                 </li>
-            }
-            @if (IsGranted("Pages.Tenants"))
-            {
+
                 <li class="nav-item nav-style">
                     <a class="nav-link" href="@Url.Action("Index", "Users")">Usuários</a>
                 </li>
             }
+
 
         </ul>
     </div>
@@ -141,20 +154,6 @@
             });
         }
 
-
-        $(document).ready(function () {
-            var currentPageUrl = window.location.pathname;
-
-            console.log(currentPageUrl);
-
-            // ...
-
-            // Verifique se o usuário logado é o host
-            if (abp.session && abp.session.tenantId === null) {
-                // Aqui você pode realizar a lógica específica para o host
-                console.log('O usuário logado é o host.');
-            }
-        });
     })(jQuery);
 
 </script>

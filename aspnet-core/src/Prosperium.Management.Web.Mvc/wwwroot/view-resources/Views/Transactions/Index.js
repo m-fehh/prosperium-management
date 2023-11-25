@@ -504,13 +504,6 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
         transactionDto['PaymentType'] = parseInt(selectedPaymentType);
         transactionDto['PaymentTerm'] = parseInt(selectedPaymentTerm);
 
-
-        
-
-        console.log(selectedPaymentType);
-        console.log(transactionDto);
-        console.log(selectedPaymentTerm);
-
         transactionDto['CategoryId'] = (selectedCategoryId == null) ? 0 : selectedCategoryId;
         transactionDto['AccountId'] = selectedAccountId;
         transactionDto['CreditCardId'] = selectedCardId;

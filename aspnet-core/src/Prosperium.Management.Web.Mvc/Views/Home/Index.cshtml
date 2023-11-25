@@ -1,418 +1,466 @@
-﻿@using Prosperium.Management.Web.Startup
+﻿@using Abp.Runtime.Security
+@using Prosperium.Management.Web.Startup
 @{
     ViewBag.Title = L("HomePage");
     ViewBag.CurrentPageName = PageNames.Home;
+
+    var isHostUser = AbpSession.TenantId == null;
 }
 
-@section scripts
-{
-    <environment names="Development">
-        <script src="~/libs/chartjs/dist/Chart.js" asp-append-version="true"></script>
-        <script src="~/view-resources/Views/Home/Index.js" asp-append-version="true"></script>
-    </environment>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 
-    <environment names="Staging,Production">
-        <script src="~/view-resources/Views/_Bundles/home-index.min.js" asp-append-version="true"></script>
-    </environment>
-}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-<div class="content-header">
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-sm-12">
-                <h1 class="m-0 text-dark">@L("HomePage")</h1>
-            </div>
-        </div>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #FF8C00;
+        padding-top: 30px;
+        display: flex;
+        font-weight: bold;
+    }
+
+    .title {
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 10px 0 30px;
+    }
+
+    .card-filter {
+        background: #f2f4f8;
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        border-radius: 10px;
+        height: 100px;
+        display: flex;
+        justify-content: center;
+    }
+
+
+    /* cards */
+    .card {
+        background: #f2f4f8;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+        text-align: start;
+        margin-bottom: 20px;
+        transition: transform 0.3s ease-in-out;
+        border-radius: 10px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        justify-content: space-around;
+    }
+
+    .icon {
+        font-size: 36px;
+        margin-right: 10px;
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .text-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #gastosValue, #ganhosValue, #totalValue {
+        font-size: 18px;
+        margin: 0;
+        font-weight: bold;
+    }
+
+    #totalGastos .icon {
+        color: #e74c3c;
+    }
+
+    #totalGanhos .icon {
+        color: #2ecc71;
+    }
+
+    h3 {
+        font-size: 12px;
+        margin: 0;
+        color: #555;
+        font-weight: bold;
+    }
+
+    .opcao-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
+        display: flex;
+        justify-content: center;
+        background: #eee;
+        font-size: 16px;
+    }
+
+        .opcao-btn:hover {
+            background-color: #F0E68C;
+        }
+
+    .opcao-selecionada {
+        background-color: #FF8C00;
+        color: white;
+        font-weight: bold
+    }
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="form-container" id="ExtractCreate">
+    <h2>Boas vindas</h2>
+    <p class="title">Centralize suas contas bancárias, acompanhe suas transações e tenha o controle total sobre seus ganhos e gastos. </p>
+
+    @* Filtros *@
+    <div class="row">
     </div>
-</div>
-<section class="content">
-<div class="container-fluid">
-<div class="row">
-    <div class="col-12">
-        <div class="alert alert-info alert-dismissible">
-            <h6><i class="icon fa fa-info"></i> This is a sample Dashboard which doesn't show any server side data. However, you can develop your own dashboard inspired by this one and its source code.</h6>
+
+    @if (!isHostUser)
+    {
+
+        @* Cards *@
+        <div class="row" style="display: flex; justify-content: center;">
+            <h2 style="font-size: 18px; padding: 15px;">Resumo</h2>
         </div>
-    </div>
-</div>
-<!-- Info boxes -->
-<div class="row">
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box">
-            <span class="info-box-icon bg-info elevation-1">
-                <i class="fas fa-cog"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">CPU Traffic</span>
-                <span class="info-box-number">
-                    10
-                    <small>%</small>
-                </span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-danger elevation-1">
-                <i class="fas fa-thumbs-up"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">Likes</span>
-                <span class="info-box-number">41,410</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <!-- fix for small devices only -->
-    <div class="clearfix hidden-md-up"></div>
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-success elevation-1">
-                <i class="fas fa-shopping-cart"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">Sales</span>
-                <span class="info-box-number">760</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-    <div class="col-12 col-sm-6 col-md-3">
-        <div class="info-box mb-3">
-            <span class="info-box-icon bg-warning elevation-1">
-                <i class="fas fa-users"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">New Members</span>
-                <span class="info-box-number">2,000</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
-</div>
-<!-- /.row -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Monthly Recap Report</h5>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-tool dropdown-toggle" data-toggle="dropdown">
-                            <i class="fas fa-wrench"></i>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-right" role="menu">
-                            <a href="#" class="dropdown-item">Action</a>
-                            <a href="#" class="dropdown-item">Another action</a>
-                            <a href="#" class="dropdown-item">Something else here</a>
-                            <a class="dropdown-divider"></a>
-                            <a href="#" class="dropdown-item">Separated link</a>
+        <div class="row mb-5" style="display: flex; justify-content: space-evenly;  margin: 10px 0 0 0;">
+            <div class="col-4">
+                <div class="card" id="totalGastos">
+                    <div class="card-content">
+                        <img src="~/img/transactionTypes/gastos.png" width="40" />
+                        <div>
+                            <p id="gastosValue">Carregando...</p>
+                            <h3>Gastos do mês</h3>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
             </div>
-            <!-- /.card-header -->
-            <div class="card-body">
+            <div class="col-4">
+                <div class="card" id="totalGanhos">
+                    <div class="card-content">
+                        <img src="~/img/transactionTypes/ganhos.png" width="40" />
+                        <div>
+                            <p id="ganhosValue">Carregando...</p>
+                            <h3>Ganhos do mês</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <div class="card" id="total">
+                    <div class="card-content">
+                        <img src="~/img/transactionTypes/total.png" width="40" />
+                        <div>
+                            <p id="totalValue">Carregando...</p>
+                            <h3>Total do mês</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Gráfico *@
+
+
+        <div class="row row-cols-2">
+            <div class="col">
+                <div class="row" style="display: flex; justify-content: center;">
+                    <h2 style="font-size: 18px; padding: 15px;">Transações por categoria</h2>
+                </div>
+                <div class="row" style="display: flex; justify-content: center;">
+                    <canvas id="myPieChart" width="400" height="400"></canvas>
+                </div>
                 <div class="row">
-                    <div class="col-md-8">
-                        <p class="text-center">
-                            <strong>Sales: 1 Jan, 2014 - 30 Jul, 2014</strong>
-                        </p>
-                        <div class="chart">
-                            <div class="chartjs-size-monitor">
-                                <div class="chartjs-size-monitor-expand">
-                                    <div class=""></div>
+                    <div class="col">
+                        <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gastos')">
+                            <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
+                            <div class="opcao">Gastos</div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="opcao-btn" onclick="marcarOpcao(this, 'ganhos')">
+                            <input type="radio" name="TransactionType" value="2" style="display: none;" />
+                            <div class="opcao">Ganhos</div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+            <div class="col">
+                <div class="row" style="display: flex; justify-content: center;">
+                    <h2 style="font-size: 18px; padding: 15px;">Últimas transações</h2>
+                    <div class="row" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 20px;">
+                        <div id="latestTransactionsContainer" style="width: 100%; margin-left: 50px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <input type="hidden" id="isHostUser" value="@isHostUser" />
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+        var isHostUser = $('#isHostUser').val();
+
+        if(!isHostUser){
+            UpdateCardValues();
+            UpdateCardTransactionsByCategory();
+            UpdateCardLatestTransaction();
+        }
+    });
+    
+
+    function marcarOpcao(elemento, valor) {
+        var botoes = document.querySelectorAll('.opcao-btn');
+        botoes.forEach(function (botao) {
+            botao.classList.remove('opcao-selecionada');
+        });
+
+        elemento.classList.add('opcao-selecionada');
+
+        var inputRadio = elemento.querySelector('input[type="radio"]');
+        inputRadio.checked = true;
+
+        UpdateCardTransactionsByCategory();
+    }
+
+
+
+    function UpdateCardValues() {
+        // Obtém a data atual
+        var currentDate = new Date();
+        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+        monthYearValue = currentMonthYear;
+
+        $.ajax({
+            url: 'Dashboard/GetValuesTotals',
+            type: 'GET',
+            data: { monthYear: monthYearValue },
+            dataType: 'json',
+            success: function (data) {
+                var gastos = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2).replace('.', ',') : "R$ 0,00";
+                var ganhos = (data.result.ganhos !== undefined) ? "R$ " + Math.abs(data.result.ganhos).toFixed(2).replace('.', ',') : "R$ 0,00";
+
+                var total = parseFloat(data.result.ganhos) - (parseFloat(data.result.gastos) * -1);
+                var totalString = "R$ " + Math.abs(total).toFixed(2).replace('.', ',');
+
+                $('#gastosValue').text(gastos);
+                $('#ganhosValue').text(ganhos);
+                $('#totalValue').text(totalString);
+
+
+                // Adicionando lógica para definir a borda e o ícone do card
+                var totalCard = $('#total');
+
+                if (total > 0) {
+                    totalCard.css('border-color', '#28a745');
+                    totalCard.css('box-shadow', '0 0 10px rgba(40, 167, 69, 0.5)');
+                } else if (total < 0) {
+                    totalCard.css('border-color', '#dc3545');
+                    totalCard.css('box-shadow', '0 0 10px rgba(220, 53, 69, 0.5)');
+                } else {
+                    totalCard.css('border-color', '#ccc');
+                    totalCard.css('box-shadow', '0 0 10px rgba(0, 0, 0, 0.1)');
+                }
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+
+    function UpdateCardTransactionsByCategory() {
+        var currentDate = new Date();
+        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+        var selectedPaymentType = parseInt($('input[name="TransactionType"]:checked').val());
+
+
+        monthYearValue = currentMonthYear;
+
+        $.ajax({
+            url: 'Dashboard/GetTransactionsByCategory',
+            type: 'GET',
+            data: { monthYear: monthYearValue, transactionType: selectedPaymentType },
+            dataType: 'json',
+            success: function (data) {
+                renderPieChart(data.result);
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+
+    function UpdateCardLatestTransaction() {
+        var currentDate = new Date();
+        var monthYearValue = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+        $.ajax({
+            url: 'Dashboard/LatestTransactions',
+            type: 'GET',
+            data: { monthYear: monthYearValue },
+            dataType: 'json',
+            success: function (data) {
+                if (data.result && data.result.length > 0) {
+                    var container = document.getElementById('latestTransactionsContainer');
+
+                    container.innerHTML = '';
+
+                    data.result.forEach(function (transaction) {
+                        container.innerHTML += createTransactionCard(transaction);
+                    });
+                }
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return new Date(dateString).toLocaleDateString('pt-BR', options);
+    }
+
+    // Função para criar o HTML do card
+    function createTransactionCard(transaction) {
+        var imageFullPath = abp.appPath + 'img/categories/' + transaction.imageCategory;
+
+        return `
+                    <div class="card" style="height: 90px;">
+                        <div class="card-content">
+                            <div class="card-body d-flex align-items-center" style="width: 100%;">
+                                     <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                        <div class="col-2" style="display: flex; justify-content: center;">
+                                        <img src="${imageFullPath}" width="40" />
+                                    </div>
+                                    <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
+                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.category}</p>
+                                        <p style="font-size: 13px; color: #999; margin: 0;">${transaction.expenseValue >= 0 ? 'R$ ' + transaction.expenseValue.toFixed(2) : '-R$ ' + Math.abs(transaction.expenseValue).toFixed(2)}</p>
+                                    </div>
+                                    <div class="col-3">
+                                                <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.transactionDate)}</p>
+                                    </div>
                                 </div>
-                                <div class="chartjs-size-monitor-shrink">
-                                    <div class=""></div>
+                                <div>
+
                                 </div>
                             </div>
-                            <!-- Sales Chart Canvas -->
-                            <canvas id="salesChart" height="360" style="height: 180px; display: block; width: 730px;" width="1460" class="chartjs-render-monitor"></canvas>
                         </div>
-                        <!-- /.chart-responsive -->
                     </div>
-                    <!-- /.col -->
-                    <div class="col-md-4">
-                        <p class="text-center">
-                            <strong>Goal Completion</strong>
-                        </p>
-                        <div class="progress-group">
-                            Add Products to Cart
-                            <span class="float-right"><b>160</b>/200</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-primary" style="width: 80%"></div>
-                            </div>
-                        </div>
-                        <!-- /.progress-group -->
-                        <div class="progress-group">
-                            Complete Purchase
-                            <span class="float-right"><b>310</b>/400</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-danger" style="width: 75%"></div>
-                            </div>
-                        </div>
-                        <!-- /.progress-group -->
-                        <div class="progress-group">
-                            <span class="progress-text">Visit Premium Page</span>
-                            <span class="float-right"><b>480</b>/800</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-success" style="width: 60%"></div>
-                            </div>
-                        </div>
-                        <!-- /.progress-group -->
-                        <div class="progress-group">
-                            Send Inquiries
-                            <span class="float-right"><b>250</b>/500</span>
-                            <div class="progress progress-sm">
-                                <div class="progress-bar bg-warning" style="width: 50%"></div>
-                            </div>
-                        </div>
-                        <!-- /.progress-group -->
-                    </div>
-                    <!-- /.col -->
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- ./card-body -->
-            <div class="card-footer">
-                <div class="row">
-                    <div class="col-sm-3 col-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 17%</span>
-                            <h5 class="description-header">$35,210.43</h5>
-                            <span class="description-text">TOTAL REVENUE</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-warning"><i class="fas fa-caret-left"></i> 0%</span>
-                            <h5 class="description-header">$10,390.90</h5>
-                            <span class="description-text">TOTAL COST</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-6">
-                        <div class="description-block border-right">
-                            <span class="description-percentage text-success"><i class="fas fa-caret-up"></i> 20%</span>
-                            <h5 class="description-header">$24,813.53</h5>
-                            <span class="description-text">TOTAL PROFIT</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                    <!-- /.col -->
-                    <div class="col-sm-3 col-6">
-                        <div class="description-block">
-                            <span class="description-percentage text-danger"><i class="fas fa-caret-down"></i> 18%</span>
-                            <h5 class="description-header">1200</h5>
-                            <span class="description-text">GOAL COMPLETIONS</span>
-                        </div>
-                        <!-- /.description-block -->
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- /.card-footer -->
-        </div>
-        <!-- /.card -->
-    </div>
-    <!-- /.col -->
-</div>
-<!-- /.row -->
-<!-- Main row -->
-<div class="row">
-    <!-- Left col -->
-    <div class="col-md-8">
-        <!-- TABLE: LATEST ORDERS -->
-        <div class="card">
-            <div class="card-header border-transparent">
-                <h3 class="card-title">Latest Orders</h3>
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table m-0">
-                        <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Item</th>
-                            <th>Status</th>
-                            <th>Popularity</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR9842</a>
-                            </td>
-                            <td>Call of Duty IV</td>
-                            <td>
-                                <span class="badge badge-success">Shipped</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR1848</a>
-                            </td>
-                            <td>Samsung Smart TV</td>
-                            <td>
-                                <span class="badge badge-warning">Pending</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR7429</a>
-                            </td>
-                            <td>iPhone 6 Plus</td>
-                            <td>
-                                <span class="badge badge-danger">Delivered</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR7429</a>
-                            </td>
-                            <td>Samsung Smart TV</td>
-                            <td>
-                                <span class="badge badge-info">Processing</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#00c0ef" data-height="20">90,80,-90,70,-61,83,63</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR1848</a>
-                            </td>
-                            <td>Samsung Smart TV</td>
-                            <td>
-                                <span class="badge badge-warning">Pending</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#f39c12" data-height="20">90,80,-90,70,61,-83,68</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR7429</a>
-                            </td>
-                            <td>iPhone 6 Plus</td>
-                            <td>
-                                <span class="badge badge-danger">Delivered</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#f56954" data-height="20">90,-80,90,70,-61,83,63</div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="javascript:;">OR9842</a>
-                            </td>
-                            <td>Call of Duty IV</td>
-                            <td>
-                                <span class="badge badge-success">Shipped</span>
-                            </td>
-                            <td>
-                                <div class="sparkbar" data-color="#00a65a" data-height="20">90,80,90,-70,61,-83,63</div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- /.table-responsive -->
-            </div>
-            <!-- /.card-body -->
-            <div class="card-footer clearfix">
-                <a href="javascript:void(0)" class="btn btn-sm btn-info float-left">Place New Order</a>
-                <a href="javascript:void(0)" class="btn btn-sm btn-secondary float-right">View All Orders</a>
-            </div>
-            <!-- /.card-footer -->
-        </div>
-        <!-- /.card -->
-    </div>
-    <!-- /.col -->
-    <div class="col-md-4">
-        <!-- Info Boxes Style 2 -->
-        <div class="info-box mb-3 bg-warning">
-            <span class="info-box-icon">
-                <i class="fas fa-tag"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">Inventory</span>
-                <span class="info-box-number">5,200</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-        <div class="info-box mb-3 bg-success">
-            <span class="info-box-icon">
-                <i class="fas fa-heart"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">Mentions</span>
-                <span class="info-box-number">92,050</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-        <div class="info-box mb-3 bg-danger">
-            <span class="info-box-icon">
-                <i class="fas fa-cloud-download-alt"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">Downloads</span>
-                <span class="info-box-number">114,381</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-        <div class="info-box mb-3 bg-info">
-            <span class="info-box-icon">
-                <i class="fas fa-comment"></i>
-            </span>
-            <div class="info-box-content">
-                <span class="info-box-text">Direct Messages</span>
-                <span class="info-box-number">163,921</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-    </div>
-    <!-- /.col -->
-</div>
-<!-- /.row -->
-</div>
-</section>
+                        `;
+    }
+
+
+    var myPieChart;
+
+    // Gráfico de categória
+    function renderPieChart(data) {
+        var canvas = document.getElementById('myPieChart');
+
+        if (!canvas) {
+            console.error('Elemento canvas não encontrado.');
+            return;
+        }
+
+        if (myPieChart) {
+            myPieChart.destroy();
+        }
+
+        var labels = data.map(item => item.categoria);
+        var values = data.map(item => Math.abs(item.valorTotal));
+
+        var ctx = canvas.getContext('2d');
+
+        // Cores relacionadas ao laranja
+        var orangeColors = ['#FFA07A', '#FF7F50', '#FF6347', '#FF4500', '#FF8C00'];
+
+        myPieChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: orangeColors,
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: false,
+                cutout: '80%',
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'left',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                var label = context.label || '';
+                                var value = Math.abs(context.parsed).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                return label + ': ' + value;
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+
+
+    function getRandomColors(count) {
+        // Função para gerar cores aleatórias
+        var colors = [];
+        for (var i = 0; i < count; i++) {
+            var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            colors.push(color);
+        }
+        return colors;
+    }
+</script>

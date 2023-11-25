@@ -12,7 +12,7 @@
     AbpAntiForgeryManager.SetCookie(Context);
 
     var pageTitle = !string.IsNullOrWhiteSpace(ViewBag.Title) ? ViewBag.Title + " / " : "";
-    pageTitle += "Management";
+    pageTitle += "Prosperium";
 }
 <!DOCTYPE html>
 <html lang="@LanguageManager.CurrentLanguage.Name">
@@ -79,17 +79,18 @@
                                 </div>
                             </div>
 
+
                             <div class="row" style="display: flex; align-items: center; justify-content: center; align-content: center; margin-top: 30px;">
-                                <div class="col-4">
+   @*                              <div class="col-4">
                                     <div class="checkbox-container">
-                                        <input type="checkbox" id="RememberMe" name="RememberMe" value="true" class="checkbox-input">
+                                        <input type="checkbox" id="RememberMe" name="RememberMe" value="false" class="checkbox-input">
                                         <label for="RememberMe" class="checkbox-custom">
                                             <span class="check-icon">&#10003;</span>
                                         </label>
                                         <span class="checkbox-label">Lembre de mim</span>
                                     </div>
-                                </div>
-                                <div class="col-4">
+                                </div> *@
+                                <div class="col-12">
                                     <button type="submit" id="LoginButton" class="btn btn-primary btn-block btn-flat">Entrar</button>
 
                                 </div>
