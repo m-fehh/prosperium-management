@@ -72,26 +72,34 @@ namespace Prosperium.Management.Web.Controllers
                     .ToList();
             }
 
-            if(transactionType > 0)
+            if (transactionType > 0)
             {
-                var transactionTypeEnum = (TransactionType) transactionType;
+                var transactionTypeEnum = (TransactionType)transactionType;
 
                 allTransactions = allTransactions.Where(x => x.TransactionType == transactionTypeEnum).ToList();
             }
 
-            var transactionsByCategory = allTransactions
+            if (allTransactions.Count > 0)
+            {
+
+                var transactionsByCategory = allTransactions
                 .GroupBy(t => t.Categories.Name)
                 .Select(group => new
-                    {
-                        Categoria = group.Key,
-                        ImageCategory = group.Select(x => x.Categories.IconPath),
-                        Contagem = group.Count(),
-                        ValorTotal = group.Sum(t => t.ExpenseValue)
-                    })
+                {
+                    Categoria = group.Key,
+                    ImageCategory = group.Select(x => x.Categories.IconPath),
+                    Contagem = group.Count(),
+                    ValorTotal = group.Sum(t => t.ExpenseValue)
+                })
                 .OrderByDescending(item => item.Contagem)
                 .Take(10);
 
-            return Json(transactionsByCategory);
+                return Json(transactionsByCategory);
+            }
+            else
+            {
+                return Json(new { message = "Não há transações disponíveis para o mês/ano especificado." });
+            }
         }
 
         [HttpGet]
@@ -111,7 +119,10 @@ namespace Prosperium.Management.Web.Controllers
                     .ToList();
             }
 
-            var latestTransactions = allTransactions
+            if (allTransactions.Count > 0)
+            {
+
+                var latestTransactions = allTransactions
                 .OrderByDescending(t => t.Date)
                 .Take(4)
                 .Select(t => new
@@ -123,7 +134,14 @@ namespace Prosperium.Management.Web.Controllers
                     TransactionType = t.TransactionType
                 });
 
-            return Json(latestTransactions);
+
+                return Json(latestTransactions);
+            }
+
+            else
+            {
+                return Json(new { message = "Não há transações disponíveis para o mês/ano especificado." });
+            }
         }
 
         [HttpGet]
@@ -135,19 +153,25 @@ namespace Prosperium.Management.Web.Controllers
             var cardTransactions = allCards.Select(card => new
             {
                 CreditCard = card.CardName,
-                Progress = CalculateCreditCardProgress(card),
+                Progress = CalculateCreditCardProgress(card, monthYear),
                 Limit = card.Limit,
                 Logo = card.FlagCard.IconPath,
                 DueDate = card.DueDay,
-                ValorGasto = card.Transactions?.Sum(transaction => transaction.ExpenseValue) ?? 0
-        });
+                ValorGasto = card.Transactions
+                    .Where(transaction => string.IsNullOrEmpty(monthYear) ||
+                                         (transaction.Date.ToString("MM/yyyy") == monthYear))
+                    .Sum(transaction => transaction.ExpenseValue),
+            });
 
             return Json(cardTransactions);
         }
 
-        private decimal CalculateCreditCardProgress(CreditCardDto creditCard)
+        private decimal CalculateCreditCardProgress(CreditCardDto creditCard, string monthYear)
         {
-            decimal totalExpenses = creditCard.Transactions?.Sum(transaction => transaction.ExpenseValue) ?? 0;
+            decimal totalExpenses = creditCard.Transactions?
+                .Where(transaction => string.IsNullOrEmpty(monthYear) || (transaction.Date.ToString("MM/yyyy") == monthYear))
+                .Sum(transaction => transaction.ExpenseValue) ?? 0;
+
             decimal progress = (int)((Math.Abs(totalExpenses) / Math.Abs(creditCard.Limit)) * 100);
 
             return progress;
