@@ -19,6 +19,58 @@
 
 <link rel="stylesheet" href="~/css/CreditCard/style.css" />
 
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #333;
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 30px 0;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FF8C00;
+        color: white;
+        font-weight: bold;
+        margin-top: 50px;
+    }
+
+        button:hover {
+            filter: brightness(90%);
+        }
+
+    .custom-placeholder {
+        font-size: 16px;
+        color: #aaa;
+    }
+</style>
+
 <div class="form-container" id="CardCreate">
     <h2>@ViewData["Title"]</h2>
 
@@ -34,7 +86,7 @@
             <div class="col-6">
                 <div class="campo-conta">
                     <label id="labelConta" for="conta">Número do cartão *</label>
-                    <input type="text" id="cardNumber" name="CardNumber" placeholder="Digite o número do cartão"  required oninput="formatarCartao(this)" />
+                    <input type="text" id="cardNumber" name="CardNumber" placeholder="Digite o número do cartão" required oninput="formatarCartao(this)" />
                     <p style="font-size: 13px; color: orange; padding: 5px; margin: 0;">* Digite apenas os 4 primeiros e os 4 últimos dígitos *</p>
                 </div>
             </div>

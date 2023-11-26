@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using System.Linq;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
+using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
+using System;
+using Microsoft.VisualBasic;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -12,10 +16,12 @@ namespace Prosperium.Management.Web.Controllers
     public class HomeController : ManagementControllerBase
     {
         private readonly ITransactionAppService _transactionAppService;
+        private readonly ICreditCardAppService _creditCardAppService;
 
-        public HomeController(ITransactionAppService transactionAppService)
+        public HomeController(ITransactionAppService transactionAppService, ICreditCardAppService creditCardAppService)
         {
             _transactionAppService = transactionAppService;
+            _creditCardAppService = creditCardAppService;
         }
 
         [Route("")]
@@ -83,7 +89,7 @@ namespace Prosperium.Management.Web.Controllers
                         ValorTotal = group.Sum(t => t.ExpenseValue)
                     })
                 .OrderByDescending(item => item.Contagem)
-                .Take(5);
+                .Take(10);
 
             return Json(transactionsByCategory);
         }
@@ -118,6 +124,33 @@ namespace Prosperium.Management.Web.Controllers
                 });
 
             return Json(latestTransactions);
+        }
+
+        [HttpGet]
+        [Route("GetCreditCardExpenses")]
+        public async Task<IActionResult> GetCreditCardExpenses(string monthYear)
+        {
+            var allCards = await _creditCardAppService.GetAllListAsync();
+
+            var cardTransactions = allCards.Select(card => new
+            {
+                CreditCard = card.CardName,
+                Progress = CalculateCreditCardProgress(card),
+                Limit = card.Limit,
+                Logo = card.FlagCard.IconPath,
+                DueDate = card.DueDay,
+                ValorGasto = card.Transactions?.Sum(transaction => transaction.ExpenseValue) ?? 0
+        });
+
+            return Json(cardTransactions);
+        }
+
+        private decimal CalculateCreditCardProgress(CreditCardDto creditCard)
+        {
+            decimal totalExpenses = creditCard.Transactions?.Sum(transaction => transaction.ExpenseValue) ?? 0;
+            decimal progress = (int)((Math.Abs(totalExpenses) / Math.Abs(creditCard.Limit)) * 100);
+
+            return progress;
         }
     }
 }

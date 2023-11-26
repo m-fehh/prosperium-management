@@ -36,6 +36,8 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         public async Task<List<CreditCardDto>> GetAllListAsync()
         {
             List<CreditCard> allCards = await _creditCardRepository.GetAll()
+                .Include(x => x.Transactions)
+                    .ThenInclude(x => x.Categories)
                 .Include(x => x.Account)
                     .ThenInclude(x => x.Bank)
                 .Include(x => x.FlagCard)

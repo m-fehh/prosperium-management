@@ -7,6 +7,7 @@
     var isHostUser = AbpSession.TenantId == null;
 }
 
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 
@@ -139,9 +140,37 @@
         font-weight: bold
     }
 
+
+    .progress {
+        display: flex;
+        height: 35px;
+        overflow: hidden;
+        border-radius: 5px;
+        background-color: #E0E0E0;
+        width: 100%;
+        margin: 10px;
+    }
+
+    .progress-bar {
+        text-align: center;
+        line-height: 10px;
+        color: #fff;
+        background-color: #FF8C00;
+        transition: width 0.3s ease-in-out;
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    #progress-bar-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/progressbar.js/dist/progressbar.min.js"></script>
+
 
 <div class="form-container" id="ExtractCreate">
     <h2>Boas vindas</h2>
@@ -198,7 +227,7 @@
         @* Gráfico *@
 
 
-        <div class="row row-cols-2">
+        <div class="row row-cols-2 mb-5">
             <div class="col">
                 <div class="row" style="display: flex; justify-content: center;">
                     <h2 style="font-size: 18px; padding: 15px;">Transações por categoria</h2>
@@ -234,6 +263,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="row" style="display: flex; justify-content: center;">
+                    <h2 style="font-size: 18px; padding: 15px;">Gastos no cartão de crédito</h2>
+                </div>
+                <div class="row" style="display: flex; justify-content: center;">
+                    <div id="progress-bar-container" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+
     }
 
     <input type="hidden" id="isHostUser" value="@isHostUser" />
@@ -245,13 +286,14 @@
     $(document).ready(function () {
         var isHostUser = $('#isHostUser').val();
 
-        if(!isHostUser){
+        if (!isHostUser) {
             UpdateCardValues();
             UpdateCardTransactionsByCategory();
             UpdateCardLatestTransaction();
+            UpdateCreditCardChart();
         }
     });
-    
+
 
     function marcarOpcao(elemento, valor) {
         var botoes = document.querySelectorAll('.opcao-btn');
@@ -266,7 +308,6 @@
 
         UpdateCardTransactionsByCategory();
     }
-
 
 
     function UpdateCardValues() {
@@ -286,7 +327,7 @@
                 var ganhos = (data.result.ganhos !== undefined) ? "R$ " + Math.abs(data.result.ganhos).toFixed(2).replace('.', ',') : "R$ 0,00";
 
                 var total = parseFloat(data.result.ganhos) - (parseFloat(data.result.gastos) * -1);
-                var totalString = "R$ " + Math.abs(total).toFixed(2).replace('.', ',');
+                var totalString = (total < 0) ? "- R$ " + Math.abs(total).toFixed(2).replace('.', ',') : "R$ " + total.toFixed(2).replace('.', ',');
 
                 $('#gastosValue').text(gastos);
                 $('#ganhosValue').text(ganhos);
@@ -362,6 +403,25 @@
         });
     }
 
+    function UpdateCreditCardChart() {
+        var currentDate = new Date();
+        var monthYearValue = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+
+        $.ajax({
+            url: 'GetCreditCardExpenses',
+            type: 'GET',
+            data: { monthYear: monthYearValue },
+            dataType: 'json',
+            success: function (data) {
+                renderCreditCardChart(data.result);
+            },
+            error: function (error) {
+                console.error('Erro na requisição:', error);
+            }
+        });
+    }
+
+
     function formatDate(dateString) {
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return new Date(dateString).toLocaleDateString('pt-BR', options);
@@ -372,33 +432,31 @@
         var imageFullPath = abp.appPath + 'img/categories/' + transaction.imageCategory;
 
         return `
-                    <div class="card" style="height: 90px;">
-                        <div class="card-content">
-                            <div class="card-body d-flex align-items-center" style="width: 100%;">
-                                     <div class="row" style="width: 100%; display: flex; align-items: center;">
-                                        <div class="col-2" style="display: flex; justify-content: center;">
-                                        <img src="${imageFullPath}" width="40" />
-                                    </div>
-                                    <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
-                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.category}</p>
-                                        <p style="font-size: 13px; color: #999; margin: 0;">${transaction.expenseValue >= 0 ? 'R$ ' + transaction.expenseValue.toFixed(2) : '-R$ ' + Math.abs(transaction.expenseValue).toFixed(2)}</p>
-                                    </div>
-                                    <div class="col-3">
-                                                <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.transactionDate)}</p>
-                                    </div>
-                                </div>
-                                <div>
+                                <div class="card" style="height: 90px;">
+                                    <div class="card-content">
+                                        <div class="card-body d-flex align-items-center" style="width: 100%;">
+                                                 <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                                    <div class="col-2" style="display: flex; justify-content: center;">
+                                                    <img src="${imageFullPath}" width="40" />
+                                                </div>
+                                                <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
+                                                    <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.category}</p>
+                                                    <p style="font-size: 13px; color: #999; margin: 0;">${transaction.expenseValue >= 0 ? 'R$ ' + transaction.expenseValue.toFixed(2) : '-R$ ' + Math.abs(transaction.expenseValue).toFixed(2)}</p>
+                                                </div>
+                                                <div class="col-3">
+                                                            <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.transactionDate)}</p>
+                                                </div>
+                                            </div>
+                                            <div>
 
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                        `;
+                                    `;
     }
 
-
     var myPieChart;
-
     // Gráfico de categória
     function renderPieChart(data) {
         var canvas = document.getElementById('myPieChart');
@@ -452,8 +510,6 @@
         });
     }
 
-
-
     function getRandomColors(count) {
         // Função para gerar cores aleatórias
         var colors = [];
@@ -462,5 +518,56 @@
             colors.push(color);
         }
         return colors;
+    }
+
+
+
+
+
+    function renderCreditCardChart(data) {
+        var currentDate = new Date();
+        var nextMonth = new Date(currentDate);
+        nextMonth.setMonth(currentDate.getMonth() + 1);
+
+        var monthYearValue = (nextMonth.getMonth() + 1).toString().padStart(2, '0') + '/' + nextMonth.getFullYear();
+
+        $('#progress-bar-container').empty();
+
+
+        data.forEach(function (card) {
+            if (card.dueDate < 10) {
+                card.dueDate = "0" + card.dueDate;
+            }
+
+            var imageFullPath = abp.appPath + 'img/flags/' + card.logo;
+            var progressBar =
+                `
+                <div class="progress-card">
+                    <div class="card" style="height: 120px;">
+                        <div class="card-content">
+                                <div class="card-body d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                                <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                    <div class="col-1" style="display: flex; justify-content: center;">
+                                        <img src="${imageFullPath}" width="45" />
+                                    </div>
+                                    <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
+                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${card.creditCard}</p>
+                                        <p style="font-size: 13px; color: #999; margin: 0;">Usado: R$  ${Math.abs(card.valorGasto).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  - Limite: R$ ${card.limit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                    </div>
+                                     <div class="col-3">
+                                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">Vencimento: ${card.dueDate}/${monthYearValue}</p>
+                                    </div>
+                                </div>
+                                <div class="progress" role="progressbar" aria-label="${card.creditCard}" aria-valuenow="${card.progress}" aria-valuemin="0" aria-valuemax="100">
+                                    <div class="progress-bar" style="width: ${card.progress}%">${card.progress}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    `
+
+            $('#progress-bar-container').append(progressBar);
+        });
     }
 </script>
