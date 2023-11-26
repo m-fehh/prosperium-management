@@ -11,7 +11,7 @@
 
         <ul class="nav nav-tabs" style="margin-left: 150px; margin-top: 30px; background: transparent;">
             <li class="nav-item nav-style">
-                <a class="nav-link" aria-current="page" href="@Url.Action("Index", "Home")">Dashboard</a>
+                <a class="nav-link" aria-current="page" href="@Url.Action("Index", "Home")">Inicial</a>
             </li>
 
             @if (!isHostUser)
@@ -117,7 +117,10 @@
             console.log(currentPageUrl);
 
             $('.nav-link').each(function () {
-                if (currentPageUrl.startsWith($(this).attr('href'))) {
+                var linkUrl = $(this).attr('href');
+
+                // Verificar se a URL atual começa com a URL do link
+                if (currentPageUrl.startsWith(linkUrl) && (currentPageUrl.length === linkUrl.length || currentPageUrl[linkUrl.length] === '/')) {
                     $(this).addClass('active');
                 }
             });

@@ -277,7 +277,7 @@
         monthYearValue = currentMonthYear;
 
         $.ajax({
-            url: 'Dashboard/GetValuesTotals',
+            url: 'GetValuesTotals',
             type: 'GET',
             data: { monthYear: monthYearValue },
             dataType: 'json',
@@ -323,7 +323,7 @@
         monthYearValue = currentMonthYear;
 
         $.ajax({
-            url: 'Dashboard/GetTransactionsByCategory',
+            url: 'GetTransactionsByCategory',
             type: 'GET',
             data: { monthYear: monthYearValue, transactionType: selectedPaymentType },
             dataType: 'json',
@@ -341,7 +341,7 @@
         var monthYearValue = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
 
         $.ajax({
-            url: 'Dashboard/LatestTransactions',
+            url: 'LatestTransactions',
             type: 'GET',
             data: { monthYear: monthYearValue },
             dataType: 'json',
