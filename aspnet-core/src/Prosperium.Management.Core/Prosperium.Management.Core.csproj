@@ -18,6 +18,8 @@
     <PackageReference Include="Abp.AutoMapper" Version="8.4.0" />
     <PackageReference Include="Abp.ZeroCore.EntityFrameworkCore" Version="8.4.0" />
     <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="4.1.0" />
+    <PackageReference Include="Flurl" Version="3.0.7" />
+    <PackageReference Include="Flurl.Http" Version="3.2.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
   </ItemGroup>

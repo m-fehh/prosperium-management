@@ -3,6 +3,7 @@ using Abp.Domain.Uow;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.Banks;
+using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Transactions;
@@ -25,14 +26,18 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         private readonly ITransactionAppService _transactionAppService;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
 
-        public AccountAppService(IRepository<AccountFinancial, long> accountFinancialRepository, IRepository<Bank, long> banksRepository, IRepository<Category, long> categoryRepository, ITransactionAppService transactionAppService, IUnitOfWorkManager unitOfWorkManager)
+        private readonly PluggyManager _pluggyManager;
+
+        public AccountAppService(IRepository<AccountFinancial, long> accountFinancialRepository, IRepository<Bank, long> banksRepository, IRepository<Category, long> categoryRepository, ITransactionAppService transactionAppService, IUnitOfWorkManager unitOfWorkManager, PluggyManager pluggyManager)
         {
             _accountFinancialRepository = accountFinancialRepository;
             _banksRepository = banksRepository;
             _categoryRepository = categoryRepository;
             _transactionAppService = transactionAppService;
             _unitOfWorkManager = unitOfWorkManager;
+            _pluggyManager = pluggyManager;
         }
+
 
         [HttpGet]
         [Route("list-banks")]
@@ -85,5 +90,15 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
             await _accountFinancialRepository.UpdateAsync(account);
         }
+
+        #region Pluggy API 
+
+        [HttpPost]
+        [Route("PluggyGetAcessToken")]
+        public async Task PluggyGetAcessToken()
+        {
+            string accessToken = await _pluggyManager.PluggyCreateConnectToken();
+        }
+        #endregion
     }
 }

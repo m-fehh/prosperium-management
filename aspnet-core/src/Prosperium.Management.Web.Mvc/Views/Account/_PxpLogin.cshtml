@@ -1,0 +1,280 @@
+﻿<link rel="stylesheet" href="~/css/Login/style.css" />
+@*
+
+<div class="login-root">
+    <div class="box-root flex-flex flex-direction--column" style="min-height: 100vh;flex-grow: 1;">
+        <div class="loginbackground box-background--white padding-top--64">
+            <div class="loginbackground-gridContainer">
+                <div class="box-root flex-flex" style="grid-area: top / start / 8 / end;">
+                    <div class="box-root" style="background-image: linear-gradient(white 0%, rgb(247, 250, 252) 33%); flex-grow: 1;">
+                    </div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 4 / 2 / auto / 5;">
+                    <div class="box-root box-divider--light-all-2 animationLeftRight tans3s" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 6 / start / auto / 2;">
+                    <div class="box-root box-background--blue800" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 7 / start / auto / 4;">
+                    <div class="box-root box-background--blue animationLeftRight" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 8 / 4 / auto / 6;">
+                    <div class="box-root box-divider--light-all-2 animationRightLeft tans3s" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 2 / 15 / auto / end;">
+                    <div class="box-root box-background--cyan200 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 3 / 14 / auto / end;">
+                    <div class="box-root box-background--blue animationRightLeft" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 4 / 17 / auto / 20;">
+                    <div class="box-root box-background--gray100 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+                </div>
+                <div class="box-root flex-flex" style="grid-area: 5 / 14 / auto / 17;">
+                    <div class="box-root box-divider--light-all-2 animationRightLeft tans3s" style="flex-grow: 1;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="box-root padding-top--24 flex-flex flex-direction--column" style="flex-grow: 1; z-index: 9;">
+            <div class="box-root padding-top--48 padding-bottom--24 flex-flex flex-justifyContent--center">
+                <img src="~/img/pxp-logo.png" style="z-index: 10; position: relative; margin-top: -48px;" width="350vh" />
+            </div>
+            <div class="formbg-outer">
+                <div class="formbg">
+                    <div class="formbg-inner padding-horizontal--48">
+                        <form id="LoginForm" method="post" action="/Account/Login">
+                            <input type="hidden" name="returnUrl" value="/">
+                            <input type="hidden" name="returnUrlHash">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="campo-login">
+                                        <label id="labelLogin" for="login">E-mail *</label>
+                                        <input type="text" id="login" name="usernameOrEmailAddress" placeholder="Digite seu email" required="" autofocus="" maxlength="256" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="display: flex; align-items: flex-end;">
+                                <div class="col-11">
+                                    <div class="campo-password">
+                                        <label id="labelPassword" for="password">Senha *</label>
+                                        <div class="input-group">
+                                            <input type="password" id="password" name="Password" placeholder="Digite sua senha" required="" autofocus="" maxlength="30" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-1">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="togglePassword">
+                                            <i class="fa fa-eye"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row" style="display: flex; align-items: center; justify-content: center; align-content: center; margin-top: 30px;">
+                                <div class="col-12">
+                                    <button type="submit" id="LoginButton" class="btn btn-primary btn-block btn-flat">Entrar</button>
+
+                                </div>
+                            </div>
+
+                            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8EvOlh8WUjtBkbQw7N2fE9lM7DBjYqsq3lgDq_yYMA8XMpTBbElFvKQMVaE_PRWp1HTPUvyOBiZFq-9jxuExAX2kosmWU-1MebiEOAYLCoWd4qstS_EQqeq75Pmr4CbOGjB_0jpHdJDZJ6-Igy70y9s">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .input-group-text {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        padding: 0.375rem 0.75rem;
+        margin-bottom: 0;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: orange;
+        text-align: center;
+        white-space: nowrap;
+        background: transparent;
+        border: none;
+        border-radius: 0.25rem
+    }
+
+    .login-box, .register-box {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .save-button,
+    #LoginButton {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FF8C00;
+        color: white;
+        font-weight: bold;
+    }
+
+    button:hover {
+        filter: brightness(90%);
+    }
+
+    .campo-login,
+    .campo-password {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    #labelLogin,
+    #labelPassword {
+        margin-bottom: 10px;
+        color: #333;
+        display: block;
+        font-size: 14px;
+        text-align: left;
+        width: 100%;
+    }
+
+    #login,
+    #password {
+        border: none;
+        background: transparent;
+        font-size: 16px;
+        color: #333;
+        outline: none;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        transition: border-color 0.3s;
+        text-align: left;
+        width: 100%;
+    }
+
+        #login:focus,
+        #password:focus {
+            border-color: #aaa;
+        }
+
+        #login::placeholder,
+        #password::placeholder {
+            color: #aaa;
+        }
+
+
+
+    .checkbox-container {
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .checkbox-input {
+        display: none;
+    }
+
+    .checkbox-custom {
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ff8c00;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .checkbox-label {
+        margin-left: 8px;
+        color: #495057;
+        font-size: 14px;
+    }
+
+    .checkbox-input:checked + .checkbox-custom {
+        background-color: #ff8c00;
+        border-color: #ff8c00;
+    }
+
+    .check-icon {
+        color: #fff;
+    }
+
+</style> *@
+
+
+
+<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap"
+      rel="stylesheet" />
+<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+
+<img class="wave" src="~/img/wave-login.png" />
+<div class="container">
+    <div class="img"></div>
+    <div class="login-content">
+        <form id="LoginForm" method="post" action="/Account/Login">
+            <input type="hidden" name="returnUrl" value="/">
+            <input type="hidden" name="returnUrlHash">
+            <div class="input-div one">
+                <div class="i">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="div">
+                    <h5>E-mail</h5>
+                    <input type="text" name="usernameOrEmailAddress" class="input" />
+                </div>
+            </div>
+            <div class="input-div pass">
+                <div class="i">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="div">
+                    <h5>Senha</h5>
+                    <input type="password" id="password" name="Password" class="input" />
+                </div>
+            </div>
+            <button type="submit" id="LoginButton" class="btn">Entrar</button>
+            <input name="__RequestVerificationToken" type="hidden" value="CfDJ8EvOlh8WUjtBkbQw7N2fE9lM7DBjYqsq3lgDq_yYMA8XMpTBbElFvKQMVaE_PRWp1HTPUvyOBiZFq-9jxuExAX2kosmWU-1MebiEOAYLCoWd4qstS_EQqeq75Pmr4CbOGjB_0jpHdJDZJ6-Igy70y9s">
+        </form>
+    </div>
+</div>
+<script>
+    const inputs = document.querySelectorAll(".input");
+
+    function addClass() {
+        let parent = this.parentNode.parentNode;
+        parent.classList.add("focus");
+    }
+
+    function removeClass() {
+        let parent = this.parentNode.parentNode;
+        if (this.value == "") {
+            parent.classList.remove("focus");
+        }
+    }
+
+    inputs.forEach((input) => {
+        input.addEventListener("focus", addClass);
+        input.addEventListener("blur", removeClass);
+    });
+</script>
+
+

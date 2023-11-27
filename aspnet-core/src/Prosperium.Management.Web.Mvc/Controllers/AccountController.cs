@@ -35,6 +35,7 @@ using Prosperium.Management.Authorization.Impersonate;
 using Prosperium.Management.Url;
 using Abp.AspNetCore.Mvc.Caching;
 using Abp.CachedUniqueKeys;
+using Abp.Domain.Repositories;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -57,6 +58,7 @@ namespace Prosperium.Management.Web.Controllers
         private readonly IImpersonationManager _impersonationManager;
         private readonly IGetScriptsResponsePerUserConfiguration _getScriptsResponsePerUserConfiguration;
         private readonly ICachedUniqueKeyPerUser _cachedUniqueKeyPerUser;
+        private readonly IRepository<User, long> _userRepository;
 
         public AccountController(
             UserManager userManager,
@@ -74,7 +76,8 @@ namespace Prosperium.Management.Web.Controllers
             IWebUrlService webUrlService,
             IImpersonationManager impersonationManager,
             IGetScriptsResponsePerUserConfiguration getScriptsResponsePerUserConfiguration,
-            ICachedUniqueKeyPerUser cachedUniqueKeyPerUser)
+            ICachedUniqueKeyPerUser cachedUniqueKeyPerUser,
+             IRepository<User, long> userRepository)
         {
             _userManager = userManager;
             _multiTenancyConfig = multiTenancyConfig;
@@ -92,6 +95,7 @@ namespace Prosperium.Management.Web.Controllers
             _impersonationManager = impersonationManager;
             _getScriptsResponsePerUserConfiguration = getScriptsResponsePerUserConfiguration;
             _cachedUniqueKeyPerUser = cachedUniqueKeyPerUser;
+            _userRepository = userRepository;
         }
 
         #region Login / Logout
@@ -122,12 +126,40 @@ namespace Prosperium.Management.Web.Controllers
                 returnUrl = returnUrl + returnUrlHash;
             }
 
-            var loginResult = await GetLoginResultAsync(loginModel.UsernameOrEmailAddress, loginModel.Password, GetTenancyNameOrNull());
+            string tenancyName = IdentifyTenant(loginModel.UsernameOrEmailAddress, loginModel.Password);
+
+            var loginResult = await GetLoginResultAsync(loginModel.UsernameOrEmailAddress, loginModel.Password, tenancyName);
 
             await _signInManager.SignInAsync(loginResult.Identity, loginModel.RememberMe);
             await UnitOfWorkManager.Current.SaveChangesAsync();
 
             return Json(new AjaxResponse { TargetUrl = returnUrl });
+        }
+
+        private string IdentifyTenant(string usernameOrEmailAddress, string password)
+        {
+            if (usernameOrEmailAddress.Equals("admin", StringComparison.OrdinalIgnoreCase) && password == "123qwe")
+            {
+                return null; // Se for host, retorna null
+            }
+            else
+            {
+                int? tenantId;
+
+                using (_unitOfWorkManager.Current.DisableFilter(AbpDataFilters.MayHaveTenant))
+                {
+                    var user = _userRepository.FirstOrDefault(u => u.EmailAddress.Trim().ToLower() == usernameOrEmailAddress.Trim().ToLower());
+
+                    if(user == null)
+                    {
+                        throw new UserFriendlyException("Opss", "Credenciais incorretas");
+                    }
+
+                    tenantId = user?.TenantId;
+                }
+
+                return _tenantManager.GetById(tenantId.Value)?.TenancyName;
+            }
         }
 
         public async Task<ActionResult> Logout()
