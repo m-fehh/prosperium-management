@@ -8,5 +8,6 @@
         // URLs:
         public const string urlGenerateApiKey = "https://api.pluggy.ai/auth";
         public const string urlCreateConnectToken = "https://api.pluggy.ai/connect_token";
+        public const string urlListCategoriesPluggy= "https://api.pluggy.ai/categories";
     }
 }

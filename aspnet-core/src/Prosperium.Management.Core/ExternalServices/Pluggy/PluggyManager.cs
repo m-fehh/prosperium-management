@@ -34,7 +34,23 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                 .ReceiveJson<ResultPluggyAuthToken>();
 
             return result?.accessToken ?? string.Empty;
-        } 
+        }
+
+        #endregion
+
+        #region Categories Pluggy 
+
+        public async Task<ResultPluggyCategories> PluggyGetCategories()
+        {
+            var xApiKey = await PluggyGenerateApiKey();
+
+            var result = await PluggyConsts.urlListCategoriesPluggy
+                .WithHeader("X-API-KEY", xApiKey)
+                .WithHeader("Accept", "application/json")
+                .GetJsonAsync<ResultPluggyCategories>();
+
+            return result;
+        }
 
         #endregion
     }
