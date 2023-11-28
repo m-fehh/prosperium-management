@@ -1596,6 +1596,40 @@ namespace Prosperium.Management.Migrations
                     b.ToTable("Pxp_Banks");
                 });
 
+            modelBuilder.Entity("Prosperium.Management.ExternalServices.Pluggy.Models.PluggyCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Pluggy_Category_Id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pluggy_Category_Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pluggy_Category_Name_Translated")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pluggy_Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pluggy_Description_Translated")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Pluggy_Id")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("Prosperium_Category_Id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pxp_Pluggy_Categories");
+                });
+
             modelBuilder.Entity("Prosperium.Management.MultiTenancy.Tenant", b =>
                 {
                     b.Property<int>("Id")

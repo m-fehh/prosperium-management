@@ -14,5 +14,6 @@ namespace Prosperium.Management.OpenAPI.V1.Categories
         Task<List<CategoryDto>> GetAllListPerTenantAsync();
         Task<List<CategoryDto>> GetAllAsync(TransactionType transactionType);
         Task DeleteAsync(long id);
+        Task GetCategoriesPluggy();
     }
 }

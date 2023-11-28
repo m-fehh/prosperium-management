@@ -12,5 +12,6 @@
         public const string Extract = "Extrato"; 
         public const string Accounts = "Contas"; 
         public const string CreditCards = "Cartão"; 
+        public const string OriginDestination = "OriginDestination"; 
     }
 }

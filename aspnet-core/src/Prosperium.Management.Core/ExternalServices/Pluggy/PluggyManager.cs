@@ -2,6 +2,7 @@
 using Flurl.Http;
 using Newtonsoft.Json;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
+using System;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.ExternalServices.Pluggy

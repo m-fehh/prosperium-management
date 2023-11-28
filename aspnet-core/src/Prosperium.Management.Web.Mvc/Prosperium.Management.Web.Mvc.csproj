@@ -50,6 +50,7 @@
     <Folder Include="wwwroot\libs\" />
     <Folder Include="wwwroot\view-resources\Views\Accounts\" />
     <Folder Include="wwwroot\view-resources\Views\CreditCard\" />
+    <Folder Include="wwwroot\view-resources\Views\OriginDestinations\" />
     <Folder Include="wwwroot\view-resources\Views\Transactions\" />
     <Folder Include="wwwroot\view-resources\Views\_Bundles\" />
   </ItemGroup>

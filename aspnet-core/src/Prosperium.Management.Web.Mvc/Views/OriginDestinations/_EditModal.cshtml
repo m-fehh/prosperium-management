@@ -1,0 +1,126 @@
+﻿@using Prosperium.Management.Web.Models.OriginDestinations
+@model OriginDestinationModalViewModel
+@{
+    Layout = null;
+}
+
+<style>
+    .modal-content {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .arrow-right {
+        float: right;
+        color: #FF8C00;
+        margin-top: 8px;
+    }
+
+        .arrow-right svg {
+            vertical-align: middle;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .institution-modal {
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+        box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+    }
+
+        .institution-modal:hover {
+            transform: scale(1.05);
+        }
+
+        .institution-modal .card-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .institution-modal .icon {
+            margin-right: 15px;
+            color: #FF8C00;
+        }
+
+        .institution-modal .card-body {
+            text-align: center;
+        }
+
+        .institution-modal .card-title {
+            color: #FF8C00;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .institution-modal .card-description {
+            color: #555;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .institution-modal .arrow-icon {
+            color: #FF8C00;
+            font-size: 24px;
+        }
+
+    .labelCategory {
+        margin-bottom: 10px;
+        color: #333;
+        display: block;
+        font-size: 14px;
+        text-align: left;
+        width: 100%;
+    }
+
+</style>
+
+<form name="MappingOriginDestination" role="form" class="form-horizontal">
+    <div class="modal-body">
+        <div role="tabpanel" class="tab-pane container" id="select-category">
+
+            <div class="row">
+
+                <label for="categorySelect" class="control-label col-12 labelCategory">Selecione uma Categoria:</label>
+
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <select id="categorySelect" name="categorySelect" class="form-control">
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="row" style="display: flex; justify-content: flex-end;">
+                <a class="custom-button" id="saveOriginDestination" style="margin: 0; width: 100%;">
+                    <i class="fa fa-save"></i> &nbsp; Salvar
+                </a>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="pluggyId" name="pluggyId" value="@Model.PluggyId" />
+</form>
