@@ -1,6 +1,5 @@
 ﻿using Abp.Domain.Services;
 using Flurl.Http;
-using Newtonsoft.Json;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using System;
 using System.Threading.Tasks;
@@ -52,6 +51,24 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
             return result;
         }
+
+        #endregion
+
+        #region Transactions Pluggy 
+        
+        public async Task<ResultPluggyTransactions> PluggyGetTransactions(string accountId, DateTime DateInitial, DateTime DateEnd)
+        {
+            string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId, DateInitial.ToString("yyyy-MM-dd"), DateEnd.ToString("yyyy-MM-dd"));
+            var xApiKey = await PluggyGenerateApiKey();
+            
+            var result = await url
+                .WithHeader("X-API-KEY", xApiKey)
+                .WithHeader("Accept", "application/json")
+                .GetJsonAsync<ResultPluggyTransactions>();
+
+            return result;
+        }
+
 
         #endregion
     }
