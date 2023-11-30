@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
+using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
@@ -14,11 +15,13 @@ namespace Prosperium.Management.Web.Controllers
     {
         private readonly IAccountAppService _accountsAppService;
         private readonly ITransactionAppService _transactionAppService;
+        private readonly PluggyManager _pluggyManager;
 
-        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService)
+        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService, PluggyManager pluggyManager)
         {
             _accountsAppService = accountsAppService;
             _transactionAppService = transactionAppService;
+            _pluggyManager = pluggyManager;
         }
 
         public IActionResult Index()
@@ -71,6 +74,16 @@ namespace Prosperium.Management.Web.Controllers
             var resultado = new { gastos, ganhos };
 
             return Json(resultado);
+        }
+
+        [HttpGet]
+        [Route("PluggyGetAccessToken")]
+        public async Task<IActionResult> PluggyGetAccessToken()
+        {
+            var accessToken = await _pluggyManager.PluggyCreateConnectToken();
+            var result = new { accessToken };
+
+            return Json(result);    
         }
     }
 }

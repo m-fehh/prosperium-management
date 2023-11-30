@@ -187,6 +187,50 @@ $(document).on('click', '#instituicao', function (e) {
 
 });
 
+// Pluggy Connection
+const initPluggyConnect = async () => {
+    try {
+        const accessToken = await getPluggyAccessToken();
+
+        const pluggyConnect = new PluggyConnect({
+            connectToken: accessToken,
+            includeSandbox: true,
+        });
+
+        return new Promise((resolve, reject) => {
+            pluggyConnect.init({
+                onSuccess: resolve,
+                onError: reject,
+            });
+        });
+    } catch (error) {
+        console.error('Erro ao inicializar o PluggyConnect:', error);
+        throw error;
+    }
+};
+
+$(document).on('click', '#bnt-adicionar-conta-pluggy', async function () {
+    try {
+        const itemData = await initPluggyConnect();
+        console.log("itemData", itemData);
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+const getPluggyAccessToken = async () => {
+    try {
+        const response = await fetch('/App/Accounts/PluggyGetAccessToken');
+        const data = await response.json();
+
+        return data.result.accessToken;
+    } catch (error) {
+        console.error('Erro ao obter o Access Token:', error);
+        throw error;
+    }
+};
+
+
 // ABP
 (function ($) {
     var _accountService = abp.services.app.account,

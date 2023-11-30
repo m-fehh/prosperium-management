@@ -21,7 +21,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
+<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.17.9/tagify.css">
@@ -38,6 +40,21 @@
         text-align: left;
         width: 100%;
         margin-top: -20px;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #FF8C00;
+        padding-top: 30px;
+        display: flex;
+        font-weight: bold;
+    }
+
+    .title {
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 10px 0 30px;
     }
 
     .custom-tagify {
@@ -74,24 +91,61 @@
         border-color: red;
     }
 
-    h2 {
-        font-size: 24px;
-        color: #333;
-        margin-bottom: 50px;
-        text-align: left;
-        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
-        padding: 30px 0;
-    }
-
     .custom-placeholder {
         font-size: 16px;
         color: #aaa;
     }
 
+    .datepicker {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+        .datepicker table {
+            width: 100%;
+        }
+
+        .datepicker th, .datepicker td {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .datepicker .datepicker-switch {
+            font-size: 18px;
+        }
+
+        .datepicker .datepicker-days table {
+            margin: 0;
+        }
+
+        .datepicker table tr td,
+        .datepicker table tr th {
+            border-radius: 0;
+        }
+
+            .datepicker table tr td span.active, .datepicker table tr td span.active.disabled, .datepicker table tr td span.active.disabled:hover, .datepicker table tr td span.active:hover {
+                background-color: #FF8C00 !important;
+                color: #fff !important;
+                background-image: none;
+            }
+
+            .datepicker table tr td span.focused, .datepicker table tr td span:hover {
+                background-color: #FF8C00 !important;
+                color: #fff !important;
+                background-image: none;
+                font-weight: 600;
+            }
+
+            .datepicker table tr td.active.active, .datepicker table tr td.active.disabled.active, .datepicker table tr td.active.disabled:active, .datepicker table tr td.active.disabled:hover.active, .datepicker table tr td.active.disabled:hover:active, .datepicker table tr td.active:active, .datepicker table tr td.active:hover.active, .datepicker table tr td.active:hover:active{
+                background-color: #FF8C00 !important;
+                background-image: none;
+            }
+
 </style>
 
 <div class="form-container" id="TransactionCreate">
     <h2>@ViewData["Title"]</h2>
+    <p class="title">Registre suas transações de maneira fácil e rápida, garantindo um controle eficaz dos seus movimentos financeiros, adaptado ao seu estilo de vida.</p>
 
     <form method="post">
         <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gasto')">

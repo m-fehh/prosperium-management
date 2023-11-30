@@ -69,6 +69,37 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return result;
         }
 
+        #endregion
+
+        #region Connector Pluggy 
+
+        public async Task<ResultPluggyConnector> PluggyGetConnectors()
+        {
+            var xApiKey = await PluggyGenerateApiKey();
+            var result = await PluggyConsts.urlConnectorPluggy
+                 .WithHeader("X-API-KEY", xApiKey)
+                .WithHeader("Accept", "application/json")
+                .GetJsonAsync<ResultPluggyConnector>();
+
+            return result;
+        }
+
+        #endregion
+
+        #region Account Pluggy 
+
+        public async Task<ResultPluggyAccounts> PluggyGetAccounts(string itemId)
+        {
+            string url = string.Format(PluggyConsts.urlListAccountsPluggy, itemId);
+            var xApiKey = await PluggyGenerateApiKey();
+
+            var result = await url
+                .WithHeader("X-API-KEY", xApiKey)
+                .WithHeader("Accept", "application/json")
+                .GetJsonAsync<ResultPluggyAccounts>();
+
+            return result;
+        }
 
         #endregion
     }

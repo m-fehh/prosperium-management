@@ -95,11 +95,13 @@ document.getElementById('parcela').addEventListener('change', calcularParcelas);
 
 document.addEventListener('DOMContentLoaded', function () {
     // Calendar
-    flatpickr("#data", {
-        enableTime: false,
-        dateFormat: "d/m/Y",
-        locale: "pt",
-        maxDate: "today",
+    $("#data").datepicker({
+        format: "dd/mm/yyyy",
+        startView: "days",
+        minViewMode: "days",
+        autoclose: true,
+        language: "pt-BR",
+        orientation: "bottom",
     });
 
     //Tags
