@@ -211,15 +211,17 @@
 
                 if (data.result.length > 0) {
                     data.result.forEach(function (card, index) {
+                        var typeAccount = (card.origin == 2) ? "Integração automática" : card.cardNumber;
+
                         cardHtml += `
                             <div class="col-6">
                                 <div class="card">
                                     <div class="card-content" style="cursor:pointer;">
                                         <div class="text-content">
-                                                                <div class="row" style="display: flex; justify-content:flex-start; align-items: center; justify-content: flex-start; width: 100%; padding: 0 10px;">
-                                                            <div class="col-11" style="margin-left: -15px;display: flex;padding-left: 30px;float: left; align-items: baseline;">
-                                                            <h3 style="font-size: 19px; font-weight: bold;">${card.cardName}</h3>
-                                                                    <p class="saldo-label" style="padding-left: 15px;">${card.cardNumber}</p>
+                                               <div class="row" style="display: flex; justify-content:flex-start; align-items: center; justify-content: flex-start; width: 100%; padding: 0 10px;">
+                                                   <div class="col-11" style="margin-left: -15px;display: flex;padding-left: 30px;float: left; align-items: center;">
+                                                    <h3 style="font-size: 19px; font-weight: bold;">${card.cardName}</h3>
+                                                        <p class="saldo-label" style="padding-left: 15px; font-size: 12px; color: #999;">${typeAccount}</p>
                                                 </div>
                                                 <div class="col-1">
                                                     <div class="icon" style="display: flex; gap: 10px;">

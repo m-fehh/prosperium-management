@@ -105,6 +105,7 @@ var monthYearInput;
                         }
                     } else {
                         var cardNumber = data.creditCard.cardNumber;
+                        var cardName = data.creditCard.cardName;
                         var parcelTransaction = data.currentInstallment;
                         var imageFullPath = abp.appPath + 'img/flags/' + data.creditCard.flagCard.iconPath;
 
@@ -113,8 +114,13 @@ var monthYearInput;
                                 <div>
                                     <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                                 </div>
-                                <div style="margin-left: 10px;">
-                                    <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} | Parcela: ${parcelTransaction}</span>
+                                <div style="margin-left: 20px;">
+                                    <div class="row">
+                                        <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} | Parcela: ${parcelTransaction}</span>
+                                    </div>
+                                    <div class="row">
+                                        <p class="saldo-label" style="font-size: 12px!important; color: #999;">${cardName}</p>
+                                    </div>
                                 </div>
                             </div>
                         `;
@@ -130,7 +136,7 @@ var monthYearInput;
 
                     if (data && data.name) {
                         return `
-                            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                            <div class="d-flex" style="display: flex; justify-content: start; margin-left: 20%; align-items: center;">
                                 <div>
                                     <img src="${imageFullPath}" style="padding: 10px;" width="50" />
                                 </div>

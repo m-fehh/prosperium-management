@@ -33,15 +33,18 @@
 </style>
 
 <div class="form-container" id="Category">
-    <h2>Categorias - Pluggy</h2>
-    <p class="title">Esta tela permite o mapeamento das categorias da Pluggy para as nossas, simplificando a integração.</p>
+    <h2>Origem-Destino</h2>
+    <p class="title"></p>
 
-    <table id="CategoriesTable" class="table table-striped table-bordered">
+    <table id="DestinationsTable" class="table table-striped table-bordered">
         <thead>
             <tr>
                 <th></th>
-                <th>Categoria</th>
-                <th>Descrição</th>
+                <th>Portal - Origem</th>
+                <th>Nome - Origem</th>
+                <th>Valor - Origem</th>
+                <th>Discriminator</th>
+                <th>Portal - Destino</th>
                 <th style="width: 150px">@L("Actions")</th>
             </tr>
         </thead>
@@ -49,7 +52,7 @@
     </table>
 </div>
 
-<div class="modal fade" id="CategoryEditModal" tabindex="-1" role="dialog" aria-labelledby="CategoryEditModalLabel" data-backdrop="static">
+<div class="modal fade" id="DestinationEditModal" tabindex="-1" role="dialog" aria-labelledby="DestinationEditModalLabel" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         </div>

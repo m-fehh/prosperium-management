@@ -14,6 +14,7 @@
         public const string urlListCategoriesPluggy= "https://api.pluggy.ai/categories";
         public const string urlListTransactionsPluggy= "https://api.pluggy.ai/transactions?accountId={0}&from={1}&to={2}";
         public const string urlListAccountsPluggy= "https://api.pluggy.ai/accounts?itemId={0}";
+        public const string urlItemPluggy= "https://api.pluggy.ai/items/{0}";
         public const string urlConnectorPluggy= "https://api.pluggy.ai/connectors";
     }
 }

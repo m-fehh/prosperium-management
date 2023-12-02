@@ -94,7 +94,7 @@
     <div class="modal-body">
         <div role="tabpanel" class="tab-pane container" id="select-category">
             <div class="row">
-                @foreach (var item in Model.Banks)
+                @foreach (var item in Model.Banks.Where(x => x.Origin == Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Manual))
                 {
                     <div class="col-md-12">
                         <div class="card institution-modal" data-banco-nome="@item.Name" data-banco-id="@item.Id" data-banco-imagem="@item.ImagePath" style="cursor: pointer;">

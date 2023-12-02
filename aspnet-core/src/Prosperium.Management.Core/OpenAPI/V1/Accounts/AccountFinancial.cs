@@ -31,5 +31,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         public ICollection<Transaction> Transactions { get; set; }
         public ICollection<CreditCard> CreditCards { get; set; }
         public bool IsActive { get; set; }
+        public AccountOrigin Origin { get; set; }   
+        public string PluggyItemId { get; set; }
+        public string PluggyAccountId { get; set; }
     }
 }

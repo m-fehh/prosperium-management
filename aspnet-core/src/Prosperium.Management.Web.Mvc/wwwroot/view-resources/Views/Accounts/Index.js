@@ -187,6 +187,8 @@ $(document).on('click', '#instituicao', function (e) {
 
 });
 
+const itemId = '';
+
 // Pluggy Connection
 const initPluggyConnect = async () => {
     try {
@@ -195,24 +197,40 @@ const initPluggyConnect = async () => {
         const pluggyConnect = new PluggyConnect({
             connectToken: accessToken,
             includeSandbox: true,
+            onSuccess: (itemData) => {
+                insertAccountPluggy(itemData.item.id);
+            },
+            onError: (error) => {
+                throw error;
+            },
         });
 
-        return new Promise((resolve, reject) => {
-            pluggyConnect.init({
-                onSuccess: resolve,
-                onError: reject,
-            });
-        });
+        pluggyConnect.init();
+
     } catch (error) {
-        console.error('Erro ao inicializar o PluggyConnect:', error);
         throw error;
     }
 };
 
+function insertAccountPluggy(id) {
+    $.ajax({
+        url: 'Accounts/InsertAccountPluggy',
+        type: 'POST',
+        data: JSON.stringify(id), 
+        contentType: 'application/json',
+        success: function (response) {
+            location.reload(); 
+        },
+        error: function (error) {
+            console.error("Erro ao enviar POST request:", error);
+        }
+    });
+}
+
 $(document).on('click', '#bnt-adicionar-conta-pluggy', async function () {
     try {
-        const itemData = await initPluggyConnect();
-        console.log("itemData", itemData);
+        await initPluggyConnect();
+
     } catch (error) {
         console.error(error);
     }

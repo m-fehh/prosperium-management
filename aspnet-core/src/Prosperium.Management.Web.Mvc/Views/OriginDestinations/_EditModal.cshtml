@@ -84,7 +84,7 @@
             font-size: 24px;
         }
 
-    .labelCategory {
+    .labeldestination {
         margin-bottom: 10px;
         color: #333;
         display: block;
@@ -97,19 +97,29 @@
 
 <form name="MappingOriginDestination" role="form" class="form-horizontal">
     <div class="modal-body">
-        <div role="tabpanel" class="tab-pane container" id="select-category">
+        <div role="tabpanel" class="tab-pane container" id="select-destination">
 
             <div class="row">
 
-                <label for="categorySelect" class="control-label col-12 labelCategory">Selecione uma Categoria:</label>
+                <label for="destinationSelect" class="control-label col-12 labeldestination">Selecione uma Destino:</label>
 
             </div>
             <div class="row">
                 <div class="col-12">
-                    <select id="categorySelect" name="categorySelect" class="form-control">
-                        @foreach (var category in Model.Categories)
+                    <select id="destinationSelect" name="destinationSelect" class="form-control">
+                        @if (Model.Categories != null)
                         {
-                            <option value="@category.Id">@category.Name</option>
+                            @foreach (var destination in Model.Categories)
+                            {
+                                <option value="@destination.Id">@destination.Name</option>
+                            }
+                        }
+                        else if (Model.Banks != null)
+                        {
+                            @foreach (var destination in Model.Banks)
+                            {
+                                <option value="@destination.Id">@destination.Name</option>
+                            }
                         }
                     </select>
                 </div>
@@ -119,6 +129,16 @@
                 <a class="custom-button" id="saveOriginDestination" style="margin: 0; width: 100%;">
                     <i class="fa fa-save"></i> &nbsp; Salvar
                 </a>
+            </div>
+
+            <div id="confirmacaoAlterarTodosModal" style="display: none;">
+                <div class="row" style="padding-top: 20px; display: flex; justify-content: center;">
+                    <p>Deseja alterar todos os itens com o mesmo nome?</p>
+                </div>
+                <div class="row" style="display: flex; gap: 20px; padding: 0; justify-content: center; margin:  0;">
+                    <button class="custom-button" id="AlterarTodos">Sim</button>
+                    <button class="custom-button" id="AlterarApenasEste">Não</button>
+                </div>
             </div>
         </div>
     </div>

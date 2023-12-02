@@ -1,27 +1,23 @@
 (function ($) {
-    var _categoriesService = abp.services.app.category,
+    var _originDestinationservice = abp.services.app.originDestination,
         l = abp.localization.getSource('Management'),
-        _$modal = $('#CategoryEditModal'),
-        _$table = $('#CategoriesTable');
+        _$modal = $('#DestinationEditModal'),
+        _$table = $('#DestinationsTable');
 
-
-    console.log("_categoriesService", _categoriesService);
-    console.log("_$table", _$table);
-
-    var _$categoriesTable = _$table.DataTable({
+    var _$DestinationsTable = _$table.DataTable({
         paging: true,
         serverSide: true,
         listAction: {
-            ajaxFunction: _categoriesService.getAllCategoriesPluggy,
+            ajaxFunction: _originDestinationservice.getAllOriginDestination,
             inputFilter: function () {
-                return $('#CategorySearchForm').serializeFormToObject(true);
+                return $('#destinationSearchForm').serializeFormToObject(true);
             }
         },
         buttons: [
             {
                 name: 'refresh',
                 text: '<i class="fas fa-redo-alt"></i>',
-                action: () => _$categoriesTable.draw(false)
+                action: () => _$DestinationsTable.draw(false)
             }
         ],
         responsive: {
@@ -37,16 +33,31 @@
             },
             {
                 targets: 1,
-                data: 'category.pluggy_Category_Name_Translated',
+                data: 'originDestinations.originPortal',
                 sortable: false
             },
             {
                 targets: 2,
-                data: 'category.pluggy_Description_Translated',
-                sortable: false,
+                data: 'originDestinations.originValueName',
+                sortable: false
             },
             {
                 targets: 3,
+                data: 'originDestinations.originValueId',
+                sortable: false
+            },
+            {
+                targets: 4,
+                data: 'originDestinations.discriminator',
+                sortable: false
+            },
+            {
+                targets: 5,
+                data: 'originDestinations.destinationPortal',
+                sortable: false
+            },
+            {
+                targets: 6,
                 data: null,
                 sortable: false,
                 autoWidth: false,
@@ -55,7 +66,7 @@
                     console.log("piru", row);
 
                     return [
-                        `<button type="button" style="background: orange; border: 0; color: #fff;" class="btn btn-sm edit-category" data-category-pluggy-id="${row.category.id}" data-toggle="modal" data-target="#CategoryEditModal">
+                        `<button type="button" style="background: orange; border: 0; color: #fff;" class="btn btn-sm edit-destination" data-destination-pluggy-id="${row.originDestinations.id}" data-discriminator="${row.originDestinations.discriminator}" data-toggle="modal" data-target="#DestinationEditModal">
                             <i class="fas fa-pencil-alt"></i>
                         </button>`
                     ].join('');
@@ -65,19 +76,20 @@
     });
 
 
-    $(document).on('click', '.edit-category', function (e) {
-        var pluggyId = $(this).data('category-pluggy-id');
+    $(document).on('click', '.edit-destination', function (e) {
+        var pluggyId = $(this).data('destination-pluggy-id');
+        var discriminator = $(this).data('discriminator');
 
         console.log(pluggyId);
 
         e.preventDefault();
         abp.ajax({
-            url: abp.appPath + 'App/OriginDestinations/GetDestinations',
+            url: abp.appPath + 'App/originDestinations/GetDestinations',
             type: 'GET',
-            data: { pluggyId: pluggyId },
+            data: { pluggyId: pluggyId, discriminator: discriminator },
             dataType: 'html',
             success: function (content) {
-                $('#CategoryEditModal div.modal-content').html(content);
+                $('#DestinationEditModal div.modal-content').html(content);
             },
             error: function (e) {
             }
@@ -87,18 +99,34 @@
     $(document).on('click', '#saveOriginDestination', function (e) {
         e.preventDefault();
 
+        $("#confirmacaoAlterarTodosModal").show();
+
         var pluggyId = $("#pluggyId").val();
-        var selectedCategoryId = $('#categorySelect').val();
+        var selecteddestinationId = $('#destinationSelect').val();
 
-        console.log("pluggyId", +pluggyId);
-        console.log("selectedCategoryId", +selectedCategoryId);
+        $("#AlterarTodos").click(function () {
+            _originDestinationservice.updateDestinationValue(pluggyId, selecteddestinationId, true).done(function () {
+                _$modal.modal('hide');
+                abp.notify.info(l('SavedSuccessfully'));
+                _$DestinationsTable.ajax.reload();
+            }).always(function () {
+                abp.ui.clearBusy(_$modal);
+            });
 
-        _categoriesService.updateCategoryPluggy(+pluggyId, +selectedCategoryId).done(function () {
-            _$modal.modal('hide');
-            abp.notify.info(l('SavedSuccessfully'));
-            _$categoriesTable.ajax.reload();
-        }).always(function () {
-            abp.ui.clearBusy(_$modal);
+            $("#confirmacaoAlterarTodosModal").hide();
+        });
+
+        $("#AlterarApenasEste").click(function () {
+            _originDestinationservice.updateDestinationValue(pluggyId, selecteddestinationId, false).done(function () {
+                _$modal.modal('hide');
+                abp.notify.info(l('SavedSuccessfully'));
+                _$DestinationsTable.ajax.reload();
+            }).always(function () {
+                abp.ui.clearBusy(_$modal);
+            });
+
+            $("#confirmacaoAlterarTodosModal").hide();
         });
     });
+
 })(jQuery);

@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using Newtonsoft.Json;
+using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
 {
@@ -31,5 +32,8 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
         [JsonIgnore]
         public ICollection<TransactionDto> Transactions { get; set; }
         public bool IsActive { get; set; }
+        public AccountOrigin Origin { get; set; }
+        public string PluggyItemId { get; set; }
+        public string PluggyCreditCardId { get; set; }
     }
 }

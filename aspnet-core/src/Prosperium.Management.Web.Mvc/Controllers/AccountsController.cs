@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Abp.UI;
+using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
+using Prosperium.Management.OriginDestinations;
 using Prosperium.Management.Web.Models.Accounts;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,12 +17,14 @@ namespace Prosperium.Management.Web.Controllers
     {
         private readonly IAccountAppService _accountsAppService;
         private readonly ITransactionAppService _transactionAppService;
+        private readonly IOriginDestinationAppService _originDestinationAppService;
         private readonly PluggyManager _pluggyManager;
 
-        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService, PluggyManager pluggyManager)
+        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService, IOriginDestinationAppService originDestinationAppService, PluggyManager pluggyManager)
         {
             _accountsAppService = accountsAppService;
             _transactionAppService = transactionAppService;
+            _originDestinationAppService = originDestinationAppService;
             _pluggyManager = pluggyManager;
         }
 
@@ -41,6 +45,8 @@ namespace Prosperium.Management.Web.Controllers
         [Route("GetAccounts")]
         public async Task<IActionResult> GetAccounts(bool isActive)
         {
+            // Busca as contas da Pluggy
+
             var allAccounts = await _accountsAppService.GetAllListAsync();
             allAccounts = allAccounts.Where(x => x.IsActive == isActive).ToList();
 
@@ -83,7 +89,15 @@ namespace Prosperium.Management.Web.Controllers
             var accessToken = await _pluggyManager.PluggyCreateConnectToken();
             var result = new { accessToken };
 
-            return Json(result);    
+            return Json(result);
+        }
+
+        [HttpPost]
+        [Route("InsertAccountPluggy")]
+        public async Task InsertAccountPluggy([FromBody] string itemId)
+        {
+            await _accountsAppService.PluggyCreateAccount(itemId);
+
         }
     }
 }

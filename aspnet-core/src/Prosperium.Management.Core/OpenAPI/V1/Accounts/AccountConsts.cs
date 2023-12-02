@@ -11,5 +11,11 @@
             Indefinido = 5,
             Benefícios = 6
         }
+
+        public enum AccountOrigin
+        {
+            Manual = 1,
+            Pluggy = 2
+        }
     }
 }

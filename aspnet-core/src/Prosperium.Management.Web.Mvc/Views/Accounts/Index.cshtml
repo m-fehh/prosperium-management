@@ -99,7 +99,7 @@
     }
 
     .card {
-        background: #f2f4f8;
+        background: #f8f8f2;
         border: 1px solid #ddd;
         padding: 10px;
         margin: 10px;
@@ -110,6 +110,7 @@
         align-items: center;
         justify-content: space-around;
     }
+
 
     .icon {
         font-size: 36px;
@@ -251,15 +252,21 @@
                     try {
                         var account = data.result[index];
                         account.balanceAvailable = await CurrentBalancePerTransaction(account.id, account.balanceAvailable);
+                        
+                        console.log(account.origin);
+
+                        var typeAccount = (account.origin == 2) ? "Automática" : "Manual";
 
                         cardHtml += `<div class="col-6">
-                                            <div class="card">
+                                                    <div class="card">
                                                 <div class="card-content" style="cursor:pointer;">
                                                     <div class="text-content">
                                                         <div class="row" style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
-                                                            <div class="col-10" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center;">
-                                                                <h3 style="font-size: 19px; font-weight: bold;">${account.accountNickname}</h3>
-                                                                <p class="saldo-label" style="padding-left: 15px; font-size: 12px; color: #999;">Tipo de Conta: ${getAccountTypeName(account.accountType)}</p>
+                                                                <div class="col-10" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center; flex-direction: column;">
+                                                                    <div class="row" style="display: flex; align-items: center;">
+                                                                    <h3 style="font-size: 19px; font-weight: bold;">${account.accountNickname}</h3>
+                                                                        <p class="saldo-label" style="padding-left: 15px; font-size: 12px; color: #999;">${getAccountTypeName(account.accountType)} - ${typeAccount}</p>
+                                                                </div>
                                                             </div>
                                                             <div class="col-2" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center;">
                                                                 <div class="icon">

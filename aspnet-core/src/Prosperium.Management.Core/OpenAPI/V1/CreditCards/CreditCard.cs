@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Transactions;
+using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.CreditCards
 {
@@ -31,5 +32,8 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         public int DueDay { get; set; }
         public ICollection<Transaction> Transactions { get; set; }
         public bool IsActive { get; set; }
+        public AccountOrigin Origin { get; set; }
+        public string PluggyItemId { get; set; }
+        public string PluggyCreditCardId { get; set; }
     }
 }

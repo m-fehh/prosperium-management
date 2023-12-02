@@ -1591,43 +1591,12 @@ namespace Prosperium.Management.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.ToTable("Pxp_Banks");
-                });
-
-            modelBuilder.Entity("Prosperium.Management.ExternalServices.Pluggy.Models.PluggyCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Pluggy_Category_Id")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pluggy_Category_Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pluggy_Category_Name_Translated")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pluggy_Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pluggy_Description_Translated")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Pluggy_Id")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("Prosperium_Category_Id")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pxp_Pluggy_Categories");
                 });
 
             modelBuilder.Entity("Prosperium.Management.MultiTenancy.Tenant", b =>
@@ -1738,6 +1707,15 @@ namespace Prosperium.Management.Migrations
                     b.Property<bool>("MainAccount")
                         .HasColumnType("bit");
 
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PluggyAccountId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PluggyItemId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 
@@ -1815,6 +1793,15 @@ namespace Prosperium.Management.Migrations
 
                     b.Property<decimal>("Limit")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PluggyCreditCardId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PluggyItemId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
@@ -1975,6 +1962,40 @@ namespace Prosperium.Management.Migrations
                     b.HasIndex("CreditCardId");
 
                     b.ToTable("Pxp_Transactions");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OriginDestinations.OriginDestination", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DestinationPortal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationValueId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DestinationValueName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginPortal")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginValueId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OriginValueName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pxp_OriginDestination");
                 });
 
             modelBuilder.Entity("Abp.Application.Features.EditionFeatureSetting", b =>

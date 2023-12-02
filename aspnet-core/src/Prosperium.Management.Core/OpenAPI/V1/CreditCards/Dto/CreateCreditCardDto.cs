@@ -3,6 +3,7 @@ using Abp.Domain.Entities;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
 {
@@ -19,5 +20,6 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
         public decimal Limit { get; set; }
         public int DueDay { get; set; }
         public bool IsActive { get; set; }
+        public AccountOrigin Origin { get; set; }
     }
 }

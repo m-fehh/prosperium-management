@@ -1,6 +1,4 @@
-﻿using Abp.Domain.Entities;
-using Prosperium.Management.ExternalServices.Pluggy.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
 {

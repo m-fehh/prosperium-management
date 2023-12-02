@@ -11,8 +11,7 @@ using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Tags;
-using Prosperium.Management.ExternalServices.Pluggy.Dtos;
-using Prosperium.Management.ExternalServices.Pluggy.Models;
+using Prosperium.Management.OriginDestinations;
 
 namespace Prosperium.Management.EntityFrameworkCore
 {
@@ -26,7 +25,7 @@ namespace Prosperium.Management.EntityFrameworkCore
         public DbSet<FlagCard> Flags { get; set; }
         public DbSet<CreditCard> CreditCards { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<PluggyCategory> PluggyCategories { get; set; }
+        public DbSet<OriginDestination> OriginDestinations { get; set; }
 
         public ManagementDbContext(DbContextOptions<ManagementDbContext> options)
             : base(options)

@@ -54,7 +54,7 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
             var bank = _context.Banks.IgnoreQueryFilters().FirstOrDefault(x => x.Name == name && x.ImagePath == image);
             if (bank == null)
             {
-                bank = new Banks.Bank { Name = name, ImagePath = image };
+                bank = new Banks.Bank { Name = name, ImagePath = image, Origin = OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Manual };
                 _context.Banks.Add(bank);
             }
         }

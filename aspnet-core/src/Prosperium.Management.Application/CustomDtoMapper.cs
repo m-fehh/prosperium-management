@@ -3,7 +3,6 @@ using Prosperium.Management.Authorization.Roles;
 using Prosperium.Management.Authorization.Users;
 using Prosperium.Management.Banks;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
-using Prosperium.Management.ExternalServices.Pluggy.Models;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Categories;
@@ -37,7 +36,6 @@ namespace PayMetrix
             configuration.CreateMap<CreditCard, CreditCardDto>().ReverseMap();
             configuration.CreateMap<CreditCard, CreateCreditCardDto>().ReverseMap();
             configuration.CreateMap<FlagCard, FlagCardDto>().ReverseMap();
-            configuration.CreateMap<PluggyCategory, CategoryPluggyDto>().ReverseMap();
 
             configuration.CreateMap<Role, RoleDto>().ReverseMap();
             configuration.CreateMap<User, UserDto>().ReverseMap();

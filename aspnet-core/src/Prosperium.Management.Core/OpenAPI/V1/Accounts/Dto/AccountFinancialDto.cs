@@ -28,5 +28,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
         public ICollection<CreateTransactionDto> Transactions { get; set; }
         public ICollection<CreditCardDto> CreditCards { get; set; }
         public bool IsActive { get; set; }
+        public AccountOrigin Origin { get; set; }
+        public string PluggyItemId { get; set; }
+        public string PluggyAccountId { get; set; }
     }
 }
