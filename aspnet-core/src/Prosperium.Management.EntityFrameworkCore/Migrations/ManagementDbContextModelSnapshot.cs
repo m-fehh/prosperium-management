@@ -1935,6 +1935,9 @@ namespace Prosperium.Management.Migrations
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
 
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
                     b.Property<string>("PaymentTerm")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -1944,6 +1947,9 @@ namespace Prosperium.Management.Migrations
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("PluggyTransactionId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
@@ -2259,7 +2265,7 @@ namespace Prosperium.Management.Migrations
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
                         .WithMany("CreditCards")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Flags.FlagCard", "FlagCard")
@@ -2296,7 +2302,7 @@ namespace Prosperium.Management.Migrations
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
                         .WithMany("Transactions")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Categories.Category", "Categories")
                         .WithMany()
@@ -2306,8 +2312,7 @@ namespace Prosperium.Management.Migrations
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", "CreditCard")
                         .WithMany("Transactions")
-                        .HasForeignKey("CreditCardId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("CreditCardId");
 
                     b.Navigation("Account");
 

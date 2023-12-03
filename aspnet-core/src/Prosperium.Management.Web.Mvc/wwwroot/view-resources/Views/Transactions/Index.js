@@ -537,7 +537,7 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
 
         _transactionService.create(transactionDto).done(function () {
             abp.notify.info(l('SavedSuccessfully'));
-            window.location.href = '/app/Extract';
+            window.location.href = 'Extract';
         }).fail(function (error) {
             console.error('Erro ao criar transação:', error);
         });

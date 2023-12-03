@@ -25,6 +25,7 @@
 }
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
 
 <style>
@@ -181,7 +182,7 @@
         </div>
     </div>
 
-    <div id="card-container" style="/* display: flex; justify-content: space-around; */ padding: 40px 10px;"></div>
+    <div id="card-container" style="padding: 40px 10px;"></div>
 </div>
 
 <script>
@@ -262,7 +263,7 @@
                                                 <div class="card-content" style="cursor:pointer;">
                                                     <div class="text-content">
                                                         <div class="row" style="display: flex; align-items: center; justify-content: flex-start; width: 100%;">
-                                                                <div class="col-10" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: center; flex-direction: column;">
+                                                                    <div class="col-10" style="margin-left: -15px; display: flex; padding-left: 30px; float: left; align-items: flex-start; flex-direction: column;">
                                                                     <div class="row" style="display: flex; align-items: center;">
                                                                     <h3 style="font-size: 19px; font-weight: bold;">${account.accountNickname}</h3>
                                                                         <p class="saldo-label" style="padding-left: 15px; font-size: 12px; color: #999;">${getAccountTypeName(account.accountType)} - ${typeAccount}</p>
@@ -289,6 +290,7 @@
                                                                     </div>
                                                                     <div class="dropdown-menu dropdown-menu-right">
                                                                         <button class="dropdown-item" data-conta-id="${account.id}" data-status-conta="${isActive}" id="bntChangeStatus">${textActive}</button>
+                                                                            <button class="dropdown-item" data-conta-id="${account.id}" data-conta-nome="${account.accountNickname}" id="bntExcluirConta">Excluir conta definitivamente</button>
                                                                     </div>
                                                                 </div>
                                                             </div>

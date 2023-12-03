@@ -18,24 +18,31 @@ h2 {
     color: #333;
 }
 
+.opcao-cartao-btn,
+.opcao-condicao-btn,
 .opcao-btn {
     display: inline-flex;
     align-items: center;
-    padding: 10px;
+    padding: 10px 30px;
     margin: 5px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    color: black;
+    font-weight: 500;
     transition: background-color 0.3s, color 0.3s;
 }
 
+    .opcao-cartao-btn:hover,
+    .opcao-condicao-btn:hover,
     .opcao-btn:hover {
-        background-color: #eee;
+        background-color: #f8f9fa;
     }
 
 .opcao-selecionada {
-    background-color: #FF8C00;
-    color: white;
+    color: orange;
+    font-weight: bolder;
+    border: 2px solid;
 }
 
 .campo-mes,
@@ -208,27 +215,7 @@ button {
     background-repeat: no-repeat;
 }
 
-.opcao-cartao-btn,
-.opcao-condicao-btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
 
-    .opcao-cartao-btn:hover,
-    .opcao-condicao-btn:hover {
-        background-color: #eee;
-    }
-
-.opcao-selecionada {
-    background-color: #FF8C00;
-    color: white;
-}
 
 .campo-tipo-cartao,
 .campo-condicoes {

@@ -216,10 +216,10 @@ function insertAccountPluggy(id) {
     $.ajax({
         url: 'Accounts/InsertAccountPluggy',
         type: 'POST',
-        data: JSON.stringify(id), 
+        data: JSON.stringify(id),
         contentType: 'application/json',
         success: function (response) {
-            location.reload(); 
+            location.reload();
         },
         error: function (error) {
             console.error("Erro ao enviar POST request:", error);
@@ -284,7 +284,7 @@ const getPluggyAccessToken = async () => {
 
         _accountService.create(account).done(function () {
             abp.notify.info(l('SavedSuccessfully'));
-            window.location.href = '/app/Accounts';
+            window.location.href = '/App/Accounts';
         }).fail(function (error) {
             console.error('Erro ao criar transação:', error);
         });
@@ -302,6 +302,29 @@ const getPluggyAccessToken = async () => {
             abp.notify.info(l('SavedSuccessfully'));
             window.location.reload();
         });
+    });
+
+    $(document).on('click', '#bntExcluirConta', function (e) {
+        e.preventDefault;
+
+        var accountId = $(this).data('conta-id');
+        var accountName = $(this).data('conta-nome');
+
+        abp.message.confirm(
+            abp.utils.formatString(
+                l('DeleteAccount'),
+                accountName),
+            null,
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    _accountService.delete(accountId).done(function () {
+                        abp.notify.info(l('SavedSuccessfully'));
+                        window.location.reload();
+                    });
+                }
+            }
+        );
+
     });
 })(jQuery);
 

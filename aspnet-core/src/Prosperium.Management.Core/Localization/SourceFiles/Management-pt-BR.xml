@@ -106,5 +106,6 @@
     <text name="RoleDeleteWarningMessage">A função {0} será excluída e desassociada de todos os usuários pertencentes a ela.</text>
     <text name="TenantDeleteWarningMessage">O Tenant {0} será excluído.</text>
     <text name="SearchWithThreeDot">Pesquisar...</text>
+    <text name="DeleteAccount">Ao confirmar, todos os dados associados à conta '{0}' serão perdidos de forma irreversível.</text>
   </texts>
 </localizationDictionary>

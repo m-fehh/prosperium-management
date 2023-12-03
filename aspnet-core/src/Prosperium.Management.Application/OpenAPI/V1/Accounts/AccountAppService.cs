@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.Banks;
@@ -97,6 +98,13 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             await _accountFinancialRepository.UpdateAsync(account);
         }
 
+        [HttpDelete("id")]
+        public async Task DeleteAsync(long id)
+        {
+            AccountFinancial searchAccount = await _accountFinancialRepository.FirstOrDefaultAsync(id);
+            await _accountFinancialRepository.DeleteAsync(searchAccount);
+        }
+
         #region Pluggy API 
 
         [HttpPost]
@@ -152,6 +160,13 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                 if (creditCard != null)
                 {
                     await _creditCardAppService.PluggyCreateCreditCard(creditCard, accountId);
+                    
+                }
+
+                // Capture all transactions
+                foreach (var getTransaction in account.Results)
+                {
+                    await _transactionAppService.CapturePluggyTransactionsAsync(getTransaction.Id, null, null);
                 }
 
                 #endregion

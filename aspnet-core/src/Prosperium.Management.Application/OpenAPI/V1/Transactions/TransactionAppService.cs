@@ -2,17 +2,26 @@
 using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.EntityFrameworkCore.Repositories;
 using Abp.Linq.Extensions;
 using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Prosperium.Management.ExternalServices.Pluggy;
+using Prosperium.Management.ExternalServices.Pluggy.Dtos;
+using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Categories;
+using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
+using Prosperium.Management.OriginDestinations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using System.Transactions;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions
@@ -23,24 +32,33 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IRepository<Transaction, long> _transactionRepository;
         private readonly IRepository<Category, long> _categoryRepository;
+        private readonly IRepository<AccountFinancial, long> _accountRepository;
+        private readonly IRepository<CreditCard, long> _creditCardRepository;
+        private readonly IRepository<OriginDestination> _originDestinationRepository;
+        private readonly PluggyManager _pluggyManager;
 
-        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<Category, long> categoryRepository)
+        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<Category, long> categoryRepository, IRepository<AccountFinancial, long> accountRepository, IRepository<CreditCard, long> creditCardRepository, IRepository<OriginDestination> originDestinationRepository, PluggyManager pluggyManager)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _transactionRepository = transactionRepository;
             _categoryRepository = categoryRepository;
+            _accountRepository = accountRepository;
+            _creditCardRepository = creditCardRepository;
+            _originDestinationRepository = originDestinationRepository;
+            _pluggyManager = pluggyManager;
         }
 
         [HttpPost]
         public async Task CreateAsync(CreateTransactionDto input)
         {
             var transaction = ObjectMapper.Map<Transaction>(input);
+            transaction.Origin = Accounts.AccountConsts.AccountOrigin.Manual;
 
             if (transaction.TransactionType == TransactionType.Gastos || transaction.TransactionType == TransactionType.Transferência)
             {
                 transaction.ExpenseValue = -Math.Abs(transaction.ExpenseValue);
 
-                if(transaction.TransactionType == TransactionType.Transferência)
+                if (transaction.TransactionType == TransactionType.Transferência)
                 {
                     var categoryTransfer = await _categoryRepository.FirstOrDefaultAsync(x => x.Name.Equals("Transferência"));
                     transaction.CategoryId = categoryTransfer.Id;
@@ -243,5 +261,70 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
             await _transactionRepository.DeleteAsync(searchTransaction);
         }
+
+        #region Pluggy API      
+
+        [HttpPost]
+        [Route("CapturePluggyTransactionsAsync")]
+        public async Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd)
+        {
+            ResultPluggyTransactions pluggyTransactions = await _pluggyManager.PluggyGetTransactions(accountId, dateInitial, dateEnd);
+
+            if (pluggyTransactions.Total > 0)
+            {
+                List<Transaction> transactionsAlreadySaved = await _transactionRepository.GetAllListAsync();
+                List<OriginDestination> originDestinations = await _originDestinationRepository.GetAllListAsync();
+
+                List<Transaction> insertPendingTransactions = new List<Transaction>();
+                var transactionsWithErrors = new List<string>();
+
+                foreach (var item in pluggyTransactions.Results)
+                {
+                    try
+                    {
+                        var isItemAlreadySaved = transactionsAlreadySaved.Any(x => x.PluggyTransactionId == item.Id);
+                        if (!isItemAlreadySaved)
+                        {
+                            long accountOrCardId = (item.IsCreditCardTransaction) ?
+                                await _creditCardRepository.GetAll().Where(x => x.PluggyCreditCardId == accountId).Select(x => x.Id).FirstOrDefaultAsync() :
+                                await _accountRepository.GetAll().Where(x => x.PluggyAccountId == accountId).Select(x => x.Id).FirstOrDefaultAsync();
+
+
+                            TransactionDto transactionDto = new TransactionDto
+                            {
+                                TransactionType = (item.Amount > 0) ? TransactionType.Ganhos : TransactionType.Gastos,
+                                ExpenseValue = Convert.ToDecimal(item.Amount),
+                                Description = item.Description,
+                                CategoryId = Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()),
+                                PaymentType = (item.Type == "CREDIT") ? PaymentType.Crédito : PaymentType.Débito,
+                                PaymentTerm = (item.IsCreditCardTransaction && item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente,
+                                AccountId = (!item.IsCreditCardTransaction) ? accountOrCardId : null,
+                                Installments = (item.IsCreditCardTransaction && item.CreditCardMetadata?.TotalInstallments > 1) ? item.CreditCardMetadata.TotalInstallments : 1,
+                                CurrentInstallment = (item.IsCreditCardTransaction && item.CreditCardMetadata.TotalInstallments > 1) ? $"{item.CreditCardMetadata.InstallmentNumber}/{item.CreditCardMetadata.TotalInstallments}" : "1/1",
+                                CreditCardId = (item.IsCreditCardTransaction) ? accountOrCardId : null,
+                                Date = item.Date,
+                                Origin = AccountConsts.AccountOrigin.Pluggy,
+                                PluggyTransactionId = item.Id
+                            };
+
+                            Transaction transactionToInsert = ObjectMapper.Map<Transaction>(transactionDto);
+                            insertPendingTransactions.Add(transactionToInsert);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        transactionsWithErrors.Add(item.Id);
+                    }
+                }
+
+                await _transactionRepository.InsertRangeAsync(insertPendingTransactions);
+                if (transactionsWithErrors.Count > 0)
+                {
+                    Logger.Error($"Transações com erros: {string.Join(", ", transactionsWithErrors)} - accountOrCardPluggyId: {accountId}");
+                }
+            }
+        }
+
+        #endregion
     }
 }

@@ -144,7 +144,7 @@ function formatarValor(elemento) {
 
         _cardService.create(cardDto).done(function () {
             abp.notify.info(l('SavedSuccessfully'));
-            window.location.href = '/app/CreditCard';
+            window.location.href = '/App/CreditCard';
         }).fail(function (error) {
              console.error('Erro ao criar transação:', error);
          });

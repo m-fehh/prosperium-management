@@ -56,9 +56,15 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         #region Transactions Pluggy 
         
-        public async Task<ResultPluggyTransactions> PluggyGetTransactions(string accountId, DateTime DateInitial, DateTime DateEnd)
+        public async Task<ResultPluggyTransactions> PluggyGetTransactions(string accountId, DateTime? dateInitial = null, DateTime? dateEnd = null)
         {
-            string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId, DateInitial.ToString("yyyy-MM-dd"), DateEnd.ToString("yyyy-MM-dd"));
+            string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId);
+
+            if (dateInitial.HasValue && dateEnd.HasValue)
+            {
+                url += $"&from={dateInitial.Value.ToString("yyyy-MM-dd")}&to={dateEnd.Value.ToString("yyyy-MM-dd")}";
+            }
+
             var xApiKey = await PluggyGenerateApiKey();
             
             var result = await url

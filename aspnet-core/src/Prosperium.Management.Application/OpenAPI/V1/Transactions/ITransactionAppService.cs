@@ -1,6 +1,7 @@
 ﻿using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,5 +16,6 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input);
         Task UpdateAsync(TransactionDto input);
         Task DeleteAsync(long id);
+        Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd);
     }
 }

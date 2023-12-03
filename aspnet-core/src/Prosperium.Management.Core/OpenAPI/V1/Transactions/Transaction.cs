@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
+using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions
 {
@@ -42,5 +43,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public CreditCard CreditCard { get; set; }
         public DateTime Date { get; set; }
         public ICollection<Tag> Tags { get; set; }
+        public AccountOrigin Origin { get; set; }
+        public string PluggyTransactionId { get; set; }
     }
 }
