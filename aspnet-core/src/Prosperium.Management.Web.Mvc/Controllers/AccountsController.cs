@@ -1,4 +1,5 @@
-﻿using Abp.UI;
+﻿using Abp.Extensions;
+using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.ExternalServices.Pluggy;
@@ -7,6 +8,7 @@ using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OriginDestinations;
 using Prosperium.Management.Web.Models.Accounts;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -72,12 +74,13 @@ namespace Prosperium.Management.Web.Controllers
         public async Task<IActionResult> GetValuesTotals(long accountId)
         {
             var allTransactions = await _transactionAppService.GetAllTransactionPerAccount(accountId);
-
+            var account = await _accountsAppService.GetAccountById(accountId);
 
             decimal gastos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue);
             decimal ganhos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue);
 
-            var resultado = new { gastos, ganhos };
+            decimal total = Math.Abs(account.BalanceAvailable) + Math.Abs(ganhos) - Math.Abs(gastos);
+            var resultado = new { gastos, ganhos, total };
 
             return Json(resultado);
         }

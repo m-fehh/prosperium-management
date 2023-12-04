@@ -107,6 +107,14 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return result;
         }
 
+        public async Task PluggyItemDeleteAsync(string itemId)
+        {
+            string url = string.Format(PluggyConsts.urlItemPluggy, itemId);
+            var xApiKey = await PluggyGenerateApiKey();
+
+             await url.WithHeader("X-API-KEY", xApiKey).WithHeader("Accept", "application/json").DeleteAsync();
+        }
+
         #endregion
 
         #region Account Pluggy 

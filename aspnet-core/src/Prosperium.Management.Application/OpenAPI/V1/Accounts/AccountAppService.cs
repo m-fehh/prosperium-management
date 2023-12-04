@@ -54,6 +54,14 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         }
 
         [HttpGet]
+        [Route("GetAccountById")]
+        public async Task<AccountFinancialDto> GetAccountById(long id)
+        {
+            var account = await _accountFinancialRepository.FirstOrDefaultAsync(x => x.Id == id);
+            return ObjectMapper.Map<AccountFinancialDto>(account);
+        }
+
+        [HttpGet]
         public async Task<List<AccountFinancialDto>> GetAllListAsync()
         {
             List<AccountFinancial> allAccounts = await _accountFinancialRepository.GetAll().Include(x => x.Bank).ToListAsync();
@@ -101,7 +109,25 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         [HttpDelete("id")]
         public async Task DeleteAsync(long id)
         {
-            AccountFinancial searchAccount = await _accountFinancialRepository.FirstOrDefaultAsync(id);
+            AccountFinancial searchAccount = await _accountFinancialRepository.GetAll()
+                .Include(x => x.CreditCards)
+                    .ThenInclude(x => x.Transactions)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (searchAccount.CreditCards.Count > 0)
+            {
+                foreach (var cards in searchAccount.CreditCards)
+                {
+                    await _creditCardAppService.DeleteAsync(cards.Id);
+                }
+            }
+
+            if (searchAccount.Origin == AccountOrigin.Pluggy)
+            {
+                await _pluggyManager.PluggyItemDeleteAsync(searchAccount.PluggyItemId);
+            }
+
             await _accountFinancialRepository.DeleteAsync(searchAccount);
         }
 
@@ -160,7 +186,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                 if (creditCard != null)
                 {
                     await _creditCardAppService.PluggyCreateCreditCard(creditCard, accountId);
-                    
+
                 }
 
                 // Capture all transactions

@@ -10,6 +10,7 @@ using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.Flags.Dto;
+using Prosperium.Management.OpenAPI.V1.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,12 +24,14 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
     public class CreditCardAppService : ManagementAppServiceBase, ICreditCardAppService
     {
         private readonly IRepository<CreditCard, long> _creditCardRepository;
+        private readonly ITransactionAppService _transactionAppService;
         private readonly IRepository<FlagCard, long> _flagCardRepository;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
 
-        public CreditCardAppService(IRepository<CreditCard, long> creditCardRepository, IRepository<FlagCard, long> flagCardRepository, IUnitOfWorkManager unitOfWorkManager)
+        public CreditCardAppService(IRepository<CreditCard, long> creditCardRepository, ITransactionAppService transactionAppService, IRepository<FlagCard, long> flagCardRepository, IUnitOfWorkManager unitOfWorkManager)
         {
             _creditCardRepository = creditCardRepository;
+            _transactionAppService = transactionAppService;
             _flagCardRepository = flagCardRepository;
             _unitOfWorkManager = unitOfWorkManager;
         }
@@ -104,6 +107,20 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
             }
         }
 
+        [HttpDelete]
+        public async Task DeleteAsync(long creditCardId)
+        {
+            var creditCard = await _creditCardRepository.FirstOrDefaultAsync(creditCardId);
+
+            // Remova manualmente as transações associadas ao cartão
+            foreach (var transaction in creditCard.Transactions.ToList())
+            {
+                await _transactionAppService.DeleteAsync(transaction.Id);
+            }
+
+            // Continue com a exclusão do cartão
+            await _creditCardRepository.DeleteAsync(creditCard);
+        }
         private async Task<(long Id, string FlagName)> CreateFlagFromPluggy(string input)
         {
             var allFlagsProsperium = await _flagCardRepository.GetAllListAsync();

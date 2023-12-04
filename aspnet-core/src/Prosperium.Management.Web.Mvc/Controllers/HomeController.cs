@@ -47,10 +47,13 @@ namespace Prosperium.Management.Web.Controllers
                     .ToList();
             }
 
-            decimal gastos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue);
-            decimal ganhos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue);
+            decimal gastos = Math.Abs(allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue));
+            decimal ganhos = Math.Abs(allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue));
+            decimal total = Math.Abs(ganhos) - Math.Abs(gastos * -1);
 
-            var resultado = new { gastos, ganhos };
+            string totalFormatted = total >= 0 ? $"R$ {total:N2}" : $"- R$ {Math.Abs(total):N2}";
+
+            var resultado = new { gastos, ganhos, totalFormatted };
 
             return Json(resultado);
         }
@@ -130,7 +133,7 @@ namespace Prosperium.Management.Web.Controllers
                     TransactionDate = t.Date,
                     Category = t.Categories.Name,
                     ImageCategory = t.Categories.IconPath,
-                    ExpenseValue = t.ExpenseValue,
+                    ExpenseValue = (t.ExpenseValue >= 0) ? $"R$ {t.ExpenseValue:N2}" : $"- R$ {Math.Abs(t.ExpenseValue):N2}",
                     TransactionType = t.TransactionType
                 });
 

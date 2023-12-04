@@ -30,6 +30,7 @@ namespace Prosperium.Management.Users.Dto
         public bool IsActive { get; set; }
 
         public string[] RoleNames { get; set; }
+        public int? TenantId { get; set; }
 
         [Required]
         [StringLength(AbpUserBase.MaxPlainPasswordLength)]

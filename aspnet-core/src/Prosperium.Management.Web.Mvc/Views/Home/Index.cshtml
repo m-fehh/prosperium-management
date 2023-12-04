@@ -199,15 +199,13 @@
             data: { monthYear: monthYearValue },
             dataType: 'json',
             success: function (data) {
-                var gastos = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2).replace('.', ',') : "R$ 0,00";
-                var ganhos = (data.result.ganhos !== undefined) ? "R$ " + Math.abs(data.result.ganhos).toFixed(2).replace('.', ',') : "R$ 0,00";
+                var gantos = "R$" + data.result.gastos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                var ganhos = "R$" + data.result.ganhos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                var total = data.result.totalFormatted;
 
-                var total = parseFloat(data.result.ganhos) - (parseFloat(data.result.gastos) * -1);
-                var totalString = (total < 0) ? "- R$ " + Math.abs(total).toFixed(2).replace('.', ',') : "R$ " + total.toFixed(2).replace('.', ',');
-
-                $('#gastosValue').text(gastos);
+                $('#gastosValue').text(gantos);
                 $('#ganhosValue').text(ganhos);
-                $('#totalValue').text(totalString);
+                $('#totalValue').text(total);
 
 
                 // Adicionando lógica para definir a borda e o ícone do card
@@ -313,7 +311,13 @@
             data: { monthYear: monthYearValue },
             dataType: 'json',
             success: function (data) {
-                renderCreditCardChart(data.result);
+                if (data.result.length > 0) {
+                    renderCreditCardChart(data.result);
+                }
+                else {
+                    var container = document.getElementById('progress-bar-container');
+                    container.innerHTML = '<p>Nenhuma transação encontrada para o mês/ano especificado.</p>';
+                }
             },
             error: function (error) {
                 console.error('Erro na requisição:', error);
@@ -332,28 +336,28 @@
         var imageFullPath = abp.appPath + 'img/categories/' + transaction.imageCategory;
 
         return `
-                                        <div class="card" style="height: 90px;">
-                                            <div class="card-content">
-                                                <div class="card-body d-flex align-items-center" style="width: 100%;">
-                                                         <div class="row" style="width: 100%; display: flex; align-items: center;">
-                                                            <div class="col-2" style="display: flex; justify-content: center;">
-                                                            <img src="${imageFullPath}" width="40" />
+                                            <div class="card" style="height: 90px;">
+                                                <div class="card-content">
+                                                    <div class="card-body d-flex align-items-center" style="width: 100%;">
+                                                             <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                                                <div class="col-2" style="display: flex; justify-content: center;">
+                                                                <img src="${imageFullPath}" width="40" />
+                                                            </div>
+                                                            <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
+                                                                <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.category}</p>
+                                                                        <p style="font-size: 13px; color: #999; margin: 0;">${transaction.expenseValue}</p>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                        <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.transactionDate)}</p>
+                                                            </div>
                                                         </div>
-                                                        <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
-                                                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.category}</p>
-                                                            <p style="font-size: 13px; color: #999; margin: 0;">${transaction.expenseValue >= 0 ? 'R$ ' + transaction.expenseValue.toFixed(2) : '-R$ ' + Math.abs(transaction.expenseValue).toFixed(2)}</p>
-                                                        </div>
-                                                        <div class="col-3">
-                                                                    <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.transactionDate)}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div>
+                                                        <div>
 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                            `;
+                                                `;
     }
 
     var myPieChart;
@@ -444,30 +448,30 @@
             var imageFullPath = abp.appPath + 'img/flags/' + card.logo;
             var progressBar =
                 `
-                        <div class="progress-card">
-                            <div class="card" style="height: 120px;">
-                                <div class="card-content">
-                                        <div class="card-body d-flex align-items-center" style="width: 100%; flex-direction: column;">
-                                        <div class="row" style="width: 100%; display: flex; align-items: center;">
-                                            <div class="col-1" style="display: flex; justify-content: center;">
-                                                <img src="${imageFullPath}" width="45" />
+                            <div class="progress-card">
+                                <div class="card" style="height: 120px;">
+                                    <div class="card-content">
+                                            <div class="card-body d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                                            <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                                <div class="col-1" style="display: flex; justify-content: center;">
+                                                    <img src="${imageFullPath}" width="45" />
+                                                </div>
+                                                <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
+                                                    <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${card.creditCard}</p>
+                                                    <p style="font-size: 13px; color: #999; margin: 0;">Usado: R$  ${Math.abs(card.valorGasto).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  - Limite: R$ ${card.limit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                </div>
+                                                 <div class="col-3">
+                                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">Vencimento: ${card.dueDate}/${monthYearValue}</p>
+                                                </div>
                                             </div>
-                                            <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
-                                                <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${card.creditCard}</p>
-                                                <p style="font-size: 13px; color: #999; margin: 0;">Usado: R$  ${Math.abs(card.valorGasto).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  - Limite: R$ ${card.limit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                            <div class="progress" role="progressbar" aria-label="${card.creditCard}" aria-valuenow="${card.progress}" aria-valuemin="0" aria-valuemax="100">
+                                                <div class="progress-bar" style="width: ${card.progress}%">${card.progress}%</div>
                                             </div>
-                                             <div class="col-3">
-                                                    <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">Vencimento: ${card.dueDate}/${monthYearValue}</p>
-                                            </div>
-                                        </div>
-                                        <div class="progress" role="progressbar" aria-label="${card.creditCard}" aria-valuenow="${card.progress}" aria-valuemin="0" aria-valuemax="100">
-                                            <div class="progress-bar" style="width: ${card.progress}%">${card.progress}%</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                            `
+                                `
 
             $('#progress-bar-container').append(progressBar);
         });

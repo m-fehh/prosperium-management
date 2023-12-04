@@ -64,8 +64,9 @@
         }
 
     .opcao-selecionada {
-        background-color: #FF8C00;
-        color: white;
+        color: orange;
+        font-weight: bolder;
+        border: 2px solid;
     }
 
     .custom-button {
@@ -163,7 +164,7 @@
         </div>
         <div class="col-6" style="display: flex; justify-content: space-around;">
             <a href="@Url.Action("CreateCard", "CreditCard")" class="custom-button" id="bnt-adicionar-conta">
-                <i class="fa fa-plus"></i> &nbsp; Adicionar novo cartão
+                <i class="fa fa-plus"></i> &nbsp; Adicionar cartão manualmente
             </a>
         </div>
     </div>
@@ -191,9 +192,6 @@
         var isActive = (valor == "ativos") ? true : false;
 
         UpdateCardValues(isActive);
-        if (isActive) {
-            $("#bnt-adicionar-conta").show();
-        }
     }
 
     function UpdateCardValues(isActive) {
@@ -269,22 +267,11 @@
 
                 else {
                     var textActive = (isActive) ? "ativo" : "inativo";
-
-                    console.log(!isActive);
-
-                    if (!isActive) {
-                        $("#bnt-adicionar-conta").hide();
-                    }
-
-
                     var emptyCardHtml = `
-                            <div class="row justify-content-center align-items-center" style="padding-bottom: 30px;">
+                                <div class="row justify-content-center align-items-center" style="padding-bottom: 30px;">
                                 <div class="col-md-10">
-                                    <div class="card shadow p-4 rounded text-center" style="height: 100%; border: 0.5px solid #FF8C00"">
-                                            <h3 style="font-size: 25px; font-weight: bold;">Parece que você ainda não tem nenhum cartão ${textActive}. &#128577;</h3>`;
-
-                    emptyCardHtml += ` <p class="lead"></p>
-                                           <p class="lead bm-2">Vamos começar adicionando um cartão!</p>`;
+                                    <div class="card text-center" style="height: 100%; padding: 30px 0;">
+                                        <h3 style="font-size: 18px; font-weight: bold;">Você não possui um cartão ${textActive} associado ao seu perfil.</h3>`;
 
                     emptyCardHtml += `</div> </div > </div>`;
                     cardContainer.append(emptyCardHtml);

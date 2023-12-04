@@ -2265,7 +2265,7 @@ namespace Prosperium.Management.Migrations
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
                         .WithMany("CreditCards")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Flags.FlagCard", "FlagCard")
@@ -2312,7 +2312,8 @@ namespace Prosperium.Management.Migrations
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.CreditCards.CreditCard", "CreditCard")
                         .WithMany("Transactions")
-                        .HasForeignKey("CreditCardId");
+                        .HasForeignKey("CreditCardId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Account");
 

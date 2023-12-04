@@ -249,11 +249,11 @@ var monthYearInput;
             data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredTags: tagId, filteredCategories: categoryId, filteredTypes: typeId },
             dataType: 'json',
             success: function (data) {
-                var gastosString = (data.result.gastos !== undefined) ? "R$ " + Math.abs(data.result.gastos).toFixed(2) : "R$ 0,00";
-                var ganhosString = (data.result.ganhos !== undefined) ? "R$ " + data.result.ganhos.toFixed(2) : "R$ 0,00";
+                var gantos = "R$" + data.result.gastos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                var ganhos = "R$" + data.result.ganhos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-                $('#gastosValue').text(gastosString);
-                $('#ganhosValue').text(ganhosString);
+                $('#gastosValue').text(gantos);
+                $('#ganhosValue').text(ganhos);
             },
             error: function (error) {
                 console.error('Erro na requisição:', error);

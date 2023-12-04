@@ -6,6 +6,8 @@ using Prosperium.Management.Authorization;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.Users;
 using Prosperium.Management.Web.Models.Users;
+using Abp.Domain.Repositories;
+using Prosperium.Management.MultiTenancy;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -13,17 +15,21 @@ namespace Prosperium.Management.Web.Controllers
     public class UsersController : ManagementControllerBase
     {
         private readonly IUserAppService _userAppService;
+        private readonly IRepository<Tenant> _tenantRepository;
 
-        public UsersController(IUserAppService userAppService)
+        public UsersController(IUserAppService userAppService, IRepository<Tenant> tenantRepository)
         {
             _userAppService = userAppService;
+            _tenantRepository = tenantRepository;
         }
 
         public async Task<ActionResult> Index()
         {
             var roles = (await _userAppService.GetRoles()).Items;
+            var tenants = await _tenantRepository.GetAllListAsync();
             var model = new UserListViewModel
             {
+                Tenants = tenants,
                 Roles = roles
             };
             return View(model);

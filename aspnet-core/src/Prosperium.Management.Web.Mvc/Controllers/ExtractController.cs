@@ -11,6 +11,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
+using Abp.Extensions;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -102,8 +103,8 @@ namespace Prosperium.Management.Web.Controllers
                     .ToList();
             }
 
-            decimal gastos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue);
-            decimal ganhos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue);
+            decimal gastos = Math.Abs(allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue));
+            decimal ganhos = Math.Abs(allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue));
 
             var resultado = new { gastos, ganhos };
 

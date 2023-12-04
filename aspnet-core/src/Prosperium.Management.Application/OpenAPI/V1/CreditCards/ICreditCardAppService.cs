@@ -13,6 +13,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
     {
         Task<List<CreditCardDto>> GetAllListAsync();
         Task<List<FlagCardDto>> GetAllListFlagsAsync();
+        Task DeleteAsync(long creditCardId);
         Task PluggyCreateCreditCard(PluggyAccount input, long accountId);
     }
 }

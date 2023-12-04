@@ -63,12 +63,14 @@ namespace Prosperium.Management.EntityFrameworkCore
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Account)
                 .WithMany(a => a.Transactions)
-                .HasForeignKey(t => t.AccountId);
+                .HasForeignKey(t => t.AccountId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.CreditCard)
                 .WithMany(c => c.Transactions)
-                .HasForeignKey(t => t.CreditCardId);
+                .HasForeignKey(t => t.CreditCardId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(t => t.Categories)
@@ -82,6 +84,12 @@ namespace Prosperium.Management.EntityFrameworkCore
                 .HasForeignKey(t => t.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<CreditCard>()
+                .HasMany(a => a.Transactions)
+                .WithOne(t => t.CreditCard)
+                .HasForeignKey(t => t.CreditCardId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<AccountFinancial>()
                 .HasMany(a => a.CreditCards)
                 .WithOne(c => c.Account)
@@ -91,7 +99,8 @@ namespace Prosperium.Management.EntityFrameworkCore
             modelBuilder.Entity<CreditCard>()
                 .HasOne(c => c.Account)
                 .WithMany(a => a.CreditCards)
-                .HasForeignKey(c => c.AccountId);
+                .HasForeignKey(c => c.AccountId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<AccountFinancial>()
                 .HasOne(a => a.Bank)

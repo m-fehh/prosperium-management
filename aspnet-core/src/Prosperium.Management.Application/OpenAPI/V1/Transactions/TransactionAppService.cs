@@ -295,7 +295,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                                 TransactionType = (item.Amount > 0) ? TransactionType.Ganhos : TransactionType.Gastos,
                                 ExpenseValue = Convert.ToDecimal(item.Amount),
                                 Description = item.Description,
-                                CategoryId = Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()),
+                                CategoryId = 11,
+                                //CategoryId = Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()),
                                 PaymentType = (item.Type == "CREDIT") ? PaymentType.Crédito : PaymentType.Débito,
                                 PaymentTerm = (item.IsCreditCardTransaction && item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente,
                                 AccountId = (!item.IsCreditCardTransaction) ? accountOrCardId : null,
@@ -317,7 +318,12 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                     }
                 }
 
-                await _transactionRepository.InsertRangeAsync(insertPendingTransactions);
+                using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
+                {
+                    await _transactionRepository.InsertRangeAsync(insertPendingTransactions);
+                    uow.Complete();
+                }
+
                 if (transactionsWithErrors.Count > 0)
                 {
                     Logger.Error($"Transações com erros: {string.Join(", ", transactionsWithErrors)} - accountOrCardPluggyId: {accountId}");
