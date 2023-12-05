@@ -7,7 +7,7 @@ namespace Prosperium.Management.Editions
 {
     public class EditionManager : AbpEditionManager
     {
-        public const string DefaultEditionName = "Standard";
+        public const string DefaultEditionName = "Basic, Advanced, Corporate";
 
         public EditionManager(
             IRepository<Edition> editionRepository,

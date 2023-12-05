@@ -114,6 +114,38 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
             AddCategoryAndSubcategory(true, "viagem.png", "Viagem", "Hospedagem", TransactionType.Gastos);
             AddCategoryAndSubcategory(true, "viagem.png", "Viagem", "Passagem", TransactionType.Gastos);
 
+            AddCategoryAndSubcategory(true, "ingressos.png", "Ingressos", "Estádios e arenas", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "ingressos.png", "Ingressos", "Museus e pontos turísticos", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "ingressos.png", "Ingressos", "Cinema, teatro e concertos", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "compras.png", "Compras", "Compra online", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "compras.png", "Compras", "Outros", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "jogos.png", "Jogatina", "Apostas", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "jogos.png", "Jogatina", "Outros", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "seguro.png", "Seguro", "Seguro de vida", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "seguro.png", "Seguro", "Seguro residencial", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "seguro.png", "Seguro", "Seguro saúde", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "seguro.png", "Seguro", "Outros", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "doacao.png", "Doação", "Doação", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "emprestimosFinanciamentos.png", "Empréstimos e financiamento", "Empréstimos e financiamento", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "emprestimosFinanciamentos.png", "Empréstimos e financiamento", "Atraso no pagamento", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "emprestimosFinanciamentos.png", "Empréstimos e financiamento", "Juros cobrados", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "emprestimosFinanciamentos.png", "Empréstimos e financiamento", "Financiamento", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "emprestimosFinanciamentos.png", "Empréstimos e financiamento", "Empréstimo", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "servicosTelecomunicao.png", "Serviços - Telecomunicação", "Telecomunicações - Internet", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "servicosTelecomunicao.png", "Serviços - Telecomunicação", "Telecomunicações - Celular", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "servicosTelecomunicao.png", "Serviços - Telecomunicação", "Telecomunicações - TV", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "servicosTelecomunicao.png", "Serviços - Telecomunicação", "Serviços - Educação", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "servicosTelecomunicao.png", "Serviços - Telecomunicação", "Serviços - Bilhetes", TransactionType.Gastos);
+
+            AddCategoryAndSubcategory(true, "obricacoes.png", "Obrigações legais", "Saldo bloqueado", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "obricacoes.png", "Obrigações legais", "Pensão alimentícia", TransactionType.Gastos);
+
 
             #endregion
 
@@ -139,6 +171,7 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
             AddCategoryAndSubcategory(true, "receitas.png", "Receita variável", "Restituição de impostos", TransactionType.Ganhos);
 
             AddCategoryAndSubcategory(true, "salario.png", "Salário", "Salário", TransactionType.Ganhos);
+            AddCategoryAndSubcategory(true, "salario.png", "Salário", "Aposentadoria", TransactionType.Ganhos);
             AddCategoryAndSubcategory(true, "salario.png", "Salário", "Pró-Labore", TransactionType.Ganhos);
 
             AddCategoryAndSubcategory(true, "transferencia.png", "Transferência", "Resgate", TransactionType.Ganhos);

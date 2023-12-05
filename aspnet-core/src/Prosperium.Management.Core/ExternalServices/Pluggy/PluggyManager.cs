@@ -1,7 +1,11 @@
 ﻿using Abp.Domain.Services;
+using Flurl;
 using Flurl.Http;
+using Newtonsoft.Json.Linq;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using System;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
@@ -49,13 +53,38 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                 .WithHeader("Accept", "application/json")
                 .GetJsonAsync<ResultPluggyCategories>();
 
+            foreach (var item in result.Results)
+            {
+                if (item.ParentDescription != null)
+                {
+                    item.ParentDescriptionTranslated = await TranslateTextAsync(item.ParentDescription, "en", "pt");
+                }
+            }
+
             return result;
+        }
+
+        private async Task<string> TranslateTextAsync(string text, string fromLanguage, string toLanguage)
+        {
+            string endpoint = $"https://translate.googleapis.com/translate_a/single";
+
+            var result = await endpoint
+                .SetQueryParam("client", "gtx")
+                .SetQueryParam("sl", fromLanguage)
+                .SetQueryParam("tl", toLanguage)
+                .SetQueryParam("dt", "t")
+                .SetQueryParam("q", text)
+                .GetJsonAsync<JArray>();
+
+            string translation = result?[0]?.FirstOrDefault()?.FirstOrDefault()?.ToString();
+
+            return translation;
         }
 
         #endregion
 
         #region Transactions Pluggy 
-        
+
         public async Task<ResultPluggyTransactions> PluggyGetTransactions(string accountId, DateTime? dateInitial = null, DateTime? dateEnd = null)
         {
             string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId);

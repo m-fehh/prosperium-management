@@ -60,7 +60,7 @@ namespace Prosperium.Management.OriginDestinations
                 var searchById = originDestination.Where(x => x.Id == pluggyId).FirstOrDefault();
                 if (changeAllNames)
                 {
-                    var allOriginDestinationByName = searchById.OriginValueName;
+                    var allOriginDestinationByName = searchById.OriginValueName.Split('-')[0];
                     var destinationToUpdate = originDestination.Where(c => c.OriginValueName.Contains(allOriginDestinationByName)).ToList();
                     foreach (var item in destinationToUpdate)
                     {
@@ -92,11 +92,6 @@ namespace Prosperium.Management.OriginDestinations
                     var isItemAlreadySaved = OriginDestinationsAlreadySaved.Any(x => x.OriginValueId == item.Id);
                     if (!isItemAlreadySaved)
                     {
-                        if (item.ParentDescription != null)
-                        {
-                            item.ParentDescriptionTranslated = culturaDestino.TextInfo.ToTitleCase(await TranslateTextAsync(item.ParentDescription, "en", "pt"));
-                        }
-
                         originDestination.Add(new OriginDestination
                         {
                             OriginPortal = "Pluggy",
@@ -157,21 +152,5 @@ namespace Prosperium.Management.OriginDestinations
         //    }
         //}
 
-        private async Task<string> TranslateTextAsync(string text, string fromLanguage, string toLanguage)
-        {
-            string endpoint = $"https://translate.googleapis.com/translate_a/single";
-
-            var result = await endpoint
-                .SetQueryParam("client", "gtx")
-                .SetQueryParam("sl", fromLanguage)
-                .SetQueryParam("tl", toLanguage)
-                .SetQueryParam("dt", "t")
-                .SetQueryParam("q", text)
-                .GetJsonAsync<JArray>();
-
-            string translation = result?[0]?.FirstOrDefault()?.FirstOrDefault()?.ToString();
-
-            return translation;
-        }
     }
 }

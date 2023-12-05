@@ -1,7 +1,6 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Abp.Application.Editions;
-using Abp.Application.Features;
 using Prosperium.Management.Editions;
 
 namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
@@ -22,31 +21,35 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
 
         private void CreateEditions()
         {
-            var defaultEdition = _context.Editions.IgnoreQueryFilters().FirstOrDefault(e => e.Name == EditionManager.DefaultEditionName);
-            if (defaultEdition == null)
-            {
-                defaultEdition = new Edition { Name = EditionManager.DefaultEditionName, DisplayName = EditionManager.DefaultEditionName };
-                _context.Editions.Add(defaultEdition);
-                _context.SaveChanges();
+            var editionNames = EditionManager.DefaultEditionName.Split(',');
 
-                /* Add desired features to the standard edition, if wanted... */
+            foreach (var editionName in editionNames)
+            {
+                var edition = _context.Editions.IgnoreQueryFilters().FirstOrDefault(e => e.Name == editionName.Trim());
+
+                if (edition == null)
+                {
+                    edition = new Edition { Name = editionName.Trim(), DisplayName = editionName.Trim() };
+                    _context.Editions.Add(edition);
+                    _context.SaveChanges();
+                }
             }
-        }
-
-        private void CreateFeatureIfNotExists(int editionId, string featureName, bool isEnabled)
-        {
-            if (_context.EditionFeatureSettings.IgnoreQueryFilters().Any(ef => ef.EditionId == editionId && ef.Name == featureName))
-            {
-                return;
-            }
-
-            _context.EditionFeatureSettings.Add(new EditionFeatureSetting
-            {
-                Name = featureName,
-                Value = isEnabled.ToString(),
-                EditionId = editionId
-            });
-            _context.SaveChanges();
         }
     }
 }
+
+        //private void CreateFeatureIfNotExists(int editionId, string featureName, bool isEnabled)
+        //{
+        //    if (_context.EditionFeatureSettings.IgnoreQueryFilters().Any(ef => ef.EditionId == editionId && ef.Name == featureName))
+        //    {
+        //        return;
+        //    }
+
+        //    _context.EditionFeatureSettings.Add(new EditionFeatureSetting
+        //    {
+        //        Name = featureName,
+        //        Value = isEnabled.ToString(),
+        //        EditionId = editionId
+        //    });
+        //    _context.SaveChanges();
+        //}
