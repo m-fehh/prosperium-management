@@ -13,6 +13,16 @@ using Prosperium.Management.Authentication.JwtBearer;
 using Prosperium.Management.Configuration;
 using Prosperium.Management.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
+using Abp.Threading;
+using Prosperium.Management.MultiTenancy;
+using System.Collections.Generic;
+using System.Linq;
+using Prosperium.Management.Jobs;
+using Abp.Quartz;
+using Quartz;
+using Castle.MicroKernel.Registration;
 
 namespace Prosperium.Management
 {
@@ -20,7 +30,8 @@ namespace Prosperium.Management
          typeof(ManagementApplicationModule),
          typeof(ManagementEntityFrameworkModule),
          typeof(AbpAspNetCoreModule)
-        ,typeof(AbpAspNetCoreSignalRModule)
+        , typeof(AbpAspNetCoreSignalRModule)
+        , typeof(AbpQuartzModule)
      )]
     public class ManagementWebCoreModule : AbpModule
     {
@@ -71,6 +82,10 @@ namespace Prosperium.Management
         {
             IocManager.Resolve<ApplicationPartManager>()
                 .AddApplicationPartsIfNotAddedBefore(typeof(ManagementWebCoreModule).Assembly);
+
+
+
+            IocManager.Resolve<SchedulerJob>().StartScheduler();
         }
     }
 }
