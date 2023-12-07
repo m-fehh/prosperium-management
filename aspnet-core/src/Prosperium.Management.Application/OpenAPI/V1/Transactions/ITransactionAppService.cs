@@ -16,6 +16,6 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input);
         Task UpdateAsync(TransactionDto input);
         Task DeleteAsync(long id);
-        Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd);
+        Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard);
     }
 }

@@ -178,6 +178,8 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                             accountId = accountToInsert.Id;
                             uow.Complete();
                         }
+
+                        await _transactionAppService.CapturePluggyTransactionsAsync(accountsBanking.Id, null, null, false);
                     }
                 }
                 #endregion
@@ -188,12 +190,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                 {
                     await _creditCardAppService.PluggyCreateCreditCard(creditCard, accountId);
 
-                }
-
-                // Capture all transactions
-                foreach (var getTransaction in account.Results)
-                {
-                    await _transactionAppService.CapturePluggyTransactionsAsync(getTransaction.Id, null, null);
                 }
 
                 #endregion

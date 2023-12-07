@@ -93,11 +93,15 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
                     PluggyCreditCardId = input.Id,
                 };
 
+                CreditCard cardToInsert = ObjectMapper.Map<CreditCard>(creditCardDto);
+
                 using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
                 {
-                    await _creditCardRepository.InsertAsync(ObjectMapper.Map<CreditCard>(creditCardDto));
+                    await _creditCardRepository.InsertAndGetIdAsync(cardToInsert);
                     uow.Complete();
                 }
+
+                await _transactionAppService.CapturePluggyTransactionsAsync(input.Id, null, null, true);
             }
         }
 

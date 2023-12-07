@@ -266,7 +266,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
         [HttpPost]
         [Route("CapturePluggyTransactionsAsync")]
-        public async Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd)
+        public async Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard)
         {
             ResultPluggyTransactions pluggyTransactions = await _pluggyManager.PluggyGetTransactions(accountId, dateInitial, dateEnd);
 
@@ -285,7 +285,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                         var isItemAlreadySaved = transactionsAlreadySaved.Any(x => x.PluggyTransactionId == item.Id);
                         if (!isItemAlreadySaved)
                         {
-                            long accountOrCardId = (item.IsCreditCardTransaction) ?
+                            long accountOrCardId = (isCreditCard) ?
                                 await _creditCardRepository.GetAll().Where(x => x.PluggyCreditCardId == accountId).Select(x => x.Id).FirstOrDefaultAsync() :
                                 await _accountRepository.GetAll().Where(x => x.PluggyAccountId == accountId).Select(x => x.Id).FirstOrDefaultAsync();
 
@@ -298,11 +298,11 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                                 CategoryId = 11,
                                 //CategoryId = Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()),
                                 PaymentType = (item.Type == "CREDIT") ? PaymentType.Crédito : PaymentType.Débito,
-                                PaymentTerm = (item.IsCreditCardTransaction && item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente,
-                                AccountId = (!item.IsCreditCardTransaction) ? accountOrCardId : null,
-                                Installments = (item.IsCreditCardTransaction && item.CreditCardMetadata?.TotalInstallments > 1) ? item.CreditCardMetadata.TotalInstallments : 1,
-                                CurrentInstallment = (item.IsCreditCardTransaction && item.CreditCardMetadata.TotalInstallments > 1) ? $"{item.CreditCardMetadata.InstallmentNumber}/{item.CreditCardMetadata.TotalInstallments}" : "1/1",
-                                CreditCardId = (item.IsCreditCardTransaction) ? accountOrCardId : null,
+                                PaymentTerm = (isCreditCard && item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente,
+                                AccountId = (!isCreditCard) ? accountOrCardId : null,
+                                Installments = (isCreditCard && item.CreditCardMetadata?.TotalInstallments > 1) ? item.CreditCardMetadata.TotalInstallments : 1,
+                                CurrentInstallment = (isCreditCard && item.CreditCardMetadata?.TotalInstallments > 1) ? $"{item.CreditCardMetadata.InstallmentNumber}/{item.CreditCardMetadata.TotalInstallments}" : "1/1",
+                                CreditCardId = (isCreditCard) ? accountOrCardId : null,
                                 Date = item.Date,
                                 Origin = AccountConsts.AccountOrigin.Pluggy,
                                 PluggyTransactionId = item.Id

@@ -31,7 +31,6 @@ namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
         public string Merchant { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public bool IsCreditCardTransaction => CreditCardMetadata != null;
     }
 
     public class PaymentData
