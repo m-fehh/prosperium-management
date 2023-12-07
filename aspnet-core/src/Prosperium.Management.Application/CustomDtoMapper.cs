@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using Prosperium.Management.Authorization.Roles;
 using Prosperium.Management.Authorization.Users;
-using Prosperium.Management.Banks;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+using Prosperium.Management.OpenAPI.V1.Banks;
+using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
+using Prosperium.Management.OpenAPI.V1.Customers;
+using Prosperium.Management.OpenAPI.V1.Customers.Dtos;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.Flags.Dto;
 using Prosperium.Management.OpenAPI.V1.Subcategories;
@@ -39,6 +42,11 @@ namespace PayMetrix
 
             configuration.CreateMap<Role, RoleDto>().ReverseMap();
             configuration.CreateMap<User, UserDto>().ReverseMap();
+
+            configuration.CreateMap<Customer, CustomerDto>().ReverseMap();
+            configuration.CreateMap<CustomerPhones, CustomerPhonesDto>().ReverseMap();
+            configuration.CreateMap<CustomerEmails, CustomerEmailsDto>().ReverseMap();
+            configuration.CreateMap<CustomerAddresses, CustomerAddressesDto>().ReverseMap();
         }
     }
 }

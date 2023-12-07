@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
-using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.Web.Models.OriginDestinations;

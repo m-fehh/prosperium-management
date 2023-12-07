@@ -1,13 +1,14 @@
 ﻿using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
-using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Prosperium.Management.Banks;
 using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+using Prosperium.Management.OpenAPI.V1.Banks;
+using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
+using Prosperium.Management.OpenAPI.V1.Customers;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using Prosperium.Management.OriginDestinations;
@@ -27,22 +28,22 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         private readonly IRepository<AccountFinancial, long> _accountFinancialRepository;
         private readonly IRepository<Bank, long> _banksRepository;
         private readonly IRepository<Category, long> _categoryRepository;
-        private IRepository<OriginDestination> _originDestinationRepository;
         private readonly ITransactionAppService _transactionAppService;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly PluggyManager _pluggyManager;
         private readonly ICreditCardAppService _creditCardAppService;
+        private readonly ICustomerAppService _customerAppService;
 
-        public AccountAppService(IRepository<AccountFinancial, long> accountFinancialRepository, IRepository<Bank, long> banksRepository, IRepository<Category, long> categoryRepository, IRepository<OriginDestination> originDestinationRepository, ITransactionAppService transactionAppService, IUnitOfWorkManager unitOfWorkManager, PluggyManager pluggyManager, ICreditCardAppService creditCardAppService)
+        public AccountAppService(IRepository<AccountFinancial, long> accountFinancialRepository, IRepository<Bank, long> banksRepository, IRepository<Category, long> categoryRepository, ITransactionAppService transactionAppService, IUnitOfWorkManager unitOfWorkManager, PluggyManager pluggyManager, ICreditCardAppService creditCardAppService, ICustomerAppService customerAppService)
         {
             _accountFinancialRepository = accountFinancialRepository;
             _banksRepository = banksRepository;
             _categoryRepository = categoryRepository;
-            _originDestinationRepository = originDestinationRepository;
             _transactionAppService = transactionAppService;
             _unitOfWorkManager = unitOfWorkManager;
             _pluggyManager = pluggyManager;
             _creditCardAppService = creditCardAppService;
+            _customerAppService = customerAppService;
         }
 
         [HttpGet]
@@ -196,13 +197,15 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                 }
 
                 #endregion
+                
+                await _customerAppService.PluggyCreateCustomer(itemId);
             }
         }
 
         private async Task<(long Id, string BankName)> CreateBankFromPluggy(string itemId)
         {
             var bankPluggy = await _pluggyManager.PluggyGetItemId(itemId);
-            var allBanksProsperium = await _banksRepository.GetAllListAsync();
+            var allBanksProsperium = await GetAllListBanksAsync();
 
             var isItemAlreadySaved = allBanksProsperium.Where(x => x.Name == bankPluggy.Connector.Name).FirstOrDefault();
             if (isItemAlreadySaved == null)
@@ -223,8 +226,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
             return (isItemAlreadySaved.Id, isItemAlreadySaved.Name);
         }
-
-
 
         private (string AgencyNumber, string AccountNumber) ExtractAgencyAndAccount(string apiString)
         {

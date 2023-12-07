@@ -1,13 +1,12 @@
 ﻿using Abp.Application.Services.Dto;
 using Abp.Domain.Entities;
-using Prosperium.Management.Banks;
-using System;
 using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
+using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 
 namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
 {

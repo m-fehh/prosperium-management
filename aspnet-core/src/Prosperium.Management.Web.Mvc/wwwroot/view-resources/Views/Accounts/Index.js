@@ -219,7 +219,7 @@ function insertAccountPluggy(id) {
         data: JSON.stringify(id),
         contentType: 'application/json',
         success: function (response) {
-            location.reload();
+
         },
         error: function (error) {
             console.error("Erro ao enviar POST request:", error);

@@ -1,4 +1,4 @@
-﻿using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+﻿using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using System.Collections.Generic;
 

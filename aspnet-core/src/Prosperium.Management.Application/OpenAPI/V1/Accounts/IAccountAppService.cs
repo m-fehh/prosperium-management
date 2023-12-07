@@ -1,5 +1,6 @@
 ﻿using Abp.Application.Services;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

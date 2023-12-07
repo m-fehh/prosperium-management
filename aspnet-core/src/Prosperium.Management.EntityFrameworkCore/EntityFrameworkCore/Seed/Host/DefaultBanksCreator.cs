@@ -1,5 +1,6 @@
 ﻿using Abp.MultiTenancy;
 using Microsoft.EntityFrameworkCore;
+using Prosperium.Management.OpenAPI.V1.Banks;
 using System.Linq;
 
 namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
@@ -54,7 +55,7 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
             var bank = _context.Banks.IgnoreQueryFilters().FirstOrDefault(x => x.Name == name && x.ImagePath == image);
             if (bank == null)
             {
-                bank = new Banks.Bank { Name = name, ImagePath = image, Origin = OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Manual };
+                bank = new Bank { Name = name, ImagePath = image, Origin = OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Manual };
                 _context.Banks.Add(bank);
             }
         }

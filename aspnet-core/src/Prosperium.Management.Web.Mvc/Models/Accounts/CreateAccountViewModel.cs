@@ -1,4 +1,4 @@
-﻿using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
+﻿using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
 using System.Collections.Generic;
 
 namespace Prosperium.Management.Web.Models.Accounts

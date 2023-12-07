@@ -1,6 +1,4 @@
-﻿using Abp.Extensions;
-using Abp.UI;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts;
