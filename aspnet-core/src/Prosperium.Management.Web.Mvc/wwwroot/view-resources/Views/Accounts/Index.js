@@ -18,8 +18,6 @@ function mostrarCamposAgenciaConta(bankName) {
 }
 
 function aplicarMascaras(banco) {
-    console.log(banco);
-
     switch (banco) {
         case 'Nubank':
             $('#agencia').mask('0000');
@@ -265,9 +263,6 @@ const getPluggyAccessToken = async () => {
 
         var account = _$form.serializeFormToObject();
 
-        console.log("Antes a mudança", account);
-
-        // Convertendo "on" para true e "off" para false
         account["MainAccount"] = account["MainAccount"] === "on";
 
         account["BankId"] = selectedBankId;
@@ -279,8 +274,6 @@ const getPluggyAccessToken = async () => {
             .replace(',', '.');
 
         account['BalanceAvailable'] = parseFloat(BalanceAvailableString).toFixed(2);
-
-        console.log("Após a mudança", account);
 
         _accountService.create(account).done(function () {
             abp.notify.info(l('SavedSuccessfully'));

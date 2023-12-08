@@ -330,8 +330,6 @@ $(document).on('click', '.card-modal', function (e) {
     var cardName = $(this).find('.card-title').text();
     var vencimentoCartao = $(this).data('vencimento');
 
-    console.log(integration);
-
     dataFaturaCartaoTransacao = vencimentoCartao;
     selectedCardId = cardId;
 
@@ -553,8 +551,6 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
         // Ajuste para o campo Date
         var dateParts = transactionDto['Date'].split('/');
         transactionDto['Date'] = new Date(`${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`);
-
-        console.log(transactionDto);
 
         _transactionService.create(transactionDto).done(function () {
             abp.notify.info(l('SavedSuccessfully'));

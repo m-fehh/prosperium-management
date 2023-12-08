@@ -88,7 +88,6 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.flag-modal', function (e) {
-        console.log("chegou");
         e.preventDefault();
 
         var FlagName = $(this).data('bandeira-nome');
@@ -133,8 +132,6 @@ function formatarValor(elemento) {
         cardDto['FlagCardId'] = selectedFlagId;
         cardDto['AccountId'] = selectedAccountId;
 
-        console.log(cardDto);
-
         var limitString = cardDto['Limit']
             .replace('R$', '')
             .replace(/\./g, '')
@@ -156,10 +153,6 @@ function formatarValor(elemento) {
 
         var cardId = $(this).data('cartao-id');
         var statusChange = $(this).data('status-cartao');
-
-        console.log("a", statusChange);
-        console.log("b", !statusChange);
-
         _cardService.statusChangeCard(cardId, !statusChange).done(function () {
             abp.notify.info(l('SavedSuccessfully'));
             window.location.reload();

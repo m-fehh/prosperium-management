@@ -31,16 +31,11 @@
             return $(this).data('tipo-id');
         }).get();
 
-
-        console.log(selectedCardIds);
-
         $('#selectedAccount').val(selectedAccountIds.join(','));
         $('#selectedCard').val(selectedCardIds.join(','));
         $('#selectedCategory').val(selectedCategoryIds.join(','));
         $('#selectedTag').val(selectedTagsIds.join(','));
         $('#selectedType').val(selectedTypeIds.join(','));
-
-        console.log("iu", $('#selectedTag').val());
 
         filter();
     });
@@ -48,7 +43,4 @@
     _$modal.on('shown.bs.modal', function () {
         _$form.find('input[type=text]:first').focus();
     });
-
-
-
 })(jQuery);

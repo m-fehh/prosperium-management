@@ -247,7 +247,6 @@
             dataType: 'json',
             success: function (data) {
                 if (data.result.length > 0) {
-                    console.log(data.result);
                     renderPieChart(data.result);
                     $('#chartMessage').hide();
                     $('.opcao-btn').show();  // Mostra os botões se houver resultados

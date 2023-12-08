@@ -63,8 +63,6 @@
                 autoWidth: false,
                 defaultContent: '',
                 render: (data, type, row, meta) => {
-                    console.log("piru", row);
-
                     return [
                         `<button type="button" style="background: orange; border: 0; color: #fff;" class="btn btn-sm edit-destination" data-destination-pluggy-id="${row.originDestinations.id}" data-discriminator="${row.originDestinations.discriminator}" data-toggle="modal" data-target="#DestinationEditModal">
                             <i class="fas fa-pencil-alt"></i>
@@ -79,8 +77,6 @@
     $(document).on('click', '.edit-destination', function (e) {
         var pluggyId = $(this).data('destination-pluggy-id');
         var discriminator = $(this).data('discriminator');
-
-        console.log(pluggyId);
 
         e.preventDefault();
         abp.ajax({
