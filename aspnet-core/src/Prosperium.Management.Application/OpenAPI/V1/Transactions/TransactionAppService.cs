@@ -292,8 +292,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
 
                             TransactionDto transactionDto = new TransactionDto
                             {
-                                TransactionType = (item.Amount > 0) ? TransactionType.Ganhos : TransactionType.Gastos,
-                                ExpenseValue = Convert.ToDecimal(item.Amount),
+                                TransactionType = (item.Amount > 0 && !isCreditCard) ? TransactionType.Ganhos : TransactionType.Gastos,
+                                ExpenseValue = (isCreditCard && item.Amount > 0) ? Convert.ToDecimal(item.Amount * -1) : Convert.ToDecimal(item.Amount),
                                 Description = item.Description,
                                 CategoryId = (!string.IsNullOrEmpty(item.CategoryId)) ? Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()) : await _categoryRepository.GetAll().Where(x => x.Name == "Outros").Select(x => x.Id).FirstOrDefaultAsync(),
                                 PaymentType = (item.Type == "CREDIT") ? PaymentType.Crédito : PaymentType.Débito,
