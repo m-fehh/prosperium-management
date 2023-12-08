@@ -1,5 +1,7 @@
 // Pega os meses subsequentes
 
+var l = abp.localization.getSource('Management');
+
 document.addEventListener('DOMContentLoaded', function () {
     var paymentTypeInput = document.querySelector('input[name="PaymentType"]:checked');
     var paymentTermInput = document.querySelector('input[name="PaymentTerm"]:checked');
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Adiciona uma opção vazia como placeholder
             var placeholderOption = document.createElement('option');
             placeholderOption.value = '';
-            placeholderOption.text = 'Selecione a fatura'; 
+            placeholderOption.text = 'Selecione a fatura';
             placeholderOption.classList.add('custom-placeholder');
 
             // Adiciona estilos diretamente ao placeholder
@@ -320,6 +322,7 @@ dataFaturaCartaoTransacao = '';
 $(document).on('click', '.card-modal', function (e) {
     e.preventDefault();
 
+    var integration = $(this).data('integration');
     var cardId = $(this).data('cartao-id');
     var imagePath = $(this).data('cartao-icon');
     var bankName = $(this).data('banco-name');
@@ -327,7 +330,7 @@ $(document).on('click', '.card-modal', function (e) {
     var cardName = $(this).find('.card-title').text();
     var vencimentoCartao = $(this).data('vencimento');
 
-    console.log(vencimentoCartao);
+    console.log(integration);
 
     dataFaturaCartaoTransacao = vencimentoCartao;
     selectedCardId = cardId;
@@ -337,7 +340,7 @@ $(document).on('click', '.card-modal', function (e) {
     $('#cartao').html(`
         <img src="${imageFullPath}" style="padding-bottom: 10px; margin-left: 10px;" width="40" />
         <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 5px;">${cardName}</span>
-        <p style="font-size: 13px; color: #999; margin: 0;">${cardNumber}</p>
+        <p style="font-size: 13px; color: #999; margin: 0;">${(integration != "Pluggy") ? cardNumber : l('AutomaticIntegration') }</p>
     `);
 
     $('#SelectCardModal').modal('hide');
@@ -381,36 +384,54 @@ $(document).on('click', '.categoria-modal', function (e) {
     var categoryIcon = $(this).data('categoria-icone');
 
     selectedCategoryId = categoryId;
+    var htmlCategories = '';
 
-    getSubcategories(categoryId, categoryIcon);
+    // Definir imageFullPath fora do escopo do if/else
+    var imageFullPath = abp.appPath + 'img/categories/' + categoryIcon;
 
-    // Remover o evento 'click' anterior da subcategoria
-    $(document).off('click', '.subcategoria');
+    if (categoriaSelecionadaTemp !== "Outros") {
+        getSubcategories(categoryId, categoryIcon);
 
-    $(document).on('click', '.subcategoria', function (e) {
-        e.preventDefault();
+        $(document).off('click', '.subcategoria');
+        $(document).on('click', '.subcategoria', function (e) {
+            e.preventDefault();
 
-        // Obter dados da subcategoria clicada
-        subcategoriaSelecionada = $(this).data('subcategoria');
+            subcategoriaSelecionada = $(this).data('subcategoria');
 
-        var imageFullPath = abp.appPath + 'img/categories/' + categoryIcon;
+            htmlCategories =
+                `
+                <div style="padding: 10px; display: flex; align-items: center; gap: 15px;">
+                    <img src="${imageFullPath}" style="padding-bottom: 10px;" width="40" />
+                    <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${categoriaSelecionadaTemp}</span>
+                    <p style="font-size: 13px; color: #999; margin: 0;">Subcategoria: ${subcategoriaSelecionada}</p>
+                </div>
+            `;
 
-        // Usar categoriaSelecionada e subcategoriaSelecionada conforme necessário
-        $('#categoria').html(`
+            // Restaurar as variáveis para futuros usos
+            categoriaSelecionada = '';
+            subcategoriaSelecionada = '';
+
+            $('#categoria').html(htmlCategories);
+            $('#SelectCategoryModal').modal('hide');
+        });
+    } else {
+        htmlCategories =
+            `
             <div style="padding: 10px; display: flex; align-items: center; gap: 15px;">
                 <img src="${imageFullPath}" style="padding-bottom: 10px;" width="40" />
                 <span style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${categoriaSelecionadaTemp}</span>
-                <p style="font-size: 13px; color: #999; margin: 0;">Subcategoria: ${subcategoriaSelecionada}</p>
             </div>
-        `);
+        `;
 
         // Restaurar as variáveis para futuros usos
         categoriaSelecionada = '';
         subcategoriaSelecionada = '';
 
+        $('#categoria').html(htmlCategories);
         $('#SelectCategoryModal').modal('hide');
-    });
+    }
 });
+
 
 function getSubcategories(categoryid, categoryIcon) {
     $.ajax({

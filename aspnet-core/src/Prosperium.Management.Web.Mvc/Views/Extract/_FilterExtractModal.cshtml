@@ -99,7 +99,7 @@
                                 <div class="card" data-conta-id="@account.Id" data-selected="false">
                                     <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
                                     <div class="card-body">
-                                        <p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: @account.AgencyNumber Conta: @account.AccountNumber</p>
+                                        <p style="font-size: 13px; color: #999; margin: 0;">Agência: @account.AgencyNumber Conta: @account.AccountNumber</p>
                                     </div>
                                 </div>
                             </div>
@@ -117,7 +117,14 @@
                                 <div class="card" data-cartao-id="@card.Id" data-selected="false">
                                     <img src="~/img/flags/@card.FlagCard.IconPath" width="40" alt="@card.CardName">
                                     <div class="card-body">
-                                        <p style="font-size: 13px; color: #999; margin: 0;">@card.CardNumber</p>
+                                        @if (card.Origin == Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Pluggy)
+                                        {
+                                            <p style="font-size: 13px; color: #999; margin: 0;">(Integração automática) - @card.CardName</p>
+                                        }
+                                        else
+                                        {
+                                            <p style="font-size: 13px; color: #999; margin: 0;">@card.CardNumber</p>
+                                        }
                                     </div>
                                 </div>
                             </div>

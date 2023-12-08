@@ -13,14 +13,17 @@ using Prosperium.Management.Authentication.JwtBearer;
 using Prosperium.Management.Configuration;
 using Prosperium.Management.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Prosperium.Management.Jobs;
+using Abp.Quartz;
 
 namespace Prosperium.Management
 {
     [DependsOn(
          typeof(ManagementApplicationModule),
          typeof(ManagementEntityFrameworkModule),
-         typeof(AbpAspNetCoreModule)
-        ,typeof(AbpAspNetCoreSignalRModule)
+         typeof(AbpAspNetCoreModule),
+         typeof(AbpQuartzModule),
+         typeof(AbpAspNetCoreSignalRModule)
      )]
     public class ManagementWebCoreModule : AbpModule
     {
@@ -71,6 +74,8 @@ namespace Prosperium.Management
         {
             IocManager.Resolve<ApplicationPartManager>()
                 .AddApplicationPartsIfNotAddedBefore(typeof(ManagementWebCoreModule).Assembly);
+
+            IocManager.Resolve<SchedulerJob>().StartScheduler();
         }
     }
 }

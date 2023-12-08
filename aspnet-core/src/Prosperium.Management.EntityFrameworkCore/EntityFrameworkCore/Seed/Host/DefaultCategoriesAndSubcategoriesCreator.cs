@@ -177,8 +177,10 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
             AddCategoryAndSubcategory(true, "transferencia.png", "Transferência", "Resgate", TransactionType.Ganhos);
             AddCategoryAndSubcategory(true, "transferencia.png", "Transferência", "Lançamento entre contas", TransactionType.Ganhos);
 
-
             #endregion
+
+            AddCategoryAndSubcategory(true, "outros.png", "Outros", "", TransactionType.Gastos);
+            AddCategoryAndSubcategory(true, "outros.png", "Outros", "", TransactionType.Ganhos);
 
             SaveChanges();
         }

@@ -104,10 +104,15 @@ var monthYearInput;
                             return '';
                         }
                     } else {
-                        var cardNumber = data.creditCard.cardNumber;
+                        var isPluggy = data.creditCard.origin === 2;
+
+                        var cardNumber = (!isPluggy) ? data.creditCard.cardNumber : data.creditCard.cardName;
                         var cardName = data.creditCard.cardName;
                         var parcelTransaction = data.currentInstallment;
                         var imageFullPath = abp.appPath + 'img/flags/' + data.creditCard.flagCard.iconPath;
+
+
+                        
 
                         return `
                             <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
@@ -119,7 +124,7 @@ var monthYearInput;
                                         <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} | Parcela: ${parcelTransaction}</span>
                                     </div>
                                     <div class="row">
-                                        <p class="saldo-label" style="font-size: 12px!important; color: #999;">${cardName}</p>
+                                        <p class="saldo-label" style="font-size: 12px!important; color: #999;">${(!isPluggy) ? cardName : l('AutomaticIntegration') }</p>
                                     </div>
                                 </div>
                             </div>

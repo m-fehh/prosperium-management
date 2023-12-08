@@ -107,5 +107,6 @@
     <text name="TenantDeleteWarningMessage">O Tenant {0} será excluído.</text>
     <text name="SearchWithThreeDot">Pesquisar...</text>
     <text name="DeleteAccount">Ao confirmar, todos os dados associados à conta '{0}' serão perdidos de forma irreversível.</text>
+    <text name="AutomaticIntegration">Integração automática</text>
   </texts>
 </localizationDictionary>
