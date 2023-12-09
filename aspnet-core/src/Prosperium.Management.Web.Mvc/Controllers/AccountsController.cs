@@ -87,7 +87,7 @@ namespace Prosperium.Management.Web.Controllers
         [Route("PluggyGetAccessToken")]
         public async Task<IActionResult> PluggyGetAccessToken()
         {
-            var accessToken = await _pluggyManager.PluggyCreateConnectToken();
+            var accessToken = await _pluggyManager.PluggyCreateConnectTokenAsync();
             var result = new { accessToken };
 
             return Json(result);

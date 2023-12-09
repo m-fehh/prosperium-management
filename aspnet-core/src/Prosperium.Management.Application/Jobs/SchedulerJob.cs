@@ -101,7 +101,7 @@ namespace Prosperium.Management.Jobs
 
             foreach (var itemId in allItemsIdsForPluggy)
             {
-                var itemsPluggy = await _pluggyManager.PluggyGetAccount(itemId);
+                var itemsPluggy = await _pluggyManager.PluggyGetAccountAsync(itemId);
                 if (itemsPluggy.Total > 0)
                 {
                     idsForFindTransactions.AddRange(itemsPluggy.Results.Select(item => $"{item.Type}-{item.Id}"));

@@ -17,5 +17,8 @@
         public const string urlItemPluggy= "https://api.pluggy.ai/items/{0}";
         public const string urlConnectorPluggy= "https://api.pluggy.ai/connectors";
         public const string urlIdentityPluggy= "https://api.pluggy.ai/identity?itemId={0}";
+
+        // URLs for Payments
+        public const string urlGetInstitutionsForPayments = "https://api.pluggy.ai/payments/recipients/institutions";
     }
 }

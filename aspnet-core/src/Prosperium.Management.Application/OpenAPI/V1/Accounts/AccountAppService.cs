@@ -46,13 +46,16 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             _customerAppService = customerAppService;
         }
 
+        #region Banks 
+
         [HttpGet]
         [Route("list-banks")]
         public async Task<List<BankDto>> GetAllListBanksAsync()
         {
             List<Bank> allBanks = await _banksRepository.GetAllListAsync();
             return ObjectMapper.Map<List<BankDto>>(allBanks);
-        }
+        } 
+        #endregion
 
         [HttpGet]
         [Route("GetAccountById")]
@@ -139,7 +142,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         public async Task PluggyCreateAccount(string itemId)
         {
             var accountsAlreadysaved = await GetAllListAsync();
-            var account = await _pluggyManager.PluggyGetAccount(itemId);
+            var account = await _pluggyManager.PluggyGetAccountAsync(itemId);
 
             if (account.Total > 0)
             {
@@ -200,7 +203,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
         private async Task<(long Id, string BankName)> CreateBankFromPluggy(string itemId)
         {
-            var bankPluggy = await _pluggyManager.PluggyGetItemId(itemId);
+            var bankPluggy = await _pluggyManager.PluggyGetItemIdAsync(itemId);
             var allBanksProsperium = await GetAllListBanksAsync();
 
             var isItemAlreadySaved = allBanksProsperium.Where(x => x.Name == bankPluggy.Connector.Name).FirstOrDefault();

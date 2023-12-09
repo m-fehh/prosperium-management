@@ -268,7 +268,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         [Route("CapturePluggyTransactionsAsync")]
         public async Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard)
         {
-            ResultPluggyTransactions pluggyTransactions = await _pluggyManager.PluggyGetTransactions(accountId, dateInitial, dateEnd);
+            ResultPluggyTransactions pluggyTransactions = await _pluggyManager.PluggyGetTransactionsAsync(accountId, dateInitial, dateEnd);
 
             if (pluggyTransactions.Total > 0)
             {

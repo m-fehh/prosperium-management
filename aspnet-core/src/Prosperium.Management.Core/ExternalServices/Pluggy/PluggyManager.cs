@@ -3,9 +3,11 @@ using Flurl;
 using Flurl.Http;
 using Newtonsoft.Json.Linq;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
+using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
@@ -14,7 +16,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
     {
         #region Authentication 
 
-        public async Task<string> PluggyGenerateApiKey()
+        public async Task<string> PluggyGenerateApiKeyAsync()
         {
             var result = await PluggyConsts.urlGenerateApiKey
                 .PostJsonAsync(new
@@ -28,9 +30,9 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return result?.apiKey ?? string.Empty;
         }
 
-        public async Task<string> PluggyCreateConnectToken()
+        public async Task<string> PluggyCreateConnectTokenAsync()
         {
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
 
             var result = await PluggyConsts.urlCreateConnectToken
                 .WithHeader("X-API-KEY", xApiKey)
@@ -44,9 +46,9 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         #region Categories Pluggy 
 
-        public async Task<ResultPluggyCategories> PluggyGetCategories()
+        public async Task<ResultPluggyCategories> PluggyGetCategoriesAsync()
         {
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
 
             var result = await PluggyConsts.urlListCategoriesPluggy
                 .WithHeader("X-API-KEY", xApiKey)
@@ -85,7 +87,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         #region Transactions Pluggy 
 
-        public async Task<ResultPluggyTransactions> PluggyGetTransactions(string accountId, DateTime? dateInitial = null, DateTime? dateEnd = null)
+        public async Task<ResultPluggyTransactions> PluggyGetTransactionsAsync(string accountId, DateTime? dateInitial = null, DateTime? dateEnd = null)
         {
             string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId);
 
@@ -94,8 +96,8 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                 url += $"&from={dateInitial.Value.ToString("yyyy-MM-dd")}&to={dateEnd.Value.ToString("yyyy-MM-dd")}";
             }
 
-            var xApiKey = await PluggyGenerateApiKey();
-            
+            var xApiKey = await PluggyGenerateApiKeyAsync();
+
             var result = await url
                 .WithHeader("X-API-KEY", xApiKey)
                 .WithHeader("Accept", "application/json")
@@ -108,9 +110,9 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         #region Connector Pluggy 
 
-        public async Task<ResultPluggyConnector> PluggyGetConnectors()
+        public async Task<ResultPluggyConnector> PluggyGetConnectorsAsync()
         {
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
             var result = await PluggyConsts.urlConnectorPluggy
                  .WithHeader("X-API-KEY", xApiKey)
                 .WithHeader("Accept", "application/json")
@@ -123,10 +125,10 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         #region Items Pluggy 
 
-        public async Task<ResultPluggyItem> PluggyGetItemId(string itemId)
+        public async Task<ResultPluggyItem> PluggyGetItemIdAsync(string itemId)
         {
             string url = string.Format(PluggyConsts.urlItemPluggy, itemId);
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
 
             var result = await url
                 .WithHeader("X-API-KEY", xApiKey)
@@ -139,19 +141,19 @@ namespace Prosperium.Management.ExternalServices.Pluggy
         public async Task PluggyItemDeleteAsync(string itemId)
         {
             string url = string.Format(PluggyConsts.urlItemPluggy, itemId);
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
 
-             await url.WithHeader("X-API-KEY", xApiKey).WithHeader("Accept", "application/json").DeleteAsync();
+            await url.WithHeader("X-API-KEY", xApiKey).WithHeader("Accept", "application/json").DeleteAsync();
         }
 
         #endregion
 
         #region Account Pluggy 
 
-        public async Task<ResultPluggyAccounts> PluggyGetAccount(string itemId)
+        public async Task<ResultPluggyAccounts> PluggyGetAccountAsync(string itemId)
         {
             string url = string.Format(PluggyConsts.urlListAccountsPluggy, itemId);
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
 
             var result = await url
                 .WithHeader("X-API-KEY", xApiKey)
@@ -164,10 +166,10 @@ namespace Prosperium.Management.ExternalServices.Pluggy
         #endregion
 
         #region Identity Pluggy   
-        public async Task<ResultPluggyIdentity> PluggyGetIdentity(string itemId)
+        public async Task<ResultPluggyIdentity> PluggyGetIdentityAsync(string itemId)
         {
             string url = string.Format(PluggyConsts.urlIdentityPluggy, itemId);
-            var xApiKey = await PluggyGenerateApiKey();
+            var xApiKey = await PluggyGenerateApiKeyAsync();
 
             var result = await url
                 .WithHeader("X-API-KEY", xApiKey)
@@ -177,6 +179,24 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return result;
         }
 
+
+        #endregion
+
+        #region Payment Pluggy 
+
+        #region List Instituition 
+        public async Task<PluggyPaymentListInstitutions> PluggyGetInstitutionsForPaymentsAsync()
+        { 
+            var result = await PluggyConsts.urlGetInstitutionsForPayments
+                .WithHeader("X-API-KEY", await PluggyGenerateApiKeyAsync())
+                .WithHeader("Accept", "application/json")
+                .GetJsonAsync<PluggyPaymentListInstitutions>();
+
+            return result;
+        }
+
+
+        #endregion
 
         #endregion
     }

@@ -84,7 +84,7 @@ namespace Prosperium.Management.OriginDestinations
             List<OriginDestination> originDestination = new List<OriginDestination>();
 
 
-            var allCategories = await _pluggyManager.PluggyGetCategories();
+            var allCategories = await _pluggyManager.PluggyGetCategoriesAsync();
             if (allCategories.Total > 0)
             {
                 foreach (var item in allCategories.Results)

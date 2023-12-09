@@ -47,7 +47,7 @@ namespace Prosperium.Management.OpenAPI.V1.Customers
         public async Task PluggyCreateCustomer(string itemId)
         {
             List<CustomerDto> customersAlreadysaved = await GetAllListAsync();
-            ResultPluggyIdentity customerByPluggy = await _pluggyManager.PluggyGetIdentity(itemId);
+            ResultPluggyIdentity customerByPluggy = await _pluggyManager.PluggyGetIdentityAsync(itemId);
 
             bool isItemAlreadySaved = customersAlreadysaved
                 .Any(x => x.PluggyItemId == customerByPluggy.ItemId || x.Document == customerByPluggy.Document && x.FullName.ToLower() == customerByPluggy.FullName.ToLower());
