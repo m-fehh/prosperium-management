@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
@@ -15,8 +16,10 @@ namespace Prosperium.Management.MultiTenancy.Dto
 
         [Required]
         [StringLength(AbpTenantBase.MaxNameLength)]
-        public string Name { get; set; }        
-        
+        public string Name { get; set; }
+        public int PlanId { get; set; }
+        public string PlanName { get; set; }
+        public DateTime? PlanExpiration { get; set; }
         public bool IsActive {get; set;}
     }
 }

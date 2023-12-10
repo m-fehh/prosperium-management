@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Abp.UI;
+using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OriginDestinations;
+using Prosperium.Management.Plans;
 using Prosperium.Management.Web.Models.Accounts;
 using System;
 using System.Linq;
@@ -17,14 +19,12 @@ namespace Prosperium.Management.Web.Controllers
     {
         private readonly IAccountAppService _accountsAppService;
         private readonly ITransactionAppService _transactionAppService;
-        private readonly IOriginDestinationAppService _originDestinationAppService;
         private readonly PluggyManager _pluggyManager;
 
-        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService, IOriginDestinationAppService originDestinationAppService, PluggyManager pluggyManager)
+        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService, PluggyManager pluggyManager)
         {
             _accountsAppService = accountsAppService;
             _transactionAppService = transactionAppService;
-            _originDestinationAppService = originDestinationAppService;
             _pluggyManager = pluggyManager;
         }
 
@@ -87,11 +87,26 @@ namespace Prosperium.Management.Web.Controllers
         [Route("PluggyGetAccessToken")]
         public async Task<IActionResult> PluggyGetAccessToken()
         {
-            var accessToken = await _pluggyManager.PluggyCreateConnectTokenAsync();
-            var result = new { accessToken };
+            try
+            {
+                var validationPlan = await _accountsAppService.ValidateAccounts();
+                if (!validationPlan)
+                {
+                    throw new UserFriendlyException("Limite de contas atingido. Considere aumentar seu plano para criar mais contas.");
+                }
 
-            return Json(result);
+                var accessToken = await _pluggyManager.PluggyCreateConnectTokenAsync();
+                var result = new { accessToken };
+
+                return Json(result);
+            }
+            catch (UserFriendlyException ex)
+            {
+                // Log ou retornar a mensagem de exceção
+                return Json(new { error = ex.Message });
+            }
         }
+
 
         [HttpPost]
         [Route("InsertAccountPluggy")]

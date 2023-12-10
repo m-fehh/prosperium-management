@@ -1,0 +1,145 @@
+﻿@using Prosperium.Management.Web.Models.Common.Modals
+@using Prosperium.Management.Web.Models.Tenants
+@model AlterPlans
+@{
+    Layout = null;
+}
+
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
+
+    .form-container {
+        background-color: #fff;
+        border-radius: 10px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .campo-data {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .labelData {
+        margin-bottom: 10px;
+        color: #333;
+        display: block;
+        font-size: 14px;
+        text-align: left;
+        width: 100%;
+    }
+
+    #data {
+        border: none;
+        background: transparent;
+        font-size: 16px;
+        color: #333;
+        outline: none;
+        padding: 10px 0;
+        border-bottom: 1px solid #ccc;
+        transition: border-color 0.3s;
+        text-align: left;
+        width: 100%;
+    }
+
+        #data::placeholder {
+            font-size: 16px;
+            color: #aaa;
+            padding: 10px;
+        }
+
+
+    h3 {
+        font-size: 24px;
+        color: #FF8C00;
+        display: flex;
+        font-weight: bold;
+    }
+
+    .title {
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 10px 0 30px;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s, color 0.3s;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #FF8C00;
+        color: white;
+        font-weight: bold;
+        margin-top: 50px;
+    }
+
+        button:hover {
+            filter: brightness(90%);
+        }
+
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<form name="PlansModal" role="form" class="form-horizontal">
+    <input hidden value="@Model.Tenant.Id" id="tenant" />
+    <div class="modal-body" style="padding: 0;">
+        <div role="tabpanel" class="tab-pane container" id="select-plan">
+            <h3>@Model.Tenant.Name</h3>
+            <p class="title">Selecione o plano e a data de expiração do plano.</p>
+
+            <div class="row">
+                <select name="selectPlan" class="form-control">
+                    @foreach (var item in Model.Plans)
+                    {
+                        <option value="@item.Id">@item.Name</option>
+                    }
+                </select>
+
+                <div class="campo-data">
+                    <label for="data" class="labelData">Data Limite:</label>
+                    <input type="text" id="data" name="data" class="form-control" placeholder="DD/MM/YYYY" maxlength="10" oninput="formatarData(this)" />
+                </div>
+            </div>
+        </div>
+
+        <button type="button" id="btnSubmitPlan" style="width: 100%;">
+            Salvar plano
+        </button>
+    </div>
+</form>
+
+<script>
+    document.getElementById('data').addEventListener('input', function () {
+        formatarData(this);
+    });
+
+    function formatarData(input) {
+        // Remove caracteres não numéricos
+        var inputValue = input.value.replace(/\D/g, '');
+
+        // Verifica se a data é válida e aplica a máscara
+        if (inputValue.length > 0) {
+            input.value = inputValue.replace(/(\d{2})(\d{0,2})(\d{0,4})/, function (match, p1, p2, p3) {
+                var formattedDate = '';
+                if (p1) formattedDate += p1;
+                if (p2) formattedDate += '/' + p2;
+                if (p3) formattedDate += '/' + p3;
+                return formattedDate;
+            });
+        }
+    }
+</script>

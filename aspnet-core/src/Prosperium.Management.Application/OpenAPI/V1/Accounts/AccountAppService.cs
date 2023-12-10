@@ -1,5 +1,7 @@
 ﻿using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
+using Abp.UI;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.ExternalServices.Pluggy;
@@ -12,6 +14,7 @@ using Prosperium.Management.OpenAPI.V1.Customers;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using Prosperium.Management.OriginDestinations;
+using Prosperium.Management.Plans;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +36,18 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         private readonly PluggyManager _pluggyManager;
         private readonly ICreditCardAppService _creditCardAppService;
         private readonly ICustomerAppService _customerAppService;
+        private readonly PlansManager _plansManager;
 
-        public AccountAppService(IRepository<AccountFinancial, long> accountFinancialRepository, IRepository<Bank, long> banksRepository, IRepository<Category, long> categoryRepository, ITransactionAppService transactionAppService, IUnitOfWorkManager unitOfWorkManager, PluggyManager pluggyManager, ICreditCardAppService creditCardAppService, ICustomerAppService customerAppService)
+        public AccountAppService(IRepository<AccountFinancial, 
+            long> accountFinancialRepository, 
+            IRepository<Bank, long> banksRepository, 
+            IRepository<Category, long> categoryRepository,
+            ITransactionAppService transactionAppService,
+            IUnitOfWorkManager unitOfWorkManager, 
+            PluggyManager pluggyManager, 
+            ICreditCardAppService creditCardAppService, 
+            ICustomerAppService customerAppService,
+            PlansManager plansManager)
         {
             _accountFinancialRepository = accountFinancialRepository;
             _banksRepository = banksRepository;
@@ -44,6 +57,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             _pluggyManager = pluggyManager;
             _creditCardAppService = creditCardAppService;
             _customerAppService = customerAppService;
+            _plansManager = plansManager;
         }
 
         #region Banks 
@@ -72,9 +86,23 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             return ObjectMapper.Map<List<AccountFinancialDto>>(allAccounts);
         }
 
+        public async Task<bool> ValidateAccounts()
+        {
+            return await _plansManager.ValidatesCreatedAccounts(AbpSession.TenantId.Value);
+
+        }
+
         [HttpPost]
         public async Task CreateAsync(AccountFinancialDto input)
         {
+            var validationPlan = await ValidateAccounts();
+            if (!validationPlan)
+            {
+                //return StatusCode(500, "Limite de contas atingido. Considere aumentar seu plano para criar mais contas.");
+
+                throw new UserFriendlyException("Limite de contas atingido. Considere aumentar seu plano para criar mais contas.");
+            }
+
             AccountFinancial account = ObjectMapper.Map<AccountFinancial>(input);
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))

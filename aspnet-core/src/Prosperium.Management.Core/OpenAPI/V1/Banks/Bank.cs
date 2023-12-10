@@ -10,7 +10,5 @@ namespace Prosperium.Management.OpenAPI.V1.Banks
         public string Name { get; set; }
         public string ImagePath { get; set; }
         public AccountOrigin Origin { get; set; }
-        //public string Ispb { get; set; }
-        //public string Compe { get; set; } 
     }
 }

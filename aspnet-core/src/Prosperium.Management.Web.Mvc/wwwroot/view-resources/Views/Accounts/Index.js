@@ -192,6 +192,10 @@ const initPluggyConnect = async () => {
     try {
         const accessToken = await getPluggyAccessToken();
 
+        if (!accessToken) {
+            return;
+        }
+
         const pluggyConnect = new PluggyConnect({
             connectToken: accessToken,
             includeSandbox: true,
@@ -239,7 +243,12 @@ const getPluggyAccessToken = async () => {
         const response = await fetch('/App/Accounts/PluggyGetAccessToken');
         const data = await response.json();
 
+        if (data.result.error) {
+            abp.notify.error(data.result.error);
+        } 
+
         return data.result.accessToken;
+
     } catch (error) {
         console.error('Erro ao obter o Access Token:', error);
         throw error;

@@ -22,12 +22,14 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Tenants
 
         private void CreateDefaultTenant()
         {
+            var planBasic = _context.Plans.Where(x => x.Name == "Essencial").FirstOrDefault();
+
             // Default tenant
 
             var defaultTenant = _context.Tenants.IgnoreQueryFilters().FirstOrDefault(t => t.TenancyName == AbpTenantBase.DefaultTenantName);
             if (defaultTenant == null)
             {
-                defaultTenant = new Tenant(AbpTenantBase.DefaultTenantName, AbpTenantBase.DefaultTenantName);
+                defaultTenant = new Tenant(AbpTenantBase.DefaultTenantName, AbpTenantBase.DefaultTenantName, planBasic.Id, planBasic.Name, null);
 
                 var defaultEdition = _context.Editions.IgnoreQueryFilters().FirstOrDefault(e => e.Name == EditionManager.DefaultEditionName);
                 if (defaultEdition != null)

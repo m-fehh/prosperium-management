@@ -28,6 +28,19 @@
     .custom-button {
         width: auto;
     }
+
+    #TenantPlanModal .modal-content {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    #TenantPlanModal h2{
+        font-size: 24px;
+        color: #FF8C00;
+        display: flex;
+        font-weight: bold;
+    }
 </style>
 
 <div class="form-container" id="Tenant">
@@ -48,8 +61,9 @@
                 <th></th>
                 <th>@L("TenancyName")</th>
                 <th>@L("Name")</th>
+                <th>Plano</th>
+                <th>Validade</th>
                 <th>@L("IsActive")</th>
-                <th style="width: 150px">Personificar</th>
                 <th style="width: 150px">@L("Actions")</th>
             </tr>
         </thead>
@@ -63,6 +77,13 @@
 @await Html.PartialAsync("~/Views/Tenants/_CreateModal.cshtml")
 
 <div class="modal fade" id="TenantEditModal" tabindex="-1" role="dialog" aria-labelledby="TenantEditModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="TenantPlanModal" tabindex="-1" role="dialog" aria-labelledby="TenantPlanModalLabel" data-backdrop="static">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
         </div>

@@ -49,38 +49,50 @@
             },
             {
                 targets: 3,
+                data: 'planName',
+                render: function (data) {
+                    return data || 'Essencial';
+                },
+                sortable: false
+            },
+            {
+                targets: 4,
+                data: 'planExpiration',
+                render: function (data) {
+                    var formattedDate = data ? moment(data).format('DD/MM/YYYY') : 'Ilimitada';
+                    return formattedDate;
+                },
+                sortable: false
+            },
+            {
+                targets: 5,
                 data: 'isActive',
                 sortable: false,
                 render: data => `<input type="checkbox" disabled ${data ? 'checked' : ''}>`
             },
             {
-                targets: 4,
+                targets: 6,
                 data: null,
                 sortable: false,
                 autoWidth: false,
                 defaultContent: '',
                 render: (data, type, row, meta) => {
                     return [
-                        `   <button type="button" style="background: orange; border: 0; color: #fff;" class="btn btn-sm impersonate-tenant-get-user" data-tenant-id="${row.id}" data-tenancy-name="${row.name}" data-toggle="modal" data-target="#GetUserModal">`,
-                        `       <i class="fa fa-unlock-alt"></i> `,
-                        '   </button>'
-                    ].join('');
-                }
-            },
-            {
-                targets: 5,
-                data: null,
-                sortable: false,
-                autoWidth: false,
-                defaultContent: '',
-                render: (data, type, row, meta) => {
-                    return [
-                        `   <button type="button" style="background: orange; border: 0; color: #fff;"  class="btn btn-sm edit-tenant" data-tenant-id="${row.id}" data-toggle="modal" data-target="#TenantEditModal">`,
-                        `       <i class="fas fa-pencil-alt"></i>`,
-                        '   </button>',
-                        `   <button type="button" style="background: orange; border: 0; color: #fff;"  class="btn btn-sm delete-tenant" data-tenant-id="${row.id}" data-tenancy-name="${row.name}">`,
-                        `       <i class="fas fa-trash"></i>`,
-                        '   </button>'
+                        ` 
+                             <div class="dropdown">
+                                <div id="menuIcon" class="ml-auto dropdown-toggle" data-toggle="dropdown" style="display: flex; align-items: center; justify-content: center;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                                        <path d="M2 11h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0-5h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2zm0-5h12a1 1 0 0 1 0 2H2a1 1 0 0 1 0-2z" />
+                                    </svg>
+                                </div>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <button class="dropdown-item impersonate-tenant-get-user" data-tenant-id="${row.id}" data-tenancy-name="${row.name}" data-toggle="modal" data-target="#GetUserModal">Impersonar</button>
+                                    <button class="dropdown-item changePlanTenant" data-tenant-id="${row.id}" data-tenancy-name="${row.name}" data-toggle="modal" data-target="#TenantPlanModal">Editar plano</button>
+                                    <button class="dropdown-item edit-tenant" data-tenant-id="${row.id}" data-toggle="modal" data-target="#TenantEditModal">Editar tenant</button>
+                                    <button class="dropdown-item delete-tenant" data-tenant-id="${row.id}" data-tenancy-name="${row.name}">Excluir tenant</button>
+                                </div>
+                            </div> 
+                           `
                     ].join('');
                 }
             }
@@ -177,6 +189,42 @@
             dataType: 'html',
             success: function (content) {
                 $('#TenantEditModal div.modal-content').html(content);
+            },
+            error: function (e) {
+            }
+        });
+    });
+
+    $(document).on('click', '#btnSubmitPlan', function () {
+        var tenantId = $('#tenant').val();
+        var selectedPlanId = $('select[name=selectPlan]').val();
+        var selectedPlanName = $('select[name=selectPlan] option:selected').text();
+        var formattedDate = $('#data').val();
+
+        $.ajax({
+            url: abp.appPath + 'Tenants/UpdatePlanByTenant',
+            type: 'POST',
+            data: { tenantId: tenantId, selectedPlanId: +selectedPlanId, selectedPlanName: selectedPlanName, formattedDate: formattedDate },
+            dataType: 'json',
+            success: function (content) {
+                window.location.reload();
+            },
+            error: function (e) {
+                console.error("ERRO", e);
+            }
+        });
+
+    });
+
+    $(document).on('click', '.changePlanTenant', function (e) {
+        var tenantId = $(this).attr('data-tenant-id');
+
+        abp.ajax({
+            url: abp.appPath + 'Tenants/EditPlan?tenantId=' + tenantId,
+            type: 'POST',
+            dataType: 'html',
+            success: function (content) {
+                $('#TenantPlanModal div.modal-content').html(content);
             },
             error: function (e) {
             }

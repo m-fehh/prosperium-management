@@ -13,6 +13,7 @@ using Prosperium.Management.OpenAPI.V1.Tags;
 using Prosperium.Management.OriginDestinations;
 using Prosperium.Management.OpenAPI.V1.Customers;
 using Prosperium.Management.OpenAPI.V1.Banks;
+using Prosperium.Management.Plans;
 
 namespace Prosperium.Management.EntityFrameworkCore
 {
@@ -31,6 +32,7 @@ namespace Prosperium.Management.EntityFrameworkCore
         public DbSet<CustomerPhones> CustomerPhones { get; set; }
         public DbSet<CustomerEmails> CustomerEmails { get; set; }
         public DbSet<CustomerAddresses> CustomerAddresses { get; set; }
+        public DbSet<Plan> Plans { get; set; }
 
         public ManagementDbContext(DbContextOptions<ManagementDbContext> options)
             : base(options)
