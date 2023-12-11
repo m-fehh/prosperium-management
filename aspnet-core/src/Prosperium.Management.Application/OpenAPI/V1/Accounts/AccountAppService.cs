@@ -69,14 +69,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             return ObjectMapper.Map<List<BankDto>>(allBanks);
         }
 
-        [HttpPut]
-        [Route("TesteBank")]
-        public async Task TesteBank()
-        { 
-            var allBanksProsperium = await GetAllListBanksAsync();
-
-        }
-
         #endregion
 
         [HttpGet]

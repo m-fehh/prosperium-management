@@ -1,14 +1,13 @@
 ﻿using Abp.Domain.Services;
 using Flurl;
 using Flurl.Http;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json.Linq;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
@@ -187,22 +186,30 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         #region List Instituition 
 
-        public async Task<PluggyPaymentListInstitutions> PluggyGetAllInstitutionsForPaymentsAsync()
+        public async Task<PluggyPaymentListInstitutions> PluggyGetAllInstitutionsForPaymentsAsync(string name = null)
         {
             var allInstitutions = new List<PluggyInstitutionDto>();
-            var page = 1;
-
-            while (true)
+            if (string.IsNullOrEmpty(name))
             {
-                var result = await PluggyGetInstitutionsForPaymentsAsync(page);
-                if (result == null || result.Results == null || result.Results.Count == 0)
-                    break;
+                var page = 1;
 
+                while (true)
+                {
+                    var result = await PluggyGetInstitutionsForPaymentsAsync(page, null);
+                    if (result == null || result.Results == null || result.Results.Count == 0)
+                        break;
+
+                    allInstitutions.AddRange(result.Results);
+                    page++;
+
+                    if (page > result.TotalPages)
+                        break;
+                }
+            }
+            else
+            {
+                var result = await PluggyGetInstitutionsForPaymentsAsync(1, name);
                 allInstitutions.AddRange(result.Results);
-                page++;
-
-                if (page > result.TotalPages)
-                    break;
             }
 
             return new PluggyPaymentListInstitutions
@@ -210,11 +217,15 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                 Total = allInstitutions.Count,
                 Results = allInstitutions
             };
+
         }
 
-        private async Task<PluggyPaymentListInstitutions> PluggyGetInstitutionsForPaymentsAsync(int page)
+        private async Task<PluggyPaymentListInstitutions> PluggyGetInstitutionsForPaymentsAsync(int page, string name)
         {
-            var url = string.Format(PluggyConsts.urlGetInstitutionsForPayments, page);
+            var url = PluggyConsts.urlGetInstitutionsForPayments;
+
+            url = url + (!string.IsNullOrEmpty(name) ? $"&name={name}" : $"&page={page}");
+
             var result = await url
                 .WithHeader("X-API-KEY", await PluggyGenerateApiKeyAsync())
                 .WithHeader("Accept", "application/json")

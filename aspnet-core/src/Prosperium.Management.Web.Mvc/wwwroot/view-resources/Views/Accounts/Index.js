@@ -11,104 +11,8 @@ function mostrarCamposAgenciaConta(bankName) {
 
     if (instituicaoSelecionada) {
         camposAgenciaConta.style.display = 'flex';
-        aplicarMascaras(bankName);
     } else {
         camposAgenciaConta.style.display = 'none';
-    }
-}
-
-function aplicarMascaras(banco) {
-    switch (banco) {
-        case 'Nubank':
-            $('#agencia').mask('0000');
-            $('#conta').mask('000000-0');
-            $('#conta').attr('maxlength', '8');
-            break;
-        case 'Itaú':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
-            break;
-        case 'Bradesco':
-            $('#agencia').mask('0000');
-            $('#conta').mask('0000000-0');
-            $('#conta').attr('maxlength', '9');
-            break;
-        case 'Caixa':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000000000-0');
-            $('#conta').attr('maxlength', '13');
-            break;
-        case 'Santander':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000000-0');
-            $('#conta').attr('maxlength', '10');
-            break;
-        case 'Inter':
-            $('#agencia').mask('000');
-            $('#conta').mask('0000-0');
-            $('#conta').attr('maxlength', '6');
-            break;
-        case 'Mercado Pago':
-            $('#agencia').mask('0000');
-            $('#conta').mask('0000000000000-0');
-            $('#conta').attr('maxlength', '15');
-            break;
-        case 'C6':
-            $('#agencia').mask('0000');
-            $('#conta').mask('000000-0');
-            $('#conta').attr('maxlength', '8');
-            break;
-        case 'Neon':
-            $('#agencia').mask('0000');
-            $('#conta').mask('000000-0');
-            $('#conta').attr('maxlength', '8');
-            break;
-        case 'BMG':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
-            break;
-        case 'Banco do Brasil':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
-            break;
-        case 'Banrisul':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
-            break;
-        case 'PAN':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000000-0');
-            $('#conta').attr('maxlength', '10');
-            break;
-        case 'PagBank':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
-            break;
-        case 'PayPal':
-            // Adicione as máscaras e limites de caracteres para o PayPal
-            break;
-        case 'PicPay':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000000');
-            $('#conta').attr('maxlength', '8');
-            break;
-        case 'Safra':
-            $('#agencia').mask('00000');
-            $('#conta').mask('00000000-0');
-            $('#conta').attr('maxlength', '10');
-            break;
-        case 'Sicredi':
-            $('#agencia').mask('0000');
-            $('#conta').mask('00000-0');
-            $('#conta').attr('maxlength', '7');
-            break;
-        default:
-            break;
     }
 }
 
@@ -134,41 +38,13 @@ $(document).on('click', '.institution-modal', function (e) {
 
     $('#SelectInstitutionModal').modal('hide');
 
-    // Mapeamento de nomes informais para os oficiais
-    const nomeOficial = obterNomeOficial(bankName);
 
     // Inserir o nome oficial no campo de apelido
-    document.getElementById('apelido').value = nomeOficial;
+    document.getElementById('apelido').value = bankName;
 
     mostrarCamposAgenciaConta(bankName);
 });
 
-
-function obterNomeOficial(nomeInformal) {
-    const mapeamentoNomes = {
-        'Nubank': 'Nu Pagamentos S.A.',
-        'Ita\u00FA': 'Ita\u00FA Unibanco S.A.',
-        'Bradesco': 'Banco Bradesco S.A.',
-        'Caixa': 'Caixa Economica Federal',
-        'Santander': 'Banco Santander (Brasil) S.A.',
-        'Inter': 'Banco Inter S.A.',
-        'Mercado Pago': 'MercadoPago',
-        'C6': 'Banco C6 S.A.',
-        'Neon': 'Neon Pagamentos S.A.',
-        'BMG': 'Banco BMG S.A.',
-        'Banco do Brasil': 'Banco do Brasil S.A.',
-        'Banrisul': 'Banco do Estado do Rio Grande do Sul S.A.',
-        'PAN': 'Banco PAN S.A.',
-        'PagBank': 'PagSeguro Internet S.A.',
-        'PayPal': 'PayPal do Brasil Serviços de Pagamentos Ltda.',
-        'PicPay': 'PicPay Servicos S.A.',
-        'Safra': 'Banco Safra S.A.',
-        'Sicredi': 'Sicredi'
-    };
-
-
-    return mapeamentoNomes[nomeInformal] || nomeInformal;
-}
 
 
 $(document).on('click', '#instituicao', function (e) {

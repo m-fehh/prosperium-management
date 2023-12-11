@@ -19,6 +19,6 @@
         public const string urlIdentityPluggy= "https://api.pluggy.ai/identity?itemId={0}";
 
         // URLs for Payments
-        public const string urlGetInstitutionsForPayments = "https://api.pluggy.ai/payments/recipients/institutions?pageSize=500&page={0}";
+        public const string urlGetInstitutionsForPayments = "https://api.pluggy.ai/payments/recipients/institutions?pageSize=500";
     }
 }

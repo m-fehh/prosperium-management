@@ -201,6 +201,12 @@
         font-size: 16px;
         color: #aaa;
     }
+
+    .label-with-note {
+        font-size: smaller;
+        color: black;
+        opacity:0.5;
+    }
 </style>
 
 <div class="form-container" id="AccountCreate">
@@ -222,13 +228,18 @@
         <div class="row" id="camposAgenciaConta" style="display: none;">
             <div class="col-6">
                 <div class="campo-agencia">
-                    <label id="labelAgencia" for="agencia">Número da Agência</label>
+                    <label id="labelAgencia" for="agencia">
+                        Número da Agência
+                    </label>
                     <input type="text" id="agencia" name="AgencyNumber" placeholder="Digite o número da agência" required />
                 </div>
             </div>
             <div class="col-6">
                 <div class="campo-conta">
-                    <label id="labelConta" for="conta">Número da Conta</label>
+                    <label id="labelConta" for="conta">
+                        Número da Conta
+                        <span class="label-with-note"> (com pontuação)</span>
+                    </label>
                     <input type="text" id="conta" name="AccountNumber" placeholder="Digite o número da conta" required />
                 </div>
             </div>

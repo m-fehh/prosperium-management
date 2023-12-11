@@ -81,6 +81,10 @@ namespace Prosperium.Management.EntityFrameworkCore
                 .Property(a => a.Origin)
                 .HasConversion<string>();
 
+            modelBuilder.Entity<Bank>()
+                .Property(a => a.Origin)
+                .HasConversion<string>();
+
             // Relacionamentos
 
             modelBuilder.Entity<Transaction>()

@@ -1721,14 +1721,24 @@ namespace Prosperium.Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<string>("Compe")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ImagePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ispb")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Origin")
-                        .HasColumnType("int");
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TradeName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
