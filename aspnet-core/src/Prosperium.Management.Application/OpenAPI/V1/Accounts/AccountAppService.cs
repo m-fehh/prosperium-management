@@ -1,10 +1,10 @@
 ﻿using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.UI;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.ExternalServices.Pluggy;
+using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Banks;
 using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
@@ -13,7 +13,6 @@ using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Customers;
 using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
-using Prosperium.Management.OriginDestinations;
 using Prosperium.Management.Plans;
 using System;
 using System.Collections.Generic;
@@ -68,7 +67,16 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         {
             List<Bank> allBanks = await _banksRepository.GetAllListAsync();
             return ObjectMapper.Map<List<BankDto>>(allBanks);
-        } 
+        }
+
+        [HttpPut]
+        [Route("TesteBank")]
+        public async Task TesteBank()
+        { 
+            var allBanksProsperium = await GetAllListBanksAsync();
+
+        }
+
         #endregion
 
         [HttpGet]
@@ -98,8 +106,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             var validationPlan = await ValidateAccounts();
             if (!validationPlan)
             {
-                //return StatusCode(500, "Limite de contas atingido. Considere aumentar seu plano para criar mais contas.");
-
                 throw new UserFriendlyException("Limite de contas atingido. Considere aumentar seu plano para criar mais contas.");
             }
 

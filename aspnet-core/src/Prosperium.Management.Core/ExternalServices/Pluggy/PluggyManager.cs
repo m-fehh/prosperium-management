@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Policy;
@@ -185,9 +186,36 @@ namespace Prosperium.Management.ExternalServices.Pluggy
         #region Payment Pluggy 
 
         #region List Instituition 
-        public async Task<PluggyPaymentListInstitutions> PluggyGetInstitutionsForPaymentsAsync()
-        { 
-            var result = await PluggyConsts.urlGetInstitutionsForPayments
+
+        public async Task<PluggyPaymentListInstitutions> PluggyGetAllInstitutionsForPaymentsAsync()
+        {
+            var allInstitutions = new List<PluggyInstitutionDto>();
+            var page = 1;
+
+            while (true)
+            {
+                var result = await PluggyGetInstitutionsForPaymentsAsync(page);
+                if (result == null || result.Results == null || result.Results.Count == 0)
+                    break;
+
+                allInstitutions.AddRange(result.Results);
+                page++;
+
+                if (page > result.TotalPages)
+                    break;
+            }
+
+            return new PluggyPaymentListInstitutions
+            {
+                Total = allInstitutions.Count,
+                Results = allInstitutions
+            };
+        }
+
+        private async Task<PluggyPaymentListInstitutions> PluggyGetInstitutionsForPaymentsAsync(int page)
+        {
+            var url = string.Format(PluggyConsts.urlGetInstitutionsForPayments, page);
+            var result = await url
                 .WithHeader("X-API-KEY", await PluggyGenerateApiKeyAsync())
                 .WithHeader("Accept", "application/json")
                 .GetJsonAsync<PluggyPaymentListInstitutions>();
