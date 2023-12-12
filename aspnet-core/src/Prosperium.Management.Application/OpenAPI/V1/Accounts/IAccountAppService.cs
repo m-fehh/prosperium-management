@@ -11,7 +11,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         Task<List<BankDto>> GetAllListBanksAsync();
         Task<List<AccountFinancialDto>> GetAllListAsync();
         Task<AccountFinancialDto> GetAccountById(long id);
-        Task PluggyCreateAccount(string itemId);
+        Task CreateAsync(AccountFinancialDto input);
         Task<bool> ValidateAccounts();
     }
 }

@@ -12,7 +12,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
         public int TenantId { get; set; }
         public string CardName { get; set; }
         public string CardNumber { get; set; }
-        public virtual long AccountId { get; set; }
+        public virtual long? AccountId { get; set; }
         public virtual long FlagCardId { get; set; }
 
         [DataType(DataType.Currency)]
@@ -21,5 +21,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
         public int DueDay { get; set; }
         public bool IsActive { get; set; }
         public AccountOrigin Origin { get; set; }
+        public string PluggyItemId { get; set; }
+        public string PluggyCreditCardId { get; set; }
     }
 }

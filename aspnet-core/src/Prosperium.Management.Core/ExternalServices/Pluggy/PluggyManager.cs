@@ -89,21 +89,58 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         public async Task<ResultPluggyTransactions> PluggyGetTransactionsAsync(string accountId, DateTime? dateInitial = null, DateTime? dateEnd = null)
         {
-            string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId);
-
-            if (dateInitial.HasValue && dateEnd.HasValue)
+            try
             {
-                url += $"&from={dateInitial.Value.ToString("yyyy-MM-dd")}&to={dateEnd.Value.ToString("yyyy-MM-dd")}";
+                var allTransactions = new List<PluggyTransactionDto>();
+                var xApiKey = await PluggyGenerateApiKeyAsync();
+
+                string url = string.Format(PluggyConsts.urlListTransactionsPluggy, accountId);
+
+                if (dateInitial.HasValue && dateEnd.HasValue)
+                {
+                    url += $"&from={dateInitial.Value.ToString("yyyy-MM-dd")}&to={dateEnd.Value.ToString("yyyy-MM-dd")}";
+                    var result = await url
+                        .WithHeader("X-API-KEY", xApiKey)
+                        .WithHeader("Accept", "application/json")
+                        .GetJsonAsync<ResultPluggyTransactions>();
+
+                    allTransactions.AddRange(result.Results);
+                }
+                else
+                {
+                    var page = 1;
+                    var pageSize = 500;
+                    while (true)
+                    {
+                        var currentUrl = $"{url}&pageSize={pageSize}&page={page}";
+
+                        var result = await currentUrl
+                            .WithHeader("X-API-KEY", xApiKey)
+                            .WithHeader("Accept", "application/json")
+                            .GetJsonAsync<ResultPluggyTransactions>();
+
+                        if (result.Total == 0)
+                            break;
+
+                        allTransactions.AddRange(result.Results);
+                        page++;
+
+                        if (page > result.TotalPages)
+                            break;
+
+                    }
+                }
+
+                return new ResultPluggyTransactions
+                {
+                    Total = allTransactions.Count,
+                    Results = allTransactions
+                };
             }
-
-            var xApiKey = await PluggyGenerateApiKeyAsync();
-
-            var result = await url
-                .WithHeader("X-API-KEY", xApiKey)
-                .WithHeader("Accept", "application/json")
-                .GetJsonAsync<ResultPluggyTransactions>();
-
-            return result;
+            catch (FlurlHttpException ex)
+            {
+                throw;
+            }
         }
 
         #endregion

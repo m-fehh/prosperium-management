@@ -9,7 +9,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
         public string ItemId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public DateTime BirthDate { get; set; }
+        public DateTime? BirthDate { get; set; }
         public string TaxNumber { get; set; }
         public string Document { get; set; }
         public string DocumentType { get; set; }

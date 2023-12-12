@@ -4,7 +4,6 @@ using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.ExternalServices.Pluggy;
-using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Banks;
 using Prosperium.Management.OpenAPI.V1.Banks.Dtos;
@@ -34,19 +33,9 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly PluggyManager _pluggyManager;
         private readonly ICreditCardAppService _creditCardAppService;
-        private readonly ICustomerAppService _customerAppService;
         private readonly PlansManager _plansManager;
 
-        public AccountAppService(IRepository<AccountFinancial, 
-            long> accountFinancialRepository, 
-            IRepository<Bank, long> banksRepository, 
-            IRepository<Category, long> categoryRepository,
-            ITransactionAppService transactionAppService,
-            IUnitOfWorkManager unitOfWorkManager, 
-            PluggyManager pluggyManager, 
-            ICreditCardAppService creditCardAppService, 
-            ICustomerAppService customerAppService,
-            PlansManager plansManager)
+        public AccountAppService(IRepository<AccountFinancial, long> accountFinancialRepository, IRepository<Bank, long> banksRepository, IRepository<Category, long> categoryRepository, ITransactionAppService transactionAppService, IUnitOfWorkManager unitOfWorkManager, PluggyManager pluggyManager, ICreditCardAppService creditCardAppService, PlansManager plansManager)
         {
             _accountFinancialRepository = accountFinancialRepository;
             _banksRepository = banksRepository;
@@ -55,9 +44,9 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             _unitOfWorkManager = unitOfWorkManager;
             _pluggyManager = pluggyManager;
             _creditCardAppService = creditCardAppService;
-            _customerAppService = customerAppService;
             _plansManager = plansManager;
         }
+
 
         #region Banks 
 
@@ -160,135 +149,5 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
             await _accountFinancialRepository.DeleteAsync(searchAccount);
         }
-
-        #region Pluggy API 
-
-        [HttpPost]
-        [Route("PluggyCreateAccount")]
-        public async Task PluggyCreateAccount(string itemId)
-        {
-            var accountsAlreadysaved = await GetAllListAsync();
-            var account = await _pluggyManager.PluggyGetAccountAsync(itemId);
-
-            if (account.Total > 0)
-            {
-                long accountId = new long();
-
-                #region Account creation   
-                var accountsBanking = account.Results.Where(x => x.Type.ToUpper().Trim().Equals("BANK")).FirstOrDefault();
-                if (accountsBanking != null)
-                {
-                    var (agencyNumber, accountNumber) = ExtractAgencyAndAccount(accountsBanking.Number);
-
-                    var isItemAlreadySaved = accountsAlreadysaved.Any(x => x.PluggyItemId == accountsBanking.ItemId && x.PluggyAccountId == accountsBanking.Id);
-                    if (!isItemAlreadySaved)
-                    {
-                        var bankCreated = await CreateBankFromPluggy(itemId);
-                        var accountDto = new AccountFinancialDto
-                        {
-                            BankId = bankCreated.Id,
-                            AccountNickname = bankCreated.BankName,
-                            AgencyNumber = agencyNumber,
-                            AccountNumber = accountNumber,
-                            BalanceAvailable = accountsBanking.Balance,
-                            AccountType = MapStringToAccountType(accountsBanking.Name),
-                            MainAccount = false,
-                            IsActive = true,
-                            Origin = AccountConsts.AccountOrigin.Pluggy,
-                            PluggyItemId = accountsBanking.ItemId,
-                            PluggyAccountId = accountsBanking.Id
-                        };
-
-                        AccountFinancial accountToInsert = ObjectMapper.Map<AccountFinancial>(accountDto);
-
-                        using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
-                        {
-                            await _accountFinancialRepository.InsertAndGetIdAsync(accountToInsert);
-                            accountId = accountToInsert.Id;
-                            uow.Complete();
-                        }
-
-                        await _transactionAppService.CapturePluggyTransactionsAsync(accountsBanking.Id, null, null, false);
-                    }
-                }
-                #endregion
-
-                #region Credit card creation    
-                var creditCard = account.Results.Where(x => x.Type.ToUpper().Trim().Equals("CREDIT")).FirstOrDefault();
-                if (creditCard != null)
-                {
-                    await _creditCardAppService.PluggyCreateCreditCard(creditCard, accountId);
-
-                }
-
-                #endregion
-                
-                await _customerAppService.PluggyCreateCustomer(itemId);
-            }
-        }
-
-        private async Task<(long Id, string BankName)> CreateBankFromPluggy(string itemId)
-        {
-            var bankPluggy = await _pluggyManager.PluggyGetItemIdAsync(itemId);
-            var allBanksProsperium = await GetAllListBanksAsync();
-
-            var isItemAlreadySaved = allBanksProsperium.Where(x => x.Name == bankPluggy.Connector.Name).FirstOrDefault();
-            if (isItemAlreadySaved == null)
-            {
-                Bank newBank = new Bank
-                {
-                    Name = bankPluggy.Connector.Name,
-                    Origin = AccountOrigin.Pluggy
-                };
-
-                using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
-                {
-                    await _banksRepository.InsertAndGetIdAsync(newBank);
-                    uow.Complete();
-                    return (newBank.Id, newBank.Name);
-                }
-            }
-
-            return (isItemAlreadySaved.Id, isItemAlreadySaved.Name);
-        }
-
-        private (string AgencyNumber, string AccountNumber) ExtractAgencyAndAccount(string apiString)
-        {
-            var regex = new Regex(@"(\d+)/(\d+)-(\d+)");
-            var match = regex.Match(apiString);
-
-            if (match.Success)
-            {
-                var agencyNumber = match.Groups[1].Value;
-                var accountNumber = match.Groups[2].Value;
-
-                return (agencyNumber, accountNumber);
-            }
-
-            throw new ArgumentException("Formato inválido para extração de agência e conta");
-        }
-
-        private AccountType MapStringToAccountType(string accountTypeName)
-        {
-            switch (accountTypeName.ToLower())
-            {
-                case "conta corrente":
-                    return AccountType.Corrente;
-                case "poupança":
-                    return AccountType.Poupança;
-                case "investimento":
-                    return AccountType.Investimento;
-                case "outros":
-                    return AccountType.Outros;
-                case "indefinido":
-                    return AccountType.Indefinido;
-                case "benefícios":
-                    return AccountType.Benefícios;
-                default:
-                    throw new ArgumentException("Tipo de conta não reconhecido", nameof(accountTypeName));
-            }
-        }
-
-        #endregion
     }
 }

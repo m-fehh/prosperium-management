@@ -17,7 +17,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         public int TenantId { get; set; }
         public string CardName { get; set; }
         public string CardNumber { get; set; }
-        public virtual long AccountId { get; set; }
+        public virtual long? AccountId { get; set; }
 
         [ForeignKey("AccountId")]
         public AccountFinancial Account { get; set; }

@@ -32,20 +32,23 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IRepository<Transaction, long> _transactionRepository;
         private readonly IRepository<Category, long> _categoryRepository;
-        private readonly IRepository<AccountFinancial, long> _accountRepository;
-        private readonly IRepository<CreditCard, long> _creditCardRepository;
-        private readonly IRepository<OriginDestination> _originDestinationRepository;
-        private readonly PluggyManager _pluggyManager;
 
-        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<Category, long> categoryRepository, IRepository<AccountFinancial, long> accountRepository, IRepository<CreditCard, long> creditCardRepository, IRepository<OriginDestination> originDestinationRepository, PluggyManager pluggyManager)
+        public TransactionAppService(IUnitOfWorkManager unitOfWorkManager, IRepository<Transaction, long> transactionRepository, IRepository<Category, long> categoryRepository)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _transactionRepository = transactionRepository;
             _categoryRepository = categoryRepository;
-            _accountRepository = accountRepository;
-            _creditCardRepository = creditCardRepository;
-            _originDestinationRepository = originDestinationRepository;
-            _pluggyManager = pluggyManager;
+        }
+
+        [HttpPost]
+        [Route("CreateAtomicTransaction")]
+        public async Task CreateAtomicTransactionAsync(List<Transaction> input)
+        {
+            using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
+            {
+                await _transactionRepository.InsertRangeAsync(input);
+                uow.Complete();
+            }
         }
 
         [HttpPost]
@@ -109,7 +112,6 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             // Se for crédito recorrente
             if (input.PaymentType == PaymentType.Débito && input.PaymentTerm == PaymentTerms.Recorrente) { }
         }
-
 
         [HttpGet("{id}")]
         public async Task<TransactionDto> GetByIdAsync(long id)
@@ -262,74 +264,5 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             await _transactionRepository.DeleteAsync(searchTransaction);
         }
 
-        #region Pluggy API      
-
-        [HttpPost]
-        [Route("CapturePluggyTransactionsAsync")]
-        public async Task CapturePluggyTransactionsAsync(string accountId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard)
-        {
-            ResultPluggyTransactions pluggyTransactions = await _pluggyManager.PluggyGetTransactionsAsync(accountId, dateInitial, dateEnd);
-
-            if (pluggyTransactions.Total > 0)
-            {
-                List<Transaction> transactionsAlreadySaved = await _transactionRepository.GetAllListAsync();
-                List<OriginDestination> originDestinations = await _originDestinationRepository.GetAllListAsync();
-
-                List<Transaction> insertPendingTransactions = new List<Transaction>();
-                var transactionsWithErrors = new List<string>();
-
-                foreach (var item in pluggyTransactions.Results)
-                {
-                    try
-                    {
-                        var isItemAlreadySaved = transactionsAlreadySaved.Any(x => x.PluggyTransactionId == item.Id);
-                        if (!isItemAlreadySaved)
-                        {
-                            long accountOrCardId = (isCreditCard) ?
-                                await _creditCardRepository.GetAll().Where(x => x.PluggyCreditCardId == accountId).Select(x => x.Id).FirstOrDefaultAsync() :
-                                await _accountRepository.GetAll().Where(x => x.PluggyAccountId == accountId).Select(x => x.Id).FirstOrDefaultAsync();
-
-
-                            TransactionDto transactionDto = new TransactionDto
-                            {
-                                TransactionType = (item.Amount > 0 && !isCreditCard) ? TransactionType.Ganhos : TransactionType.Gastos,
-                                ExpenseValue = (isCreditCard && item.Amount > 0) ? Convert.ToDecimal(item.Amount * -1) : Convert.ToDecimal(item.Amount),
-                                Description = item.Description,
-                                CategoryId = (!string.IsNullOrEmpty(item.CategoryId)) ? Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()) : await _categoryRepository.GetAll().Where(x => x.Name == "Outros").Select(x => x.Id).FirstOrDefaultAsync(),
-                                PaymentType = (item.Type == "CREDIT") ? PaymentType.Crédito : PaymentType.Débito,
-                                PaymentTerm = (isCreditCard && item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente,
-                                AccountId = (!isCreditCard) ? accountOrCardId : null,
-                                Installments = (isCreditCard && item.CreditCardMetadata?.TotalInstallments > 1) ? item.CreditCardMetadata.TotalInstallments : 1,
-                                CurrentInstallment = (isCreditCard && item.CreditCardMetadata?.TotalInstallments > 1) ? $"{item.CreditCardMetadata.InstallmentNumber}/{item.CreditCardMetadata.TotalInstallments}" : "1/1",
-                                CreditCardId = (isCreditCard) ? accountOrCardId : null,
-                                Date = item.Date,
-                                Origin = AccountConsts.AccountOrigin.Pluggy,
-                                PluggyTransactionId = item.Id
-                            };
-
-                            Transaction transactionToInsert = ObjectMapper.Map<Transaction>(transactionDto);
-                            insertPendingTransactions.Add(transactionToInsert);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        transactionsWithErrors.Add(item.Id);
-                    }
-                }
-
-                using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
-                {
-                    await _transactionRepository.InsertRangeAsync(insertPendingTransactions);
-                    uow.Complete();
-                }
-
-                if (transactionsWithErrors.Count > 0)
-                {
-                    Logger.Error($"Transações com erros: {string.Join(", ", transactionsWithErrors)} - accountOrCardPluggyId: {accountId}");
-                }
-            }
-        }
-
-        #endregion
     }
 }

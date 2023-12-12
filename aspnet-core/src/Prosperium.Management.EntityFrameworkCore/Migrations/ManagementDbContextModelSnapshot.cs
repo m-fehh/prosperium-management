@@ -1780,7 +1780,7 @@ namespace Prosperium.Management.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long>("AccountId")
+                    b.Property<long?>("AccountId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("CardName")
@@ -2467,8 +2467,7 @@ namespace Prosperium.Management.Migrations
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
                         .WithMany("CreditCards")
                         .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Flags.FlagCard", "FlagCard")
                         .WithMany()

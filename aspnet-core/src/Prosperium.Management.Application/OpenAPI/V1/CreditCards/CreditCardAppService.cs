@@ -2,6 +2,7 @@
 using Abp.Domain.Uow;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using Prosperium.Management.OpenAPI.V1.Flags;
@@ -20,14 +21,12 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         private readonly IRepository<CreditCard, long> _creditCardRepository;
         private readonly ITransactionAppService _transactionAppService;
         private readonly IRepository<FlagCard, long> _flagCardRepository;
-        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
-        public CreditCardAppService(IRepository<CreditCard, long> creditCardRepository, ITransactionAppService transactionAppService, IRepository<FlagCard, long> flagCardRepository, IUnitOfWorkManager unitOfWorkManager)
+        public CreditCardAppService(IRepository<CreditCard, long> creditCardRepository, ITransactionAppService transactionAppService, IRepository<FlagCard, long> flagCardRepository)
         {
             _creditCardRepository = creditCardRepository;
             _transactionAppService = transactionAppService;
             _flagCardRepository = flagCardRepository;
-            _unitOfWorkManager = unitOfWorkManager;
         }
 
         [HttpGet]
@@ -57,7 +56,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         {
             CreditCard card = ObjectMapper.Map<CreditCard>(input);
             card.IsActive = true;
-            card.Origin = Accounts.AccountConsts.AccountOrigin.Manual;
+            card.Origin = AccountConsts.AccountOrigin.Manual;
             await _creditCardRepository.InsertAsync(card);
         }
 
@@ -68,41 +67,6 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
             card.IsActive = statusChange;
 
             await _creditCardRepository.UpdateAsync(card);
-        }
-
-        [HttpPost]
-        [Route("PluggyCreateCreditCard")]
-        public async Task PluggyCreateCreditCard(PluggyAccount input, long accountId)
-        {
-            var creditCardAlreadysaved = await GetAllListAsync();
-            var isItemAlreadySaved = creditCardAlreadysaved.Any(x => x.PluggyItemId == input.ItemId && x.PluggyCreditCardId == input.Id);
-            if (!isItemAlreadySaved)
-            {
-                var flagCreated = await CreateFlagFromPluggy(input.CreditData.Brand);
-                var creditCardDto = new CreditCardDto
-                {
-                    CardName = input.Name,
-                    CardNumber = "**** **** **** ****",
-                    AccountId = accountId,
-                    FlagCardId = flagCreated.Id,
-                    Limit = input.CreditData.CreditLimit,
-                    DueDay = input.CreditData.BalanceDueDate.Day,
-                    IsActive = true,
-                    Origin = AccountConsts.AccountOrigin.Pluggy,
-                    PluggyItemId = input.ItemId,
-                    PluggyCreditCardId = input.Id,
-                };
-
-                CreditCard cardToInsert = ObjectMapper.Map<CreditCard>(creditCardDto);
-
-                using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
-                {
-                    await _creditCardRepository.InsertAndGetIdAsync(cardToInsert);
-                    uow.Complete();
-                }
-
-                await _transactionAppService.CapturePluggyTransactionsAsync(input.Id, null, null, true);
-            }
         }
 
         [HttpDelete]
@@ -118,27 +82,6 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
 
             // Continue com a exclusão do cartão
             await _creditCardRepository.DeleteAsync(creditCard);
-        }
-        private async Task<(long Id, string FlagName)> CreateFlagFromPluggy(string input)
-        {
-            var allFlagsProsperium = await _flagCardRepository.GetAllListAsync();
-            var isItemAlreadySaved = allFlagsProsperium.Where(x => x.Name.ToLower().Trim() == input.ToLower().Trim()).FirstOrDefault();
-            if (isItemAlreadySaved == null)
-            {
-                FlagCard newFlag = new FlagCard
-                {
-                    Name = input
-                };
-
-                using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
-                {
-                    await _flagCardRepository.InsertAndGetIdAsync(newFlag);
-                    uow.Complete();
-                    return (newFlag.Id, newFlag.Name);
-                }
-            }
-
-            return (isItemAlreadySaved.Id, isItemAlreadySaved.Name);
         }
     }
 }

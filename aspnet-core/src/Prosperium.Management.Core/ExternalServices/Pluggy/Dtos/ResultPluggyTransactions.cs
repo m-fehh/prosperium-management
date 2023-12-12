@@ -15,22 +15,31 @@ namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
     {
         public string Id { get; set; }
         public string Description { get; set; }
+        public string DescriptionRaw { get; set; }
         public string CurrencyCode { get; set; }
         public double? Amount { get; set; }
+        public double? AmountInAccountCurrency { get; set; }
         public DateTime Date { get; set; }
-        public double? Balance { get; set; }
         public string Category { get; set; }
         public string CategoryId { get; set; }
-        public PaymentData PaymentData { get; set; }
-        public CreditCardMetadata CreditCardMetadata { get; set; }
+        public double? Balance { get; set; }
         public string AccountId { get; set; }
         public string ProviderCode { get; set; }
         public string Status { get; set; }
+        public PaymentData PaymentData { get; set; }
         public string Type { get; set; }
+        public CreditCardMetadata CreditCardMetadata { get; set; }
         public string AcquirerData { get; set; }
-        public string Merchant { get; set; }
+        public Merchant Merchant { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+    }
+
+    public class Merchant
+    {
+        public string Cnpj { get; set; }
+        public string Name { get; set; }
+        public string BusinessName { get; set; }
     }
 
     public class PaymentData
@@ -44,12 +53,18 @@ namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
 
     public class ReceiverData
     {
-        public string DocumentNumber { get; set; }
+        public DocumentNumber DocumentNumber { get; set; }
         public string Name { get; set; }
         public string AccountNumber { get; set; }
         public string BranchNumber { get; set; }
         public string RoutingNumber { get; set; }
         public string RoutingNumberISPB { get; set; }
+    }
+
+    public class DocumentNumber
+    {
+        public string Type { get; set; }
+        public string Value { get; set; }
     }
 
     public class CreditCardMetadata

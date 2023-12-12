@@ -12,11 +12,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="ExternalServices\**" />
-    <EmbeddedResource Remove="ExternalServices\**" />
-    <None Remove="ExternalServices\**" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Abp.Quartz" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
       <PrivateAssets>all</PrivateAssets>

@@ -5,8 +5,6 @@ using Prosperium.Management.ExternalServices.Pluggy;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Transactions;
-using Prosperium.Management.OriginDestinations;
-using Prosperium.Management.Plans;
 using Prosperium.Management.Web.Models.Accounts;
 using System;
 using System.Linq;
@@ -18,12 +16,14 @@ namespace Prosperium.Management.Web.Controllers
     public class AccountsController : ManagementControllerBase
     {
         private readonly IAccountAppService _accountsAppService;
+        private readonly IPluggyAppService _pluggyAppService;
         private readonly ITransactionAppService _transactionAppService;
         private readonly PluggyManager _pluggyManager;
 
-        public AccountsController(IAccountAppService accountsAppService, ITransactionAppService transactionAppService, PluggyManager pluggyManager)
+        public AccountsController(IAccountAppService accountsAppService, IPluggyAppService pluggyAppService, ITransactionAppService transactionAppService, PluggyManager pluggyManager)
         {
             _accountsAppService = accountsAppService;
+            _pluggyAppService = pluggyAppService;
             _transactionAppService = transactionAppService;
             _pluggyManager = pluggyManager;
         }
@@ -112,7 +112,7 @@ namespace Prosperium.Management.Web.Controllers
         [Route("InsertAccountPluggy")]
         public async Task InsertAccountPluggy([FromBody] string itemId)
         {
-            await _accountsAppService.PluggyCreateAccount(itemId);
+            await _pluggyAppService.PluggyCreateAsync(itemId);
 
         }
     }
