@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
@@ -158,83 +159,85 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         [HttpGet]
         public async Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input)
         {
-            var allTransaction = _transactionRepository.GetAll()
-                .Include(x => x.Categories)
-                    .ThenInclude(x => x.Subcategories)
-                .Include(x => x.Account)
-                    .ThenInclude(x => x.Bank)
-                .Include(x => x.CreditCard)
-                    .ThenInclude(x => x.FlagCard)
-                .WhereIf(!string.IsNullOrEmpty(input.Filter), x => x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
+            var query = _transactionRepository.GetAll()
+                .Include(x => x.Categories).ThenInclude(x => x.Subcategories)
+                .Include(x => x.Account).ThenInclude(x => x.Bank)
+                .Include(x => x.CreditCard).ThenInclude(x => x.FlagCard)
+                .Where(x => x.Account.AccountType != AccountConsts.AccountType.Crédito);
+
+            // Filtro por descrição
+            if (!string.IsNullOrEmpty(input.Filter))
+            {
+                query = query.Where(x => x.Description.ToLower().Trim().Contains(input.Filter.ToLower().Trim()));
+            }
 
             // Filtros avançados
+            query = ApplyAdvancedFilters(query, input);
+
+            // Filtro por calendário
+            query = ApplyCalendarFilter(query, input);
+
+            var pagedAndFilteredTransaction = query.OrderBy(input.Sorting ?? "date desc").PageBy(input);
+
+            var transactions = pagedAndFilteredTransaction.Select(o => new GetTransactionForViewDto
+            {
+                Transaction = ObjectMapper.Map<TransactionDto>(o),
+            });
+
+            int totalCount = await query.CountAsync();
+            return new PagedResultDto<GetTransactionForViewDto>(totalCount, await transactions.ToListAsync());
+        }
+
+        #region PRIVATE METHODS 
+
+        private IQueryable<Transaction> ApplyAdvancedFilters(IQueryable<Transaction> query, GetAllTransactionFilter input)
+        {
             if (!string.IsNullOrEmpty(input.FilteredAccounts))
             {
-                input.MonthYear = null;
-
                 var accountIds = input.FilteredAccounts.Split(',').Select(id => long.Parse(id)).ToList();
-                allTransaction = allTransaction.Where(x => accountIds.Contains(x.AccountId.Value));
+                query = query.Where(x => accountIds.Contains(x.AccountId.Value));
             }
 
             if (!string.IsNullOrEmpty(input.filteredCards))
             {
-                input.MonthYear = null;
-
                 var cardIds = input.filteredCards.Split(',').Select(id => long.Parse(id)).ToList();
-                allTransaction = allTransaction.Where(x => cardIds.Contains(x.CreditCardId.Value));
+                query = query.Where(x => cardIds.Contains(x.CreditCardId.Value));
             }
 
             if (!string.IsNullOrEmpty(input.FilteredCategories))
             {
-                input.MonthYear = null;
-
                 var categoryIds = input.FilteredCategories.Split(',').Select(id => long.Parse(id)).ToList();
-                allTransaction = allTransaction.Where(x => categoryIds.Contains(x.CategoryId));
+                query = query.Where(x => categoryIds.Contains(x.CategoryId));
             }
 
             if (!string.IsNullOrEmpty(input.FilteredTags))
             {
-                input.MonthYear = null;
-
                 var tagsIds = input.FilteredTags.Split(',').Select(id => long.Parse(id)).ToList();
-                allTransaction = allTransaction.Where(x => x.Tags.Any(tag => tagsIds.Contains(tag.Id)));
+                query = query.Where(x => x.Tags.Any(tag => tagsIds.Contains(tag.Id)));
             }
 
             if (!string.IsNullOrEmpty(input.FilteredTypes))
             {
-                input.MonthYear = null;
-
-                var transactionTypes = input.FilteredTypes.Split(',').Select(type => Enum.Parse(typeof(TransactionType), type)).Cast<TransactionType>().ToList();
-                allTransaction = allTransaction.Where(x => transactionTypes.Contains(x.TransactionType));
+                var transactionTypes = input.FilteredTypes.Split(',').Select(type => Enum.Parse<TransactionType>(type)).ToList();
+                query = query.Where(x => transactionTypes.Contains(x.TransactionType));
             }
 
+            return query;
+        }
 
-
-            // Filtro por calendário
+        private IQueryable<Transaction> ApplyCalendarFilter(IQueryable<Transaction> query, GetAllTransactionFilter input)
+        {
             if (!string.IsNullOrEmpty(input.MonthYear))
             {
                 var parts = input.MonthYear.Split('/');
                 var month = int.Parse(parts[0]);
                 var year = int.Parse(parts[1]);
-
-                allTransaction = allTransaction.Where(x => x.Date.Month == month && x.Date.Year == year);
+                query = query.Where(x => x.Date.Month == month && x.Date.Year == year);
             }
 
-            var pagedAndFilteredTransaction = allTransaction.OrderBy(input.Sorting ?? "date desc").PageBy(input);
-
-            var transactions = from o in pagedAndFilteredTransaction
-                               select new GetTransactionForViewDto()
-                               {
-                                   Transaction = ObjectMapper.Map<TransactionDto>(o),
-                               };
-
-            int totalCount = await allTransaction.CountAsync();
-            return new PagedResultDto<GetTransactionForViewDto>
-            (
-                totalCount,
-                await transactions.ToListAsync()
-            );
-        }
+            return query;
+        } 
+        #endregion
 
         [HttpPut]
         public async Task UpdateAsync(TransactionDto input)

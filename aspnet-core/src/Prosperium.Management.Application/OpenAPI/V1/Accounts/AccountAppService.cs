@@ -71,7 +71,10 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         [HttpGet]
         public async Task<List<AccountFinancialDto>> GetAllListAsync()
         {
-            List<AccountFinancial> allAccounts = await _accountFinancialRepository.GetAll().Include(x => x.Bank).ToListAsync();
+            List<AccountFinancial> allAccounts = await _accountFinancialRepository
+                .GetAll()
+                .Include(x => x.Bank)
+                .ToListAsync();
             return ObjectMapper.Map<List<AccountFinancialDto>>(allAccounts);
         }
 
@@ -80,6 +83,24 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             return await _plansManager.ValidatesCreatedAccounts(AbpSession.TenantId.Value);
 
         }
+
+        [HttpPost]
+        [Route("CreateAndGetId")]
+        public async Task<long> CreateAndGetIdAsync(AccountFinancialDto input)
+        {
+            AccountFinancial account = ObjectMapper.Map<AccountFinancial>(input);
+
+            using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
+            {
+                account.Origin = (account.Origin == 0) ? AccountOrigin.Manual : AccountOrigin.Pluggy;
+                account.IsActive = true;
+                await _accountFinancialRepository.InsertAndGetIdAsync(account);
+                uow.Complete();
+            }
+
+            return account.Id;
+        }
+
 
         [HttpPost]
         public async Task CreateAsync(AccountFinancialDto input)
@@ -94,7 +115,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
-                account.Origin = AccountConsts.AccountOrigin.Manual;
+                account.Origin = (account.Origin == 0) ? AccountOrigin.Manual : AccountOrigin.Pluggy;
                 account.IsActive = true;
                 await _accountFinancialRepository.InsertAndGetIdAsync(account);
                 uow.Complete();

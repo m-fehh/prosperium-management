@@ -42,7 +42,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             _originDestinationRepository = originDestinationRepository;
         }
 
-        public async Task PluggyCreateAsync(string itemId)
+        public async Task<List<string>> PluggyCreateAsync(string itemId)
         {
             var pluggyAccounts = await _pluggyManager.PluggyGetAccountAsync(itemId);
             if (pluggyAccounts == null || pluggyAccounts.Total == 0)
@@ -50,14 +50,29 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                 throw new UserFriendlyException("Erro ao criar a conta, por favor, acione a equipe de suporte.");
             }
 
+            Dictionary<string, int> accountsCount = new Dictionary<string, int>();
+
             foreach (var item in pluggyAccounts.Results)
             {
                 await (item.Type == "CREDIT" ? CreateCreditCardAsync(item) : CreateAccountAsync(item));
+
+                // Atualiza a contagem do tipo de conta
+                if (accountsCount.ContainsKey(item.Type))
+                {
+                    accountsCount[item.Type]++;
+                }
+                else
+                {
+                    accountsCount[item.Type] = 1;
+                }
 
                 await CapturePluggyTransactionsAsync(item.Id, null, null, (item.Type == "CREDIT"));
             }
 
             await _customerAppService.PluggyCreateCustomer(itemId);
+            List<string> accountsCreated = accountsCount.Select(kv => $"{kv.Value} {kv.Key}").ToList();
+
+            return accountsCreated;
         }
 
         public async Task CapturePluggyTransactionsAsync(string pluggyAccountOrCardId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard)
@@ -84,7 +99,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                                 transactionDto.TransactionType = TransactionType.Gastos;
                                 transactionDto.ExpenseValue = (item.Amount > 0) ? Convert.ToDecimal(item.Amount * -1) : Convert.ToDecimal(item.Amount);
                                 transactionDto.Description = item.Description;
-                                transactionDto.CategoryId = (!string.IsNullOrEmpty(item.CategoryId)) ? Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()) : (await _categoryAppService.GetAllListAsync()).Where(x => x.Name == "Outros").Select(x => x.Id).FirstOrDefault();
+                                transactionDto.CategoryId = (item.CategoryId == "29") ? (await _categoryAppService.GetAllListAsync()).Where(x => x.Name == "Fatura Mensal").Select(x => x.Id).FirstOrDefault() : (!string.IsNullOrEmpty(item.CategoryId)) ? Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()) : (await _categoryAppService.GetAllListAsync()).Where(x => x.Name == "Outros").Select(x => x.Id).FirstOrDefault();
                                 transactionDto.PaymentType = PaymentType.Crédito;
                                 transactionDto.PaymentTerm = (item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente;
                                 transactionDto.Installments = (item.CreditCardMetadata?.TotalInstallments > 1) ? item.CreditCardMetadata.TotalInstallments : 1;
@@ -137,7 +152,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             var accountAlreadysaved = (await _accountAppService.GetAllListAsync()).Any(x => x.PluggyItemId == input.ItemId && x.PluggyAccountId == input.Id);
             if (!accountAlreadysaved)
             {
-                AccountFinancialDto accountFinancialDto = new AccountFinancialDto
+                AccountFinancialDto accountFinancialDto = new()
                 {
                     BankId = bankId,
                     AccountNickname = bankName,
@@ -149,7 +164,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                     IsActive = true,
                     Origin = AccountOrigin.Pluggy,
                     PluggyItemId = input.ItemId,
-                    PluggyAccountId = input.Id
+                    PluggyAccountId = input.Id,
                 };
 
                 await _accountAppService.CreateAsync(accountFinancialDto);
@@ -161,21 +176,44 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             var creditCardAlreadysaved = (await _creditCardAppService.GetAllListAsync()).Any(x => x.PluggyItemId == input.ItemId && x.PluggyCreditCardId == input.Id);
             if (!creditCardAlreadysaved)
             {
-                CreateCreditCardDto creditCardDto = new CreateCreditCardDto
-                {
-                    CardName = input.Name,
-                    CardNumber = null,
-                    AccountId = null,
-                    FlagCardId = await FlagFromPluggy(input.CreditData.Brand),
-                    Limit = input.CreditData.CreditLimit.Value,
-                    DueDay = input.CreditData.BalanceDueDate.Day,
-                    IsActive = true,
-                    Origin = AccountOrigin.Pluggy,
-                    PluggyItemId = input.ItemId,
-                    PluggyCreditCardId = input.Id,
-                };
+                var (bankId, bankName) = await BankFromPluggy(input.ItemId);
+                var accountAlreadysaved = (await _accountAppService.GetAllListAsync()).Any(x => x.PluggyItemId == input.ItemId && x.PluggyAccountId == input.Id);
 
-                await _creditCardAppService.CreateAsync(creditCardDto);
+                if (!accountAlreadysaved)
+                {
+                    AccountFinancialDto accountFinancialDto = new AccountFinancialDto()
+                    {
+                        BankId = bankId,
+                        AccountNickname = bankName,
+                        AgencyNumber = null,
+                        AccountNumber = null,
+                        BalanceAvailable = (input.Balance.Value > 0) ? input.Balance.Value * -1 : input.Balance.Value,
+                        AccountType = AccountType.Crédito,
+                        MainAccount = false,
+                        IsActive = true,
+                        Origin = AccountOrigin.Pluggy,
+                        PluggyItemId = input.ItemId,
+                        PluggyAccountId = input.Id,
+                    };
+
+                    var accountId = await _accountAppService.CreateAndGetIdAsync(accountFinancialDto);
+
+                    CreateCreditCardDto creditCardDto = new CreateCreditCardDto
+                    {
+                        CardName = input.Name,
+                        CardNumber = $"**** **** **** {input.Number}",
+                        AccountId = accountId,
+                        FlagCardId = await FlagFromPluggy(input.CreditData.Brand),
+                        Limit = input.CreditData.CreditLimit.Value,
+                        DueDay = input.CreditData.BalanceDueDate.Day,
+                        IsActive = true,
+                        Origin = AccountOrigin.Pluggy,
+                        PluggyItemId = input.ItemId,
+                        PluggyCreditCardId = input.Id,
+                    };
+
+                    await _creditCardAppService.CreateAsync(creditCardDto);
+                }
             }
         }
 
@@ -185,7 +223,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
         {
             var bankPluggy = await _pluggyManager.PluggyGetItemIdAsync(itemId);
             var findBank = (await _accountAppService.GetAllListBanksAsync())
-                .Where(x => x.TradeName.ToLower().Contains(bankPluggy.Connector.Name.ToLower())).FirstOrDefault();
+                .Where(x => bankPluggy.Connector.Name.ToLower().Contains(x.TradeName.ToLower())).FirstOrDefault();
 
             return (findBank.Id, findBank.Name);
         }

@@ -12,8 +12,5 @@ namespace Prosperium.Management.Web.Models.Extract
         public List<AccountFinancialDto> Accounts { get; set; }
         public List<CreditCardDto> Cards { get; set; }
         public List<CategoryDto> Categories { get; set; }
-        public List<TagDto> Tags { get; set; }
-        public List<SelectListItem> TransactionType { get; set; }
-        public int TransactionQuantity { get; set; }
     }
 }

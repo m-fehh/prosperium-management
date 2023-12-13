@@ -115,29 +115,15 @@ namespace Prosperium.Management.Web.Controllers
         [HttpGet("GetAllFilters")]
         public async Task<ActionResult> GetAllFilters()
         {
-            var allTransactions = await _transactionAppService.GetAllListAsync();
-
-            var allAccounts = await _accountAppService.GetAllListAsync();
+            var allAccounts = (await _accountAppService.GetAllListAsync()).Where(x => x.AccountType != AccountConsts.AccountType.Crédito).ToList();
             var allCards = await _creditCardAppService.GetAllListAsync();
-            var allTags = await _tagAppService.GetTagsListAsync();
             var allCategories = await _categoryAppService.GetAllListPerTenantAsync();
-            var allTransactionTypes = Enum.GetValues(typeof(TransactionType))
-                               .Cast<TransactionType>()
-                               .Select(tt => new SelectListItem
-                               {
-                                   Value = ((int)tt).ToString(),
-                                   Text = tt.ToString()
-                               })
-                               .ToList();
 
             var model = new AllFiltersModalViewModel
             {
                 Accounts = allAccounts,
                 Cards = allCards,
-                Tags = allTags,
                 Categories = allCategories,
-                TransactionType = allTransactionTypes,
-                TransactionQuantity = allTransactions.Count()
             };
 
             return PartialView("_FilterExtractModal", model);

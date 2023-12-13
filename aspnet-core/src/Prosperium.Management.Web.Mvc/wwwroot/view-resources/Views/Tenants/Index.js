@@ -1,14 +1,7 @@
 ﻿(function ($) {
-    var _tenantService = abp.services.app.tenant,
+    var _transactionService = abp.services.app.transaction,
         l = abp.localization.getSource('Management'),
-        _$modal = $('#TenantCreateModal'),
-        _$form = _$modal.find('form'),
-        _$table = $('#TenantsTable');
-
-    // Destruir a tabela DataTable, se já estiver inicializada
-    if ($.fn.DataTable.isDataTable('#TenantsTable')) {
-        $('#TenantsTable').DataTable().destroy();
-    }
+        _$table = $('#ExtractTable');
 
     var _$tenantsTable = _$table.DataTable({
         paging: true,

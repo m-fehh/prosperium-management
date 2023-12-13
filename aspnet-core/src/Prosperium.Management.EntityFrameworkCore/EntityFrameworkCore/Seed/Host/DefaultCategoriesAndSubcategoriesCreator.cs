@@ -146,6 +146,8 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
             AddCategoryAndSubcategory(true, "obricacoes.png", "Obrigações legais", "Saldo bloqueado", TransactionType.Gastos);
             AddCategoryAndSubcategory(true, "obricacoes.png", "Obrigações legais", "Pensão alimentícia", TransactionType.Gastos);
 
+            AddCategoryAndSubcategory(false, "fatura-credito.png", "Fatura Mensal", "Faturas", TransactionType.Gastos);
+
 
             #endregion
 

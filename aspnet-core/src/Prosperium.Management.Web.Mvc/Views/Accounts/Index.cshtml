@@ -204,26 +204,6 @@
         UpdateCardValues(isActive);
     }
 
-    function CurrentBalancePerTransaction(accountId) {
-        return new Promise(function (resolve, reject) {
-            $.ajax({
-                url: '/App/Accounts/GetValuesTotals',
-                type: 'GET',
-                data: { accountId: accountId },
-                dataType: 'json',
-                success: function (data) {
-                    resolve(data.result.total);
-                },
-                error: function (error) {
-                    console.error('Erro na requisição:', error);
-
-                    reject(Math.abs(currentBalance).toFixed(2));
-                }
-            });
-        });
-    }
-
-
     $(document).ready(function () {
         UpdateCardValues(true);
     });
@@ -246,8 +226,7 @@
                 for (let index = 0; index < data.result.length; index++) {
                     try {
                         var account = data.result[index];
-                        account.balanceAvailable = await CurrentBalancePerTransaction(account.id);
-                        
+                        console.log(account);
 
                         var typeAccount = (account.origin == 2) ? "Automática" : "Manual";
 

@@ -60,7 +60,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
         [Column(TypeName = "decimal?(18,2)")]
         public decimal? AvailableCreditLimit { get; set; }
 
-        public object BalanceForeignCurrency { get; set; }
+        public decimal? BalanceForeignCurrency { get; set; }
 
         [DataType(DataType.Currency)]
         [Column(TypeName = "decimal?(18,2)")]
@@ -70,7 +70,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy.Dtos
         [Column(TypeName = "decimal?(18,2)")]
         public decimal? CreditLimit { get; set; }
 
-        public bool IsLimitFlexible { get; set; }
+        public bool? IsLimitFlexible { get; set; }
         public string HolderType { get; set; }
         public string Status { get; set; }
     }

@@ -5,12 +5,9 @@ function formatarCartao(input) {
     // Remove caracteres não numéricos
     let numeros = input.value.replace(/\D/g, '');
 
-    // Adiciona a máscara se houver pelo menos 8 dígitos
-    if (numeros.length >= 8) {
-        input.value = numeros.replace(/(\d{4})(\d{4})(\d{0,8})/, '$1 **** **** $2');
-    } else if (numeros.length > 4) {
-        // Adiciona um espaço após o quarto caractere
-        input.value = numeros.replace(/(\d{4})/, '$1 ').trim();
+    // Adiciona a máscara se houver pelo menos 4 dígitos
+    if (numeros.length >= 4) {
+        input.value = `**** **** **** ${numeros.slice(-4)}`;
     } else {
         input.value = numeros;
     }

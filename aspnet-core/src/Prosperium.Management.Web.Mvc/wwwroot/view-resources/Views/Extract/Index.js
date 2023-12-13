@@ -1,37 +1,29 @@
-var _$extractTable;
-var filterInput;
-var monthYearInput;
-
 (function ($) {
     var _transactionService = abp.services.app.transaction,
         l = abp.localization.getSource('Management'),
         _$table = $('#ExtractTable');
 
-    filterInput = $('#filterInput');
-    monthYearInput = $('#monthYearInput');
-
-    _$extractTable = _$table.DataTable({
+    var resultData;
+    var _$extractTable = _$table.DataTable({
         paging: true,
         serverSide: true,
-        language: {
-            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese.json'
-        },
+        lengthChange: true,  // Adicionando esta opção para permitir a alteração do número de itens por página
         listAction: {
             ajaxFunction: function (input) {
                 var currentDate = new Date();
                 var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
 
+                var currentPage = _$table.DataTable().page.info().page;
+                var itemsPerPage = _$table.DataTable().page.info().length;
+
                 var formData = $('#ExtractSearchForm').serializeFormToObject(true);
-                formData.filter = filterInput.val();
-                formData.monthYear = monthYearInput.val();
+
+                formData.filter = $('#filterInput').val();
+                formData.monthYear = $('#monthYearInput').val();
 
                 if (!formData.monthYear || formData.monthYear.trim() === "") {
-
-
                     formData.monthYear = currentMonthYear;
                 }
-
-
 
                 // Filtro avançado:
                 formData.filteredAccounts = $("#selectedAccount").val();
@@ -40,7 +32,18 @@ var monthYearInput;
                 formData.filteredTags = $("#selectedTag").val();
                 formData.filteredTypes = $("#selectedType").val();
 
-                return _transactionService.getAll(formData);
+                formData.skipCount = currentPage * itemsPerPage;
+                formData.maxResultCount = itemsPerPage;
+
+                var transactionPromise = _transactionService.getAll(formData);
+
+                transactionPromise.then(function (data) {
+                     resultData = data.items;
+                    UpdateCardValues();
+                    return data.items;
+                });
+
+                return transactionPromise;
             },
             inputFilter: function () {
                 return $('#ExtractSearchForm').serializeFormToObject(true);
@@ -49,11 +52,9 @@ var monthYearInput;
         buttons: [
             {
                 name: 'refresh',
-                text: '<i class="fas fa-redo-alt"></i>',
                 class: 'bntRefreshTable',
-                action: function () {
-                    _$extractTable.draw(false);
-                }
+                text: '<i class="fas fa-redo-alt"></i>',
+                action: () => _$extractTable.draw(false)
             }
         ],
         responsive: {
@@ -74,7 +75,9 @@ var monthYearInput;
                 targets: 1,
                 data: 'transaction.description',
                 render: function (data) {
-                    return data.toUpperCase();
+                    var maxLength = 30;
+                    var truncatedData = data.length > maxLength ? data.substring(0, maxLength) + '...' : data;
+                    return `<span title="${data}">${truncatedData.toUpperCase()}</span>`;
                 },
                 sortable: false
             },
@@ -82,8 +85,7 @@ var monthYearInput;
                 targets: 2,
                 data: 'transaction',
                 render: function (data, type, row) {
-                    if (data.account != null)
-                    {
+                    if (data.account != null) {
                         var accountNickname = data.account.accountNickname;
                         var agencyNumber = data.account.agencyNumber;
                         var accountNumber = data.account.accountNumber;
@@ -91,7 +93,7 @@ var monthYearInput;
 
                         if (data.account && data.account.accountNickname) {
                             return `
-                            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                            <div class="d-flex" style="display: flex; justify-content: start; margin-left: 20%; align-items: center;">
                                 <div>
                                     <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                                 </div>
@@ -104,27 +106,21 @@ var monthYearInput;
                             return '';
                         }
                     } else {
-                        var isPluggy = data.creditCard.origin === 2;
-
-                        var cardNumber = (!isPluggy) ? data.creditCard.cardNumber : data.creditCard.cardName;
                         var cardName = data.creditCard.cardName;
                         var parcelTransaction = data.currentInstallment;
                         var imageFullPath = abp.appPath + 'img/flags/' + data.creditCard.flagCard.iconPath;
 
-
-                        
-
                         return `
-                            <div class="d-flex" style="display: flex; justify-content: center; align-items: center;">
+                            <div class="d-flex" style="display: flex; justify-content: start; margin-left: 20%; align-items: center;">
                                 <div>
                                     <img src="${imageFullPath}" style="border-radius: 5px;" width="30" />
                                 </div>
                                 <div style="margin-left: 20px;">
                                     <div class="row">
-                                        <span style="font-size: 12px; color: #000; font-weight: 400;">${cardNumber} | Parcela: ${parcelTransaction}</span>
+                                        <span style="font-size: 12px; color: #000; font-weight: 400;">${data.creditCard.cardNumber} | Parcela: ${parcelTransaction}</span>
                                     </div>
                                     <div class="row">
-                                        <p class="saldo-label" style="font-size: 12px!important; color: #999;">${(!isPluggy) ? cardName : l('AutomaticIntegration') }</p>
+                                        <p class="saldo-label" style="font-size: 12px!important; color: #999;">${cardName}</p>
                                     </div>
                                 </div>
                             </div>
@@ -173,6 +169,7 @@ var monthYearInput;
         ]
     });
 
+    // Função para atualizar o estilo de cada linha 
     _$extractTable.on('draw.dt', function () {
         _$extractTable.rows().every(function () {
             var data = this.data();
@@ -181,7 +178,7 @@ var monthYearInput;
             $(rowNode).removeClass('gastos ganhos transferencia');
 
             // Adicione a classe correspondente ao TransactionType
-            if (data.transaction.transactionType === 1 /* Gastos */) {
+            if (data.transaction.transactionType === 1) {
                 $(rowNode).addClass('gastos');
             } else if (data.transaction.transactionType === 2) {
                 $(rowNode).addClass('ganhos');
@@ -191,79 +188,60 @@ var monthYearInput;
         });
     });
 
-    $(document).on('click', '#FilterIcon', function (e) {
-        e.preventDefault();
+    // Função para atualizar o texto do título
+    function UpdateResumoTitle(date) {
+        var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
+        $("#resumoTitle").text(formattedDate);
+    }
 
-        abp.ajax({
-            url: abp.appPath + 'App/Extract/GetAllFilters',
-            type: 'GET',
-            dataType: 'html',
-            success: function (content) {
-                $('#FilterModal div.modal-content').html(content);
-            },
-            error: function (e) { }
+    $(document).ready(function () {
+        UpdateResumoTitle(new Date()); 
+
+        $("#calendarIcon").datepicker({
+            format: "mm/yyyy",
+            startView: "months",
+            minViewMode: "months",
+            autoclose: true,
+            language: "pt-BR",
+            orientation: "bottom",
+            defaultViewDate: { year: new Date().getFullYear(), month: new Date().getMonth() }
+        }).on('changeDate', function (e) {
+            $("#monthYearInput").val(e.format(0, 'mm/yyyy'));
+            UpdateResumoTitle(e.date);
+            HandleSearchInput();
+        });
+
+        $("#monthYearInput").on('change', function () {
+            UpdateResumoTitle(new Date(monthYearInput.val()));
+            HandleSearchInput();
         });
     });
-
-    abp.event.on('filter.applied', () => {
-        $("#btnLimparFiltro").css("visibility", "visible");
-
-        $('#FilterModal').modal('hide');
-        _$extractTable.ajax.reload();
-
-        UpdateCardValues();
-    });
-
-    $(document).on('click', '#btnLimparFiltro', function () {
-        $('#selectedAccount').val('');
-        $('#selectedCard').val('');
-        $('#selectedCategory').val('');
-        $('#selectedTag').val('');
-        $('#selectedType').val('');
-
-        _$extractTable.ajax.reload();
-
-        $("#btnLimparFiltro").css("visibility", "hidden");
-
-        UpdateCardValues();
-    });
-
 
     function UpdateCardValues() {
-        // Obtém a data atual
-        var currentDate = new Date();
-        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
+        var totalGastos = 0;
+        var totalGanhos = 0;
 
-
-        accountId = $("#selectedAccount").val();
-        cardId = $("#selectedCard").val();
-        categoryId = $("#selectedCategory").val();
-        tagId = $("#selectedTag").val();
-        typeId = $("#selectedType").val();
-
-        var filterValue = filterInput.val();
-        var monthYearValue = monthYearInput.val();
-
-        if (!monthYearValue || monthYearValue.trim() === "") {
-            monthYearValue = currentMonthYear;
+        if (resultData) {
+            resultData.forEach(function (item) {
+                if (item.transaction.transactionType === 1) {
+                    // Despesa
+                    totalGastos += Math.abs(item.transaction.expenseValue);
+                } else if (item.transaction.transactionType === 2) {
+                    // Ganho
+                    totalGanhos += Math.abs(item.transaction.expenseValue);
+                }
+            });
         }
 
-        $.ajax({
-            url: '/App/Extract/GetValuesTotals',
-            type: 'GET',
-            data: { filter: filterValue, monthYear: monthYearValue, filteredAccounts: accountId, filteredCards: cardId, filteredTags: tagId, filteredCategories: categoryId, filteredTypes: typeId },
-            dataType: 'json',
-            success: function (data) {
-                var gantos = "R$" + data.result.gastos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                var ganhos = "R$" + data.result.ganhos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // Atualize os elementos HTML com os novos valores calculados
+        $('#gastosValue').text(formatCurrency(totalGastos));
+        $('#ganhosValue').text(formatCurrency(totalGanhos));
+    }
 
-                $('#gastosValue').text(gantos);
-                $('#ganhosValue').text(ganhos);
-            },
-            error: function (error) {
-                console.error('Erro na requisição:', error);
-            }
-        });
+    // Função para formatar valor R$ 
+    function formatCurrency(value) {
+        return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     // Função para lidar com a entrada de pesquisa
@@ -289,63 +267,50 @@ var monthYearInput;
         };
     }
 
-    $(document).ready(function () {
-        UpdateCardValues();
+    // Abre a modal do filtro avançado
+    $(document).on('click', '#FilterIcon', function (e) {
+        e.preventDefault();
 
-        var monthYearInput = $("#monthYearInput");
-        var calendarIcon = $("#calendarIcon");
-        var resumoTitle = $("#resumoTitle");
-
-        // Obtém a data atual
-        var currentDate = new Date();
-        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-        // Define o valor padrão do input de mês/ano
-        monthYearInput.val(currentMonthYear);
-        UpdateResumoTitle(currentDate);
-
-        calendarIcon.datepicker({
-            format: "mm/yyyy",
-            startView: "months",
-            minViewMode: "months",
-            autoclose: true,
-            language: "pt-BR",
-            orientation: "bottom",
-            defaultViewDate: { year: currentDate.getFullYear(), month: currentDate.getMonth() }
-        }).on('changeDate', function (e) {
-            monthYearInput.val(e.format(0, 'mm/yyyy'));
-            UpdateResumoTitle(e.date);
-            HandleSearchInput();
+        abp.ajax({
+            url: abp.appPath + 'App/Extract/GetAllFilters',
+            type: 'GET',
+            dataType: 'html',
+            success: function (content) {
+                $('#FilterModal div.modal-content').html(content);
+            },
+            error: function (e) { }
         });
-
-        monthYearInput.on('change', function () {
-            UpdateResumoTitle(new Date(monthYearInput.val()));
-            HandleSearchInput();
-            UpdateCardValues();
-        });
-
-        // Evento de input para o campo de filtro
-        filterInput.on('input', function () {
-            HandleSearchInput();
-        });
-
-        calendarIcon.css({
-            "font-size": "28px",
-            "color": "#FF8C00",
-            "margin-right": "10px",
-            "cursor": "pointer"
-        });
-
-        // Função para atualizar o texto do título
-        function UpdateResumoTitle(date) {
-            var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
-            resumoTitle.text(formattedDate);
-        }
     });
 
-})(jQuery);
+
+    // Comitta a pesquisa
+    abp.event.on('filter.applied', () => {
+        $("#btnLimparFiltro").css("visibility", "visible");
+
+        _$extractTable.ajax.reload();
+        $('#FilterModal').modal('hide');
+        UpdateCardValues();
+
+    });
+
+    // Limpa os filtro
+    $(document).on('click', '#btnLimparFiltro', function () {
+        $('#selectedAccount').val('');
+        $('#selectedCard').val('');
+        $('#selectedCategory').val('');
+        $('#selectedTag').val('');
+        $('#selectedType').val('');
+
+        _$extractTable.ajax.reload();
+
+        $("#btnLimparFiltro").css("visibility", "hidden");
+        UpdateCardValues();
+    });
+
+    // Evento de input para o campo de filtro
+    $('#filterInput').on('input', function () {
+        HandleSearchInput();
+    });
 
 
-
-
+}) (jQuery);

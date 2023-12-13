@@ -92,12 +92,27 @@ const initPluggyConnect = async () => {
 
 function insertAccountPluggy(id) {
     $.ajax({
-        url: 'Accounts/InsertAccountPluggy',
+        url: abp.appPath + 'App/Accounts/InsertAccountPluggy', 
         type: 'POST',
         data: JSON.stringify(id),
         contentType: 'application/json',
         success: function (response) {
-            window.location.href = '/App/Accounts';
+            console.log(response);
+
+            var hasCreditAccounts = response.result.pluggyAccounts.includes("CREDIT");
+            var hasBankAccounts = response.result.pluggyAccounts.includes("BANK");
+
+            console.log("hasCreditAccounts", hasCreditAccounts);
+            console.log("hasBankAccounts", hasBankAccounts);
+
+            if (hasCreditAccounts && hasBankAccounts) {
+                location.reload();
+            } else if (hasCreditAccounts) {
+                window.location.href = '/App/CreditCards';
+            }
+            else {
+                location.reload();
+            }
         },
         error: function (error) {
             console.error("Erro ao enviar POST request:", error);

@@ -3,6 +3,7 @@ using Abp.Domain.Uow;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
+using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using Prosperium.Management.OpenAPI.V1.Flags;
@@ -21,12 +22,14 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         private readonly IRepository<CreditCard, long> _creditCardRepository;
         private readonly ITransactionAppService _transactionAppService;
         private readonly IRepository<FlagCard, long> _flagCardRepository;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
-        public CreditCardAppService(IRepository<CreditCard, long> creditCardRepository, ITransactionAppService transactionAppService, IRepository<FlagCard, long> flagCardRepository)
+        public CreditCardAppService(IRepository<CreditCard, long> creditCardRepository, ITransactionAppService transactionAppService, IRepository<FlagCard, long> flagCardRepository, IUnitOfWorkManager unitOfWorkManager)
         {
             _creditCardRepository = creditCardRepository;
             _transactionAppService = transactionAppService;
             _flagCardRepository = flagCardRepository;
+            _unitOfWorkManager = unitOfWorkManager;
         }
 
         [HttpGet]
@@ -55,9 +58,14 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         public async Task CreateAsync(CreateCreditCardDto input)
         {
             CreditCard card = ObjectMapper.Map<CreditCard>(input);
-            card.IsActive = true;
-            card.Origin = AccountConsts.AccountOrigin.Manual;
-            await _creditCardRepository.InsertAsync(card);
+            using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
+            {
+                card.IsActive = true;
+                card.Origin = AccountConsts.AccountOrigin.Manual;
+
+                await _creditCardRepository.InsertAndGetIdAsync(card);
+                uow.Complete();
+            }
         }
 
         [HttpPut]

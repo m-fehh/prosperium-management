@@ -12,6 +12,7 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         Task<List<AccountFinancialDto>> GetAllListAsync();
         Task<AccountFinancialDto> GetAccountById(long id);
         Task CreateAsync(AccountFinancialDto input);
+        Task<long> CreateAndGetIdAsync(AccountFinancialDto input);
         Task<bool> ValidateAccounts();
     }
 }

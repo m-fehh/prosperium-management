@@ -68,22 +68,6 @@ namespace Prosperium.Management.Web.Controllers
         }
 
         [HttpGet]
-        [Route("GetValuesTotals")]
-        public async Task<IActionResult> GetValuesTotals(long accountId)
-        {
-            var allTransactions = await _transactionAppService.GetAllTransactionPerAccount(accountId);
-            var account = await _accountsAppService.GetAccountById(accountId);
-
-            decimal gastos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Gastos).Sum(x => x.ExpenseValue);
-            decimal ganhos = allTransactions.Where(x => x.TransactionType == TransactionConsts.TransactionType.Ganhos).Sum(x => x.ExpenseValue);
-
-            decimal total = Math.Abs(account.BalanceAvailable) + Math.Abs(ganhos) - Math.Abs(gastos);
-            var resultado = new { gastos, ganhos, total };
-
-            return Json(resultado);
-        }
-
-        [HttpGet]
         [Route("PluggyGetAccessToken")]
         public async Task<IActionResult> PluggyGetAccessToken()
         {
@@ -110,10 +94,12 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpPost]
         [Route("InsertAccountPluggy")]
-        public async Task InsertAccountPluggy([FromBody] string itemId)
+        public async Task<IActionResult> InsertAccountPluggy([FromBody] string itemId)
         {
-            await _pluggyAppService.PluggyCreateAsync(itemId);
+            var pluggyAccounts = await _pluggyAppService.PluggyCreateAsync(itemId);
+            var result = new { pluggyAccounts };
 
+            return Json(result);
         }
     }
 }
