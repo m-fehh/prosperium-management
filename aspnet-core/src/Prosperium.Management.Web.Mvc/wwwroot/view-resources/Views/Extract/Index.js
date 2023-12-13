@@ -36,7 +36,7 @@
                 var transactionPromise = _transactionService.getAll(formData);
 
                 transactionPromise.then(function (data) {
-                     resultData = data.items;
+                    resultData = data.items;
                     UpdateCardValues();
                     return data.items;
                 });
@@ -194,7 +194,7 @@
     }
 
     $(document).ready(function () {
-        UpdateResumoTitle(new Date()); 
+        UpdateResumoTitle(new Date());
 
         $("#calendarIcon").datepicker({
             format: "mm/yyyy",
@@ -222,9 +222,13 @@
 
         if (resultData) {
             resultData.forEach(function (item) {
+                console.log(resultData)
+
                 if (item.transaction.transactionType === 1) {
                     // Despesa
-                    totalGastos += Math.abs(item.transaction.expenseValue);
+                    if (item.transaction.categoryId !== 33) {
+                        totalGastos += Math.abs(item.transaction.expenseValue);
+                    }
                 } else if (item.transaction.transactionType === 2) {
                     // Ganho
                     totalGanhos += Math.abs(item.transaction.expenseValue);
@@ -311,4 +315,4 @@
     });
 
 
-}) (jQuery);
+})(jQuery);

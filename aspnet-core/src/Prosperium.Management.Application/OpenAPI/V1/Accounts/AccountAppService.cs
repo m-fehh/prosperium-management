@@ -149,11 +149,12 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
         [HttpDelete("id")]
         public async Task DeleteAsync(long id)
         {
-            AccountFinancial searchAccount = await _accountFinancialRepository.GetAll()
+            var searchAllAccount = await _accountFinancialRepository.GetAll()
                 .Include(x => x.CreditCards)
                     .ThenInclude(x => x.Transactions)
-                .Where(x => x.Id == id)
-                .FirstOrDefaultAsync();
+                .ToListAsync();
+
+            var searchAccount = searchAllAccount.Where(x => x.Id == id).FirstOrDefault();
 
             if (searchAccount.CreditCards.Count > 0)
             {
@@ -163,12 +164,22 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                 }
             }
 
-            if (searchAccount.Origin == AccountOrigin.Pluggy)
+            if (searchAccount.Origin != AccountOrigin.Pluggy)
+            {
+                await _accountFinancialRepository.DeleteAsync(searchAccount);
+            }
+            else
             {
                 await _pluggyManager.PluggyItemDeleteAsync(searchAccount.PluggyItemId);
+                var findAccountsWithSameItemId = searchAllAccount.Where(x => x.PluggyItemId == searchAccount.PluggyItemId).ToList();
+
+                foreach (var item in findAccountsWithSameItemId)
+                {
+                    await _accountFinancialRepository.DeleteAsync(item.Id);
+                }
+
             }
 
-            await _accountFinancialRepository.DeleteAsync(searchAccount);
         }
     }
 }

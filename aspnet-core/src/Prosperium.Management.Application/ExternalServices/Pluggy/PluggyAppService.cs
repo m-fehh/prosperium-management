@@ -18,6 +18,7 @@ using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Drawing;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
 {
@@ -238,28 +239,18 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
         private (string AgencyNumber, string AccountNumber) ExtractAgencyAndAccount(string accountAgencyNumber)
         {
-            // Ajuste na expressão regular para lidar com os diferentes formatos
-            var regex = new Regex(@"\b(\d+)/(\d+)/(\d+)(?:-(\d+/\d+))?\b");
-            var match = regex.Match(accountAgencyNumber);
+            var splitString = accountAgencyNumber.Split('/');
 
-            if (match.Success)
+            var agencyNumber = splitString[1].Trim();
+            var accountNumber = splitString[2].Trim();
+
+            if (splitString.Length > 3 )
             {
-                var agencyNumber = match.Groups[2].Value;
-                var accountNumber = match.Groups[3].Value;
-
-                if (match.Groups[4].Success)
-                {
-                    accountNumber += "-" + match.Groups[4].Value;
-                }
-
-                return (agencyNumber, accountNumber);
+                accountNumber = accountNumber + "/" + splitString[3].Trim();
             }
 
-            throw new ArgumentException("Formato inválido para extração de agência e conta");
+            return (agencyNumber, accountNumber);
         }
-
-
-
         #endregion
     }
 }
