@@ -23,6 +23,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions
@@ -142,6 +143,44 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         }
 
         [HttpGet]
+        [Route("list-transaction-per-month")]
+        public async Task<List<TransactionDto>> GetAllListPerMonthAsync(string monthYear, string filteredAccounts, string filteredCards, string filteredCategories)
+        {
+            var parts = monthYear.Split('/');
+            var month = int.Parse(parts[0]);
+            var year = int.Parse(parts[1]);
+
+            var query = _transactionRepository.GetAll()
+                .Include(x => x.Categories).ThenInclude(x => x.Subcategories)
+                .Include(x => x.Account).ThenInclude(x => x.Bank)
+                .Include(x => x.CreditCard).ThenInclude(x => x.FlagCard)
+                .Where(x => x.Account.AccountType != AccountConsts.AccountType.Crédito)
+                .Where(x => x.Date.Month == month && x.Date.Year == year);
+
+            if (!string.IsNullOrEmpty(filteredAccounts))
+            {
+                var accountIds = filteredAccounts.Split(',').Select(id => long.Parse(id)).ToList();
+                query = query.Where(x => accountIds.Contains(x.AccountId.Value));
+            }
+
+            if (!string.IsNullOrEmpty(filteredCards))
+            {
+                var cardIds = filteredCards.Split(',').Select(id => long.Parse(id)).ToList();
+                query = query.Where(x => cardIds.Contains(x.CreditCardId.Value));
+            }
+
+            if (!string.IsNullOrEmpty(filteredCategories))
+            {
+                var categoryIds = filteredCategories.Split(',').Select(id => long.Parse(id)).ToList();
+                query = query.Where(x => categoryIds.Contains(x.CategoryId));
+            }
+
+            var allTransactions = await query.ToListAsync();
+
+            return ObjectMapper.Map<List<TransactionDto>>(allTransactions);
+        }
+
+        [HttpGet]
         [Route("list-transaction-per-account")]
         public async Task<List<TransactionDto>> GetAllTransactionPerAccount(long accountId)
         {
@@ -210,18 +249,6 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                 query = query.Where(x => categoryIds.Contains(x.CategoryId));
             }
 
-            if (!string.IsNullOrEmpty(input.FilteredTags))
-            {
-                var tagsIds = input.FilteredTags.Split(',').Select(id => long.Parse(id)).ToList();
-                query = query.Where(x => x.Tags.Any(tag => tagsIds.Contains(tag.Id)));
-            }
-
-            if (!string.IsNullOrEmpty(input.FilteredTypes))
-            {
-                var transactionTypes = input.FilteredTypes.Split(',').Select(type => Enum.Parse<TransactionType>(type)).ToList();
-                query = query.Where(x => transactionTypes.Contains(x.TransactionType));
-            }
-
             return query;
         }
 
@@ -236,7 +263,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             }
 
             return query;
-        } 
+        }
         #endregion
 
         [HttpPut]

@@ -1,0 +1,198 @@
+﻿@using Prosperium.Management.Web.Models.Extract
+@model AllFiltersModalViewModel
+@{
+    Layout = null;
+}
+
+<style>
+
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+
+    .card-body {
+        padding: 15px;
+    }
+
+
+    .card-text {
+        color: #555;
+    }
+
+    .btn {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .btn:hover {
+            background-color: #267bb5;
+        }
+
+    .selected {
+        border-color: #28a745 !important;
+        box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #28a745;
+        font-size: 20px;
+    }
+
+    .custom-button-modal {
+        width: 100%;
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .custom-button:hover {
+        transform: scale(1.05);
+    }
+
+    a:hover {
+        color: #fff;
+    }
+
+    hr.divider {
+        width: 100%;
+        margin: 10px 0;
+        border: 1px solid rgba(204, 204, 204, 0.5);
+    }
+
+</style>
+
+<form name="FilterModal" role="form" class="form-horizontal" id="FilterModal">
+    <div class="modal-body">
+        <div role="tabpanel" class="tab-pane container" id="select-filters">
+            <div role="tabpanel" class="tab-pane container" id="select-filters">
+
+                @if (Model.Accounts.Count > 0)
+                {
+                    <label for="selectedAccount">Filtrar por conta:</label>
+                    <div class="row account-row" data-card-type="account">
+                        @foreach (var account in Model.Accounts)
+                        {
+                            <div class="col-md-4 mb-1">
+                                <div class="card" data-conta-id="@account.Id" data-selected="false">
+                                    <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
+                                    <div class="card-body">
+                                        <p style="font-size: 13px; color: #999; margin: 0;">Agência: @account.AgencyNumber Conta: @account.AccountNumber</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Cards.Count > 0)
+                {
+                    <label for="selectedCard">Filtrar por cartão:</label>
+                    <div class="row creditcard-row" data-card-type="card">
+                        @foreach (var card in Model.Cards)
+                        {
+                            <div class="col-md-4 mb-1">
+                                <div class="card" data-cartao-id="@card.Id" data-selected="false">
+                                    <img src="~/img/flags/@card.FlagCard.IconPath" width="40" alt="@card.CardName">
+                                    <div class="card-body">
+                                        @if (card.Origin == Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Pluggy)
+                                        {
+                                            <p style="font-size: 13px; color: #999; margin: 0;">(Integração automática) - @card.CardName</p>
+                                        }
+                                        else
+                                        {
+                                            <p style="font-size: 13px; color: #999; margin: 0;">@card.CardNumber</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (Model.Categories.Count > 0)
+                {
+                    <label for="selectedCategory">Filtrar por categorias:</label>
+                    <div class="row category-row" data-card-type="category">
+                        @foreach (var category in Model.Categories)
+                        {
+                            <div class="col-md-2 mb-1">
+                                <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id" data-selected="false">
+                                    <img src="~/img/categories/@category.IconPath" width="45" alt="@category.Name">
+                                    <div class="card-body">
+                                        <p style="font-size: 13px; color: #999; margin: 0;">@category.Name</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <hr class="divider">
+                <div class="row" style="display: flex; justify-content: flex-end;  padding: 10px 0;">
+                    <div class="save-button custom-button-modal">
+                        <i class="fas fa-search"></i> &nbsp; Aplicar filtro
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="~/view-resources/Views/Extract/_FilterExtractModal.js" asp-append-version="true"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#FilterModal .card').click(function () {
+            var card = $(this);
+            var cardType = card.closest('.row').data('card-type');
+            var itemId = card.data(cardType + '-id');
+
+            if (cardType === 'account') {
+                // Se o tipo for 'account', desmarque outros cards desse tipo
+                $('.row.' + cardType + '-row .card').not(card).removeClass('selected').data('selected', 'false').find('.checkmark').remove();
+            }
+
+            toggleSelection(card);
+        });
+
+        function toggleSelection(card) {
+            card.toggleClass('selected');
+            var isSelected = card.hasClass('selected');
+            card.data('selected', isSelected.toString()); // Atualiza o atributo data-selected
+            addCheckmark(card);
+        }
+
+        function addCheckmark(card) {
+            card.find('.checkmark').remove();
+
+            if (card.hasClass('selected')) {
+                card.append('<span class="checkmark">&#10003;</span>');
+            }
+        }
+    });
+</script>
+
+

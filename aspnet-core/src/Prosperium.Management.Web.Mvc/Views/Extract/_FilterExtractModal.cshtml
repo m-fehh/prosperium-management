@@ -165,7 +165,7 @@
 
 <script>
     $(document).ready(function () {
-        $('.card').click(function () {
+        $('#FilterModal .card').click(function () {
             var card = $(this);
             var cardType = card.closest('.row').data('card-type');
             var itemId = card.data(cardType + '-id');

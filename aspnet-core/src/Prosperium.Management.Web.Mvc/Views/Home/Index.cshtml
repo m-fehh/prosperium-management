@@ -7,6 +7,17 @@
     var isHostUser = AbpSession.TenantId == null;
 }
 
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Home/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Home/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
 <link rel="stylesheet" href="~/css/Home/style.css" />
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -30,18 +41,22 @@
     @if (!isHostUser)
     {
         <div class="row" style="display: flex; justify-content: flex-end;">
-            <div class="col-11" style="display: flex; justify-content: start;">
-                <h2 class="titleMonth" style="font-size: 18px; padding: 15px; margin-left: 10px;"></h2>
-
+            <div class="col-10" style="display: flex; justify-content: start;">
+                <h2 class="titleMonth" style="border: none; margin: 0; font-size: 1.2rem; color: #333; padding-left: 20px"></h2>
             </div>
-            <div class="col-1">
-                <i class="far fa-calendar-alt" style="font-size: 40px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="calendarIcon"></i>
+            <div class="col-2" style="display: flex; justify-content: flex-end; align-items: center; padding-right: 20px;">
+                <i class="fas fa-funnel-dollar" data-toggle="modal" data-target="#FilterModal" style="font-size: 30px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="FilterIcon"></i>
+                <i class="far fa-calendar-alt" style="font-size: 30px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="calendarIcon"></i>
                 <input type="text" name="MonthYear" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 30px; display: none;" oninput="HandleSearchInput(this)" id="monthYearInput" />
             </div>
         </div>
 
+        <button id="btnLimparFiltro" style="background: transparent; border: none; color: #FF8C00; font-weight: bold;  visibility: hidden; display: flex; align-items: center; margin-left: 20px;">
+            <i class="fas fa-times"></i> &nbsp; Limpar Filtro
+        </button>
+
         @* Cards *@
-        <div class="row mb-5" style="display: flex; justify-content: space-evenly;  margin: 10px 0 0 0;">
+        <div class="row mb-5" style="display: flex; justify-content: space-evenly; margin: 10px 0 0 0;">
             <div class="col-4">
                 <div class="card" id="totalGastos">
                     <div class="card-content">
@@ -64,7 +79,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-4">
                 <div class="card" id="total">
                     <div class="card-content">
@@ -79,12 +93,13 @@
         </div>
 
         @* Gráfico *@
-
-
         <div class="row row-cols-2 mb-5">
             <div class="col">
                 <div class="row" style="display: flex; justify-content: center;">
                     <h2 style="font-size: 18px; padding: 15px;">Transações por categoria</h2>
+                </div>
+                <div class="row" id="chartMessage" style="display: none; display: flex; justify-content: center; padding: 20px;">
+                    <p class="messageNotVisible" id="messageNotVisibleCategories">Não há transações disponíveis para o mês/ano especificado.</p>
                 </div>
                 <div class="row" style="display: flex; justify-content: center;">
                     <canvas id="myPieChart" width="400" height="400"></canvas>
@@ -103,16 +118,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" id="chartMessage" style="display: none; display: flex; justify-content: center; padding: 20px;">
-                    <p>Não há transações disponíveis para o mês/ano especificado.</p>
-                </div>
             </div>
             <div class="col">
                 <div class="row" style="display: flex; justify-content: center;">
                     <h2 style="font-size: 18px; padding: 15px;">Últimas transações</h2>
-                    <div class="row" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 20px;">
-                        <div id="latestTransactionsContainer" style="width: 100%; margin-left: 50px;"></div>
-                    </div>
+                </div>
+                <div class="row" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 20px;">
+                    <div id="latestTransactionsContainer" style="width: 100%; margin-left: 50px;"></div>
+                    <p class="messageNotVisible">Não há transações disponíveis para o mês/ano especificado.</p>
                 </div>
             </div>
         </div>
@@ -124,366 +137,20 @@
                 </div>
                 <div class="row" style="display: flex; justify-content: center;">
                     <div id="progress-bar-container" style="width: 100%;"></div>
+                    <p class="messageNotVisible" id="messageNotVisibleCreditCard">Não há transações disponíveis para o mês/ano especificado.</p>
                 </div>
             </div>
         </div>
 
+        <input type="hidden" id="selectedAccount" name="selectedAccount" />
+        <input type="hidden" id="selectedCard" name="selectedCard" />
+        <input type="hidden" id="selectedCategory" name="selectedCategory" />
     }
-
-    <input type="hidden" id="isHostUser" value="@isHostUser" />
+</div>
+<div class="modal fade" id="FilterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" data-backdrop="static">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
 </div>
 
-
-<script>
-    $(document).ready(function () {
-        var isHostUser = $('#isHostUser').val();
-
-        if (!isHostUser) {
-            UpdateCardValues();
-            UpdateCardTransactionsByCategory();
-            UpdateCardLatestTransaction();
-            UpdateCreditCardChart();
-
-            var monthYearInput = $("#monthYearInput");
-            var calendarIcon = $("#calendarIcon");
-
-            var currentDate = new Date();
-            var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-            monthYearInput.val(currentMonthYear);
-
-            calendarIcon.datepicker({
-                format: "mm/yyyy",
-                startView: "months",
-                minViewMode: "months",
-                autoclose: true,
-                language: "pt-BR",
-                orientation: "bottom",
-                defaultViewDate: { year: currentDate.getFullYear(), month: currentDate.getMonth() }
-            }).on('changeDate', function (e) {
-                UpdateResumoTitle(e.date);
-                monthYearInput.val(e.format(0, 'mm/yyyy'));
-                UpdateCardValues();
-                UpdateCardTransactionsByCategory();
-                UpdateCardLatestTransaction();
-                UpdateCreditCardChart();
-            });
-
-            UpdateResumoTitle(currentDate);
-        }
-    });
-
-    function UpdateResumoTitle(date) {
-        var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
-        $(".titleMonth").text("Resumo de " + formattedDate.toLowerCase());
-    }
-
-    function marcarOpcao(elemento, valor) {
-        var botoes = document.querySelectorAll('.opcao-btn');
-        botoes.forEach(function (botao) {
-            botao.classList.remove('opcao-selecionada');
-        });
-
-        elemento.classList.add('opcao-selecionada');
-
-        var inputRadio = elemento.querySelector('input[type="radio"]');
-        inputRadio.checked = true;
-
-        UpdateCardTransactionsByCategory();
-    }
-
-
-    function UpdateCardValues() {
-        // Obtém a data atual
-        var currentDate = new Date();
-        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-        var monthYearValue = $("#monthYearInput").val();
-        if (!monthYearValue || monthYearValue.trim() === "") {
-            monthYearValue = currentMonthYear;
-        }
-
-        $.ajax({
-            url: 'GetValuesTotals',
-            type: 'GET',
-            data: { monthYear: monthYearValue },
-            dataType: 'json',
-            success: function (data) {
-                var gantos = "R$" + data.result.gastos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                var ganhos = "R$" + data.result.ganhos.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-                var total = data.result.totalFormatted;
-
-                $('#gastosValue').text(gantos);
-                $('#ganhosValue').text(ganhos);
-                $('#totalValue').text(total);
-
-
-                // Adicionando lógica para definir a borda e o ícone do card
-                var totalCard = $('#total');
-
-                if (total > 0) {
-                    totalCard.css('border-color', '#28a745');
-                    totalCard.css('box-shadow', '0 0 10px rgba(40, 167, 69, 0.5)');
-                } else if (total < 0) {
-                    totalCard.css('border-color', '#dc3545');
-                    totalCard.css('box-shadow', '0 0 10px rgba(220, 53, 69, 0.5)');
-                } else {
-                    totalCard.css('border-color', '#ccc');
-                    totalCard.css('box-shadow', '0 0 10px rgba(0, 0, 0, 0.1)');
-                }
-            },
-            error: function (error) {
-                console.error('Erro na requisição:', error);
-            }
-        });
-    }
-
-    function UpdateCardTransactionsByCategory() {
-        var currentDate = new Date();
-        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-        var selectedPaymentType = parseInt($('input[name="TransactionType"]:checked').val());
-
-
-        var monthYearValue = $("#monthYearInput").val();
-        if (!monthYearValue || monthYearValue.trim() === "") {
-            monthYearValue = currentMonthYear;
-        }
-
-        $.ajax({
-            url: 'GetTransactionsByCategory',
-            type: 'GET',
-            data: { monthYear: monthYearValue, transactionType: selectedPaymentType },
-            dataType: 'json',
-            success: function (data) {
-                if (data.result.length > 0) {
-                    renderPieChart(data.result);
-                    $('#chartMessage').hide();
-                    $('.opcao-btn').show();  // Mostra os botões se houver resultados
-                } else {
-                    // Se não houver resultado, esconde o gráfico, mostra a mensagem e esconde os botões
-                    $('#myPieChart').hide();
-                    $('.opcao-btn').show();
-                    $('#chartMessage').show();
-                }
-            },
-            error: function (error) {
-                console.error('Erro na requisição:', error);
-            }
-        });
-    }
-
-    function UpdateCardLatestTransaction() {
-        var currentDate = new Date();
-        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-        var monthYearValue = $("#monthYearInput").val();
-        if (!monthYearValue || monthYearValue.trim() === "") {
-            monthYearValue = currentMonthYear;
-        }
-
-        $.ajax({
-            url: 'LatestTransactions',
-            type: 'GET',
-            data: { monthYear: monthYearValue },
-            dataType: 'json',
-            success: function (data) {
-                var container = document.getElementById('latestTransactionsContainer');
-                if (data.result && data.result.length > 0) {
-                    container.innerHTML = '';
-
-                    data.result.forEach(function (transaction) {
-                        container.innerHTML += createTransactionCard(transaction);
-                    });
-
-                } else {
-                    container.innerHTML = '<p>Nenhuma transação encontrada para o mês/ano especificado.</p>';
-                }
-            },
-            error: function (error) {
-                console.error('Erro na requisição:', error);
-            }
-        });
-    }
-
-    function UpdateCreditCardChart() {
-        var currentDate = new Date();
-        var currentMonthYear = (currentDate.getMonth() + 1).toString().padStart(2, '0') + '/' + currentDate.getFullYear();
-
-        var monthYearValue = $("#monthYearInput").val();
-        if (!monthYearValue || monthYearValue.trim() === "") {
-            monthYearValue = currentMonthYear;
-        }
-
-        $.ajax({
-            url: 'GetCreditCardExpenses',
-            type: 'GET',
-            data: { monthYear: monthYearValue },
-            dataType: 'json',
-            success: function (data) {
-                if (data.result.length > 0) {
-                    renderCreditCardChart(data.result);
-                }
-                else {
-                    var container = document.getElementById('progress-bar-container');
-                    container.innerHTML = '<p>Nenhuma transação encontrada para o mês/ano especificado.</p>';
-                }
-            },
-            error: function (error) {
-                console.error('Erro na requisição:', error);
-            }
-        });
-    }
-
-
-    function formatDate(dateString) {
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        return new Date(dateString).toLocaleDateString('pt-BR', options);
-    }
-
-    // Função para criar o HTML do card
-    function createTransactionCard(transaction) {
-        var imageFullPath = abp.appPath + 'img/categories/' + transaction.imageCategory;
-
-        return `
-                                                <div class="card" style="height: 90px;">
-                                                    <div class="card-content">
-                                                        <div class="card-body d-flex align-items-center" style="width: 100%;">
-                                                                 <div class="row" style="width: 100%; display: flex; align-items: center;">
-                                                                    <div class="col-2" style="display: flex; justify-content: center;">
-                                                                    <img src="${imageFullPath}" width="40" />
-                                                                </div>
-                                                                <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
-                                                                    <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.category}</p>
-                                                                            <p style="font-size: 13px; color: #999; margin: 0;">${transaction.expenseValue}</p>
-                                                                </div>
-                                                                <div class="col-3">
-                                                                            <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.transactionDate)}</p>
-                                                                </div>
-                                                            </div>
-                                                            <div>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                    `;
-    }
-
-    var myPieChart;
-    // Gráfico de categória
-    function renderPieChart(data) {
-        var canvas = document.getElementById('myPieChart');
-
-        if (!canvas) {
-            console.error('Elemento canvas não encontrado.');
-            return;
-        }
-
-        if (myPieChart) {
-            myPieChart.destroy();
-        }
-
-        var labels = data.map(item => item.categoria);
-        var values = data.map(item => Math.abs(item.valorTotal));
-
-        var ctx = canvas.getContext('2d');
-
-        // Cores relacionadas ao laranja
-        var orangeColors = ['#FFA07A', '#FF7F50', '#FF6347', '#FF4500', '#FF8C00'];
-
-        myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: orangeColors,
-                }]
-            },
-            options: {
-                responsive: false,
-                maintainAspectRatio: false,
-                cutout: '80%',
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'left',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                var label = context.label || '';
-                                var value = Math.abs(context.parsed).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                                return label + ': ' + value;
-                            },
-                        },
-                    },
-                },
-            },
-        });
-    }
-
-    function getRandomColors(count) {
-        // Função para gerar cores aleatórias
-        var colors = [];
-        for (var i = 0; i < count; i++) {
-            var color = '#' + Math.floor(Math.random() * 16777215).toString(16);
-            colors.push(color);
-        }
-        return colors;
-    }
-
-
-
-    function renderCreditCardChart(data) {
-        var inputDate = $("#monthYearInput").val();
-        var dateParts = inputDate.split('/');
-        var currentMonth = parseInt(dateParts[0]);
-        var currentYear = parseInt(dateParts[1]);
-
-        var newDate = new Date(currentYear, currentMonth - 1, 1); // Subtrai 1 do mês para usar 0-index
-        newDate.setMonth(newDate.getMonth() + 1);
-
-        var monthYearValue = (newDate.getMonth() + 1).toString().padStart(2, '0') + '/' + newDate.getFullYear();
-
-        $('#progress-bar-container').empty();
-
-
-        data.forEach(function (card) {
-            if (card.dueDate < 10) {
-                card.dueDate = "0" + card.dueDate;
-            }
-
-            var imageFullPath = abp.appPath + 'img/flags/' + card.logo;
-            var progressBar =
-                `
-                                <div class="progress-card">
-                                    <div class="card" style="height: 120px;">
-                                        <div class="card-content">
-                                                <div class="card-body d-flex align-items-center" style="width: 100%; flex-direction: column;">
-                                                <div class="row" style="width: 100%; display: flex; align-items: center;">
-                                                    <div class="col-1" style="display: flex; justify-content: center;">
-                                                        <img src="${imageFullPath}" width="45" />
-                                                    </div>
-                                                    <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
-                                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${card.creditCard}</p>
-                                                        <p style="font-size: 13px; color: #999; margin: 0;">Usado: R$  ${Math.abs(card.valorGasto).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  - Limite: R$ ${card.limit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                                                    </div>
-                                                     <div class="col-3">
-                                                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">Vencimento: ${card.dueDate}/${monthYearValue}</p>
-                                                    </div>
-                                                </div>
-                                                <div class="progress" role="progressbar" aria-label="${card.creditCard}" aria-valuenow="${card.progress}" aria-valuemin="0" aria-valuemax="100">
-                                                    <div class="progress-bar" style="width: ${card.progress}%">${card.progress}%</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                    `
-
-            $('#progress-bar-container').append(progressBar);
-        });
-    }
-</script>

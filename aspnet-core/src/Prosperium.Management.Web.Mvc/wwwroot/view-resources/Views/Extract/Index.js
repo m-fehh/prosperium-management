@@ -29,8 +29,6 @@
                 formData.filteredAccounts = $("#selectedAccount").val();
                 formData.filteredCards = $("#selectedCard").val();
                 formData.filteredCategories = $("#selectedCategory").val();
-                formData.filteredTags = $("#selectedTag").val();
-                formData.filteredTypes = $("#selectedType").val();
 
                 formData.skipCount = currentPage * itemsPerPage;
                 formData.maxResultCount = itemsPerPage;
