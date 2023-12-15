@@ -35,7 +35,6 @@
 
             @if (isHostUser)
             {
-
                 <li class="nav-item nav-style">
                     <a class="nav-link" href="@Url.Action("Index", "Tenants")">Tenants</a>
                 </li>
@@ -118,16 +117,13 @@
 <script>
     (function ($) {
         $(document).ready(function () {
-            $('#BackToImpersonator').hide();
-            $('.nav-link').removeClass('active');
-
             var currentPageUrl = window.location.pathname;
 
             $('.nav-link').each(function () {
                 var linkUrl = $(this).attr('href');
 
-                // Verificar se a URL atual é igual à URL do link
-                if (currentPageUrl === linkUrl) {
+                // Verificar se a URL atual começa com a URL do link
+                if (currentPageUrl.startsWith(linkUrl) && (currentPageUrl.length === linkUrl.length || currentPageUrl[linkUrl.length] === '/')) {
                     $(this).addClass('active');
                 }
             });

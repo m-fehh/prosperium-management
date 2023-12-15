@@ -161,6 +161,11 @@
         ]
     });
 
+    function formatCurrency(value) {
+        const formattedValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return value >= 0 ? `R$ ${formattedValue}` : `- R$ ${formattedValue.substring(1)}`;
+    }
+
     // Função para atualizar o estilo de cada linha 
     _$extractTable.on('draw.dt', function () {
         _$extractTable.rows().every(function () {
@@ -233,11 +238,6 @@
         // Atualize os elementos HTML com os novos valores calculados
         $('#gastosValue').text(formatCurrency(totalGastos));
         $('#ganhosValue').text(formatCurrency(totalGanhos));
-    }
-
-    // Função para formatar valor R$ 
-    function formatCurrency(value) {
-        return `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     }
 
     // Função para lidar com a entrada de pesquisa

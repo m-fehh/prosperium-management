@@ -26,7 +26,7 @@
     @RenderSection("styles", required: false)
 </head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
-    <div class="wrapper">
+    <div class="wrapper" style="overflow-x: hidden;">
         @await Html.PartialAsync("_Header.cshtml")
         @await Html.PartialAsync("_PxpNavigation.cshtml")
         <div class="content-wrapper">
@@ -50,6 +50,8 @@
     .form-container{
         margin-top: -0.1px;  
         box-shadow: 2px 2px 5px rgba(255, 165, 0, 0.2), -2px -2px 5px rgba(255, 165, 0, 0.2);
+        width: 100%;
+        overflow-x: hidden;
     }
 
 
