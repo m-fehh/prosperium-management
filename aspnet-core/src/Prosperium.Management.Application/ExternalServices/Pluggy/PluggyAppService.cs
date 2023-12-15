@@ -75,6 +75,11 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return accountsCreated;
         }
 
+        public async Task Abc(string a)
+        {
+            await _customerAppService.PluggyCreateCustomer(a);
+        }
+
         public async Task<ResultPluggyItem> PluggyUpdateItemAsync(string pluggyAccountId)
         {
             var accountPluggy = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyAccountId == pluggyAccountId).FirstOrDefault();

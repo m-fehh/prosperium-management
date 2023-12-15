@@ -8,8 +8,10 @@ using Prosperium.Management.OpenAPI.V1.Customers.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Xml.Linq;
 using static Prosperium.Management.OpenAPI.V1.Customers.CustomerConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Customers
@@ -58,7 +60,7 @@ namespace Prosperium.Management.OpenAPI.V1.Customers
                 {
                     FullName = customerByPluggy.FullName,
                     DocumentType = customerByPluggy.DocumentType,
-                    Document = customerByPluggy.Document,
+                    Document = FormatDocument(customerByPluggy.DocumentType, customerByPluggy.Document),
                     TaxNumber = customerByPluggy.TaxNumber,
                     CompanyName = customerByPluggy.CompanyName,
                     JobTitle = customerByPluggy.JobTitle,
@@ -101,5 +103,22 @@ namespace Prosperium.Management.OpenAPI.V1.Customers
         }
 
         #endregion
+
+        static string FormatDocument(string type, string document)
+        {
+            switch (type.ToUpper())
+            {
+                case "CPF":
+                    string numericCPF = new string(document.Where(char.IsDigit).ToArray());
+                    return Convert.ToUInt64(numericCPF).ToString(@"000\.000\.000\-00");
+                case "CNPJ":
+                    string numericCNPJ = new string(document.Where(char.IsDigit).ToArray());
+                    return Convert.ToUInt64(numericCNPJ).ToString(@"00\.000\.000\/0000\-00");
+                case "RG":
+                    return Regex.Replace(document, @"^(\d{2})(\d{3})(\d{3})(\d{1,2}).*", "$1.$2.$3-$4");
+                default:
+                    return document;
+            }
+        }
     }
 }
