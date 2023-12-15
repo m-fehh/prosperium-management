@@ -1,7 +1,9 @@
 ﻿(function ($) {
-    var _transactionService = abp.services.app.transaction,
+    var _tenantService = abp.services.app.tenant,
         l = abp.localization.getSource('Management'),
-        _$table = $('#ExtractTable');
+        _$modal = $('#TenantCreateModal'),
+        _$form = _$modal.find('form'),
+        _$table = $('#TenantsTable');
 
     var _$tenantsTable = _$table.DataTable({
         paging: true,

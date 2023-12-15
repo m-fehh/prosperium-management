@@ -14,6 +14,7 @@ using Prosperium.Management.OpenAPI.V1.Transactions;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using Prosperium.Management.Plans;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -68,6 +69,14 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             return ObjectMapper.Map<AccountFinancialDto>(account);
         }
 
+        public async Task<bool> ValidateAccounts()
+        {
+            return await _plansManager.ValidatesCreatedAccounts(AbpSession.TenantId.Value);
+
+        }
+        
+        #region GET - ACCOUNT 
+
         [HttpGet]
         public async Task<List<AccountFinancialDto>> GetAllListAsync()
         {
@@ -78,11 +87,9 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             return ObjectMapper.Map<List<AccountFinancialDto>>(allAccounts);
         }
 
-        public async Task<bool> ValidateAccounts()
-        {
-            return await _plansManager.ValidatesCreatedAccounts(AbpSession.TenantId.Value);
+        #endregion
 
-        }
+        #region POST - ACCOUNT 
 
         [HttpPost]
         [Route("CreateAndGetId")]
@@ -100,7 +107,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
 
             return account.Id;
         }
-
 
         [HttpPost]
         public async Task CreateAsync(AccountFinancialDto input)
@@ -135,16 +141,52 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
             };
 
             await _transactionAppService.CreateAsync(extractCreated);
+        } 
+
+        #endregion
+
+        #region PUT - ACCOUNT 
+        [HttpPut]
+        [Route("UpdateBalanceValue")]
+        public async Task UpdateBalanceValueAsync(AccountFinancialDto input)
+        {
+            using (var unitOfWork = _unitOfWorkManager.Begin())
+            {
+                var existingAccount = await _accountFinancialRepository.FirstOrDefaultAsync(input.Id);
+                existingAccount.BalanceAvailable = input.BalanceAvailable;
+
+                await _accountFinancialRepository.UpdateAsync(existingAccount);
+                unitOfWork.Complete();
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdateStatusPluggy")]
+        public async Task UpdateStatusPluggy(string itemId, string newStatus)
+        {
+            var account = (await _accountFinancialRepository.GetAllListAsync()).Where(x => x.PluggyItemId == itemId).ToList();
+            foreach (var item in account)
+            {
+                item.StatusPluggyItem = newStatus;
+
+                await _accountFinancialRepository.UpdateAsync(item);
+            }
         }
 
         [HttpPut]
+        [Route("StatusChangeAccount")]
         public async Task StatusChangeAccountAsync(long id, bool statusChange)
         {
             var account = await _accountFinancialRepository.FirstOrDefaultAsync(id);
             account.IsActive = statusChange;
 
             await _accountFinancialRepository.UpdateAsync(account);
-        }
+        } 
+
+        #endregion
+
+        #region DELETE - ACCOUNT 
 
         [HttpDelete("id")]
         public async Task DeleteAsync(long id)
@@ -178,8 +220,9 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts
                     await _accountFinancialRepository.DeleteAsync(item.Id);
                 }
 
-            }
+            } 
 
+            #endregion
         }
     }
 }

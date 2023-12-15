@@ -69,7 +69,7 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpGet]
         [Route("PluggyGetAccessToken")]
-        public async Task<IActionResult> PluggyGetAccessToken()
+        public async Task<IActionResult> PluggyGetAccessToken(bool IsUpdate, string ItemId)
         {
             try
             {
@@ -79,7 +79,8 @@ namespace Prosperium.Management.Web.Controllers
                     throw new UserFriendlyException("Limite de contas atingido. Considere aumentar seu plano para criar mais contas.");
                 }
 
-                var accessToken = await _pluggyManager.PluggyCreateConnectTokenAsync();
+                var accessToken = await ((IsUpdate) ? _pluggyManager.PluggyGetConnectTokenForUpdateAsync(ItemId) : _pluggyManager.PluggyCreateConnectTokenAsync());
+
                 var result = new { accessToken };
 
                 return Json(result);
@@ -89,6 +90,13 @@ namespace Prosperium.Management.Web.Controllers
                 // Log ou retornar a mensagem de exceção
                 return Json(new { error = ex.Message });
             }
+        }
+
+        [HttpPost]
+        [Route("UpdateAllDataPluggy")]
+        public async Task UpdateAllDataPluggy([FromBody] string itemId)
+        {
+            await _pluggyAppService.UpdateAllDataPluggy(itemId);
         }
 
 

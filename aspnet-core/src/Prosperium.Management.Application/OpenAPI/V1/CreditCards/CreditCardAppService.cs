@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using Prosperium.Management.OpenAPI.V1.Accounts;
+using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.Flags.Dto;
@@ -69,6 +70,22 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
         }
 
         [HttpPut]
+        public async Task UpdateAsync(CreditCardDto input)
+        {
+            using (var unitOfWork = _unitOfWorkManager.Begin())
+            {
+                var creditCard = await _creditCardRepository.FirstOrDefaultAsync(input.Id);
+                
+                // No creditCard, será atualizado apenas o LIMITE.
+                creditCard.Limit = input.Limit;
+
+                await _creditCardRepository.UpdateAsync(creditCard);
+                unitOfWork.Complete();
+            }
+        }
+
+        [HttpPut]
+        [Route("StatusChangeCard")]
         public async Task StatusChangeCardAsync(long id, bool statusChange)
         {
             var card = await _creditCardRepository.FirstOrDefaultAsync(id);

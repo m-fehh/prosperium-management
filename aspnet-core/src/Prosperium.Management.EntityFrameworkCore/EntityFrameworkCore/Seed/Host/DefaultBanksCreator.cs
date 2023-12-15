@@ -21,7 +21,7 @@ namespace Prosperium.Management.EntityFrameworkCore.Seed.Host
 
         private void SeedBanks()
         {
-            AddBanks("NU PAGAMENTOS S.A. - INSTITUIÇÃO DE PAGAMENTO", "NUBANK", "nubank.png", "18236120", "260");
+            AddBanks("NU PAGAMENTOS S.A.", "NUBANK", "nubank.png", "18236120", "260");
             AddBanks("BANCO ITAUBANK S.A.", "ITAÚ", "itau.png", "60394079", "479");
             AddBanks("BANCO BRADESCO S.A.", "BRADESCO", "bradesco.png", "60746948", "237");
             AddBanks("CAIXA ECONOMICA FEDERAL", "CAIXA", "caixa.png", "360305", "104");

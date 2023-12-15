@@ -1703,6 +1703,9 @@ namespace Prosperium.Management.Migrations
                     b.Property<string>("PluggyItemId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("StatusPluggyItem")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
 

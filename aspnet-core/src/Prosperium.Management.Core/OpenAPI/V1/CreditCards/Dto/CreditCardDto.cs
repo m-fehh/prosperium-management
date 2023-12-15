@@ -30,7 +30,7 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards.Dto
         public int DueDay { get; set; }
         public string DueDayInput => DueDay.ToString("D2");
         [JsonIgnore]
-        public ICollection<TransactionDto> Transactions { get; set; }
+        public ICollection<CreateTransactionDto> Transactions { get; set; }
         public bool IsActive { get; set; }
         public AccountOrigin Origin { get; set; }
         public string PluggyItemId { get; set; }

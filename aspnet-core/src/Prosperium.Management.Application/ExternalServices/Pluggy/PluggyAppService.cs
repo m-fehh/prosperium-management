@@ -1,5 +1,4 @@
 ﻿using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System;
 using Prosperium.Management.OpenAPI.V1.Accounts;
@@ -17,8 +16,7 @@ using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 using Prosperium.Management.OpenAPI.V1.Categories;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
 {
@@ -55,7 +53,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
             foreach (var item in pluggyAccounts.Results)
             {
-                await (item.Type == "CREDIT" ? CreateCreditCardAsync(item) : CreateAccountAsync(item));
+                long accountId = await (item.Type == "CREDIT" ? CreateCreditCardAsync(item) : CreateAccountAsync(item));
 
                 // Atualiza a contagem do tipo de conta
                 if (accountsCount.ContainsKey(item.Type))
@@ -67,7 +65,8 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                     accountsCount[item.Type] = 1;
                 }
 
-                await CapturePluggyTransactionsAsync(item.Id, null, null, (item.Type == "CREDIT"));
+                var tenantId = (await _accountAppService.GetAccountById(accountId)).TenantId;
+                await CapturePluggyTransactionsAsync(item.Id, null, null, (item.Type == "CREDIT"), tenantId);
             }
 
             await _customerAppService.PluggyCreateCustomer(itemId);
@@ -76,13 +75,22 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return accountsCreated;
         }
 
-        public async Task CapturePluggyTransactionsAsync(string pluggyAccountOrCardId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard)
+        public async Task<ResultPluggyItem> PluggyUpdateItemAsync(string pluggyAccountId)
+        {
+            var accountPluggy = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyAccountId == pluggyAccountId).FirstOrDefault();
+            var result = await _pluggyManager.PluggyUpdateItemAsync(accountPluggy.PluggyItemId);
+
+            return result;
+        }
+
+        public async Task CapturePluggyTransactionsAsync(string pluggyAccountOrCardId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard, int tenantId)
         {
             ResultPluggyTransactions pluggyTransactions = await _pluggyManager.PluggyGetTransactionsAsync(pluggyAccountOrCardId, dateInitial, dateEnd);
             if (pluggyTransactions.Total > 0)
             {
                 var originDestinations = await _originDestinationRepository.GetAllListAsync();
                 var transactionsAlreadySaved = await _transactionAppService.GetAllListAsync();
+                //var tenantId = (await _accountAppService.GetAllListAsync()).Where(x => x.Id == prosperiumAccountId).Select(x => x.TenantId).FirstOrDefault();
 
                 List<Transaction> insertPendingTransactions = new List<Transaction>();
                 var transactionsWithErrors = new List<string>();
@@ -97,6 +105,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                             TransactionDto transactionDto = new TransactionDto();
                             if (isCreditCard)
                             {
+                                transactionDto.TenantId = tenantId;
                                 transactionDto.TransactionType = TransactionType.Gastos;
                                 transactionDto.ExpenseValue = (item.Amount > 0) ? Convert.ToDecimal(item.Amount * -1) : Convert.ToDecimal(item.Amount);
                                 transactionDto.Description = item.Description;
@@ -112,6 +121,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                             }
                             else
                             {
+                                transactionDto.TenantId = tenantId;
                                 transactionDto.TransactionType = (item.Amount > 0) ? TransactionType.Ganhos : TransactionType.Gastos;
                                 transactionDto.ExpenseValue = Convert.ToDecimal(item.Amount);
                                 transactionDto.Description = item.Description;
@@ -141,13 +151,17 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                     Logger.Error($"Transações com erros: {string.Join(", ", transactionsWithErrors)} - accountOrCardPluggyId: {pluggyAccountOrCardId}");
                 }
 
-                await _transactionAppService.CreateAtomicTransactionAsync(insertPendingTransactions);
+                if (insertPendingTransactions.Count > 0)
+                {
+                    await _transactionAppService.CreateAtomicTransactionAsync(insertPendingTransactions);
+                }
             }
         }
 
-        private async Task CreateAccountAsync(PluggyAccount input)
+        private async Task<long> CreateAccountAsync(PluggyAccount input)
         {
-            var (bankId, bankName) = await BankFromPluggy(input.ItemId);
+            long accountId = 0;
+            var (bankId, bankName) = await ItemPluggy(input.ItemId);
             var (agencyNumber, accountNumber) = ExtractAgencyAndAccount(input.BankData.TransferNumber);
 
             var accountAlreadysaved = (await _accountAppService.GetAllListAsync()).Any(x => x.PluggyItemId == input.ItemId && x.PluggyAccountId == input.Id);
@@ -168,16 +182,19 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                     PluggyAccountId = input.Id,
                 };
 
-                await _accountAppService.CreateAsync(accountFinancialDto);
+                accountId = await _accountAppService.CreateAndGetIdAsync(accountFinancialDto);
             }
+
+            return accountId;
         }
 
-        private async Task CreateCreditCardAsync(PluggyAccount input)
+        private async Task<long> CreateCreditCardAsync(PluggyAccount input)
         {
+            long accountId = 0;
             var creditCardAlreadysaved = (await _creditCardAppService.GetAllListAsync()).Any(x => x.PluggyItemId == input.ItemId && x.PluggyCreditCardId == input.Id);
             if (!creditCardAlreadysaved)
             {
-                var (bankId, bankName) = await BankFromPluggy(input.ItemId);
+                var (bankId, bankName) = await ItemPluggy(input.ItemId);
                 var accountAlreadysaved = (await _accountAppService.GetAllListAsync()).Any(x => x.PluggyItemId == input.ItemId && x.PluggyAccountId == input.Id);
 
                 if (!accountAlreadysaved)
@@ -197,7 +214,7 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                         PluggyAccountId = input.Id,
                     };
 
-                    var accountId = await _accountAppService.CreateAndGetIdAsync(accountFinancialDto);
+                    accountId = await _accountAppService.CreateAndGetIdAsync(accountFinancialDto);
 
                     CreateCreditCardDto creditCardDto = new CreateCreditCardDto
                     {
@@ -214,17 +231,65 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                     };
 
                     await _creditCardAppService.CreateAsync(creditCardDto);
+
                 }
+            }
+
+            return accountId;
+        }
+
+        public async Task UpdateBalanceAccount(string pluggyAccountId)
+        {
+            var accountAlreadysaved = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyAccountId == pluggyAccountId).FirstOrDefault();
+            var pluggyAccount = (await _pluggyManager.PluggyGetAccountAsync(accountAlreadysaved.PluggyItemId)).Results.Where(x => x.Id == accountAlreadysaved.PluggyAccountId).FirstOrDefault();
+
+            if (accountAlreadysaved.BalanceAvailable != pluggyAccount.Balance.Value)
+            {
+                accountAlreadysaved.BalanceAvailable = pluggyAccount.Balance.Value;
+
+                await _accountAppService.UpdateBalanceValueAsync(accountAlreadysaved);
+            }
+        }
+
+        public async Task UpdateLimitCard(string pluggyCreditCardId)
+        {
+            var creditCardAlreadysaved = (await _creditCardAppService.GetAllListAsync()).Where(x => x.PluggyCreditCardId == pluggyCreditCardId).FirstOrDefault();
+            var pluggyAccount = (await _pluggyManager.PluggyGetAccountAsync(creditCardAlreadysaved.PluggyItemId)).Results.Where(x => x.Id == creditCardAlreadysaved.PluggyCreditCardId).FirstOrDefault();
+
+            if (creditCardAlreadysaved.Limit != pluggyAccount.CreditData.CreditLimit.Value)
+            {
+                creditCardAlreadysaved.Limit = pluggyAccount.CreditData.CreditLimit.Value;
+
+                await _creditCardAppService.UpdateAsync(creditCardAlreadysaved);
+            }
+        }
+
+        public async Task UpdateAllDataPluggy(string itemId)
+        {
+            DateTime dateInitial = DateTime.Now.Date.AddDays(-1);
+            DateTime dateEnd = dateInitial.AddDays(2).AddTicks(-1);
+
+            var accountPluggy = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyItemId == itemId).ToList();
+
+            foreach (var item in accountPluggy)
+            {
+                var isCredit = item.AccountType == AccountType.Crédito;
+
+                await CapturePluggyTransactionsAsync(item.PluggyAccountId, dateInitial, dateEnd, isCredit, item.TenantId);
+                await ((isCredit) ? UpdateLimitCard(item.PluggyAccountId) : UpdateBalanceAccount(item.PluggyAccountId));
             }
         }
 
         #region PRIVATE METHODS
 
-        private async Task<(long Id, string BankName)> BankFromPluggy(string itemId)
+        private async Task<(long Id, string BankName)> ItemPluggy(string itemId)
         {
-            var bankPluggy = await _pluggyManager.PluggyGetItemIdAsync(itemId);
+            var itemPluggy = await _pluggyManager.PluggyGetItemIdAsync(itemId);
+
+            await _accountAppService.UpdateStatusPluggy(itemId, itemPluggy.Status);
+
             var findBank = (await _accountAppService.GetAllListBanksAsync())
-                .Where(x => bankPluggy.Connector.Name.ToLower().Contains(x.TradeName.ToLower())).FirstOrDefault();
+                .Where(x => itemPluggy.Connector.Name.ToLower().Contains(x.TradeName.ToLower())).FirstOrDefault();
 
             return (findBank.Id, findBank.Name);
         }
@@ -244,13 +309,13 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             var agencyNumber = splitString[1].Trim();
             var accountNumber = splitString[2].Trim();
 
-            if (splitString.Length > 3 )
+            if (splitString.Length > 3)
             {
                 accountNumber = accountNumber + "/" + splitString[3].Trim();
             }
 
             return (agencyNumber, accountNumber);
         }
-        #endregion
+        #endregion 
     }
 }

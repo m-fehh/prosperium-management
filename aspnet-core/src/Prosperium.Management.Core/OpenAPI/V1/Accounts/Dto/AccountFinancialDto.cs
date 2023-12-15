@@ -30,5 +30,6 @@ namespace Prosperium.Management.OpenAPI.V1.Accounts.Dto
         public AccountOrigin Origin { get; set; }
         public string PluggyItemId { get; set; }
         public string PluggyAccountId { get; set; }
+        public string StatusPluggyItem { get; set; }
     }
 }

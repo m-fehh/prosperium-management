@@ -66,7 +66,7 @@ const itemId = '';
 // Pluggy Connection
 const initPluggyConnect = async () => {
     try {
-        const accessToken = await getPluggyAccessToken();
+        const accessToken = await getPluggyAccessToken(false, null);
 
         if (!accessToken) {
             return;
@@ -74,7 +74,7 @@ const initPluggyConnect = async () => {
 
         const pluggyConnect = new PluggyConnect({
             connectToken: accessToken,
-            includeSandbox: true,
+            includeSandbox: false,
             onSuccess: (itemData) => {
                 insertAccountPluggy(itemData.item.id);
             },
@@ -90,9 +90,61 @@ const initPluggyConnect = async () => {
     }
 };
 
+// Atualizar conta - Pluggy (Apenas INTER)
+$(document).on('click', '#bntAtualizarConta', async function (e) {
+    e.preventDefault();
+
+    var itemId = $(this).data('item-id');
+    const accessToken = await getPluggyAccessToken(true, itemId);
+
+    if (!accessToken) {
+        return;
+    }
+
+    try {
+        const pluggyConnect = new PluggyConnect({
+            connectToken: accessToken,
+            updateItem: itemId,
+            includeSandbox: false,
+            onSuccess: (itemData) => {
+                PluggyUpdateAllData(itemId);
+            },
+            onError: (error) => {
+                throw error;
+            },
+        });
+
+        pluggyConnect.init();
+
+    } catch (error) {
+        throw error;
+    }
+});
+
+function PluggyUpdateAllData(itemId) {
+    abp.notify.info("Atualizando item...");
+
+    $.ajax({
+        url: abp.appPath + 'App/Accounts/UpdateAllDataPluggy',
+        type: 'POST',
+        data: JSON.stringify(itemId),
+        contentType: 'application/json',
+        success: function (response) {
+            abp.notify.success("Item atualizado com sucesso.");
+            location.reload();
+        },
+        error: function (error) {
+            console.error("Erro ao enviar GET request:", error);
+        },
+        complete: function () {
+            abp.ui.clearBusy();
+        }
+    });
+}
+
 function insertAccountPluggy(id) {
     $.ajax({
-        url: abp.appPath + 'App/Accounts/InsertAccountPluggy', 
+        url: abp.appPath + 'App/Accounts/InsertAccountPluggy',
         type: 'POST',
         data: JSON.stringify(id),
         contentType: 'application/json',
@@ -129,14 +181,14 @@ $(document).on('click', '#bnt-adicionar-conta-pluggy', async function () {
     }
 });
 
-const getPluggyAccessToken = async () => {
+const getPluggyAccessToken = async (isUpdate, itemId) => {
     try {
-        const response = await fetch('/App/Accounts/PluggyGetAccessToken');
+        const response = await fetch(`/App/Accounts/PluggyGetAccessToken?IsUpdate=${isUpdate}&ItemId=${itemId}`);
         const data = await response.json();
 
         if (data.result.error) {
             abp.notify.error(data.result.error);
-        } 
+        }
 
         return data.result.accessToken;
 

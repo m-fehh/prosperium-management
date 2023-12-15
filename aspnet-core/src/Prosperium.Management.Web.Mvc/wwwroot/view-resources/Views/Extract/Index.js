@@ -188,7 +188,7 @@
 
     // Função para atualizar o texto do título
     function UpdateResumoTitle(date) {
-        var monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        var monthNames = ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
         var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
         $("#resumoTitle").text(formattedDate);
     }

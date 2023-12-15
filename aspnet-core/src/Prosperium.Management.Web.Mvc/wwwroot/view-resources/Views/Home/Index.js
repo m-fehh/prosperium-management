@@ -24,9 +24,9 @@
 
     //Atualiza o texto do topo
     function UpdateResumoTitle(date) {
-        var monthNames = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+        var monthNames = ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
         var formattedDate = monthNames[date.getMonth()] + "/" + date.getFullYear();
-        $(".titleMonth").text(formattedDate.toLowerCase());
+        $(".titleMonth").text(formattedDate);
     }
 
 
@@ -65,7 +65,11 @@
         var transactionType = $('input[name="TransactionType"]:checked').val();
 
         var transactionPromise = CaptureTransactionsPerMonth();
+
         transactionPromise.then(function (data) {
+            // Remove os pagamentos de fatura
+            data = data.filter(transaction => transaction.categoryId !== 33);
+
             if (data.length > 0) {
                 $('#chartMessage').hide();
                 $('#latestTransactionsContainer').show();
@@ -102,7 +106,7 @@
     // Atualiza card de cartão de crédito
     function UpdateCardCreditCard(transactions) {
         let monthYear = $("#monthYearInput").val();
- 
+
         if (!monthYear) {
             var currentDate = new Date();
 
@@ -201,7 +205,9 @@
     function UpdateCardLatestTransaction(transactions) {
         $("#latestTransactionsContainer").empty();
 
-        var last4Transactions = transactions.slice(-4);
+        var last4Transactions = transactions.sort(function (a, b) {
+            return new Date(b.date) - new Date(a.date);
+        }).slice(0, 4);
 
         last4Transactions.forEach(function (item) {
             $("#latestTransactionsContainer").append(createTransactionCard(item));
@@ -217,6 +223,7 @@
             if (item.transactionType === 1) {
                 // Despesa
                 totalGastos += Math.abs(item.expenseValue);
+
             } else if (item.transactionType === 2) {
                 // Ganho
                 totalGanhos += Math.abs(item.expenseValue);
@@ -346,6 +353,10 @@
             additionalInfo = `<p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: ${transaction.account.agencyNumber} | Conta: ${transaction.account.accountNumber}</p>`;
         }
 
+        var categoryName = transaction.categories.name.length > 20
+            ? transaction.categories.name.substring(0, 20) + '...'
+            : transaction.categories.name;
+
         return `
         <div class="card" style="height: 90px;">
             <div class="card-content">
@@ -356,7 +367,7 @@
                         </div>
                         <div class="col-7" style="display: flex; align-items: center; gap: 5px; flex-direction: column;">
                         <div class="row">
-                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${transaction.categories.name} ${formatCurrency(transaction.expenseValue)}</p>
+                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;" title="${transaction.categories.name}">${categoryName} ${formatCurrency(transaction.expenseValue)}</p>
                             </div>
                             <div class="row">
                                 ${additionalInfo}

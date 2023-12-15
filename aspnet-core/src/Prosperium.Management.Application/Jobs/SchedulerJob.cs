@@ -57,7 +57,8 @@ namespace Prosperium.Management.Jobs
             {
                 var captureTransactionsArgs = await CreateCaptureTransactionsArgs(tenant);
 
-                await _jobManager.ScheduleAsync<CaptureTransactionsJob>(
+                await _jobManager.ScheduleAsync<CaptureTransactionsJob>
+                (
                     async job =>
                     {
                         job.WithIdentity($"{nameof(CaptureTransactionsJob)}_{Guid.NewGuid()}_Tenant_{tenant.Id}", "TransactionJobs")
@@ -67,10 +68,14 @@ namespace Prosperium.Management.Jobs
                     },
                     trigger =>
                     {
-                        trigger.WithCronSchedule("0 0 20 * * ?"); // Executa todos os dias às 20h
-                    });
+                        // Agendar para rodar a cada 1 hora, específico para cada tenant
+                        trigger.WithCronSchedule($"0 15 16 * * ?");
+                        //trigger.WithCronSchedule($"0 0 */3 * * ?");
+                    }
+                );
             }
         }
+
 
         #region PRIVATE METHODS  
 
@@ -104,7 +109,7 @@ namespace Prosperium.Management.Jobs
                 var itemsPluggy = await _pluggyManager.PluggyGetAccountAsync(itemId);
                 if (itemsPluggy.Total > 0)
                 {
-                    idsForFindTransactions.AddRange(itemsPluggy.Results.Select(item => $"{item.Type}-{item.Id}"));
+                    idsForFindTransactions.AddRange(itemsPluggy.Results.Select(item => $"{item.Type}@{item.Id}"));
                 }
             }
 
@@ -116,7 +121,7 @@ namespace Prosperium.Management.Jobs
         {
             using (var unitOfWork = _unitOfWorkManager.Begin())
             {
-                var tenants = _tenantRepository.GetAllList();
+                var tenants = (_tenantRepository.GetAllList()).Where(x => x.TenancyName != "Default").ToList();
                 unitOfWork.Complete();
 
                 return tenants;

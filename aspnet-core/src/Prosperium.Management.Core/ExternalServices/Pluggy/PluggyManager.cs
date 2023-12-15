@@ -42,6 +42,18 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return result?.accessToken ?? string.Empty;
         }
 
+        public async Task<string> PluggyGetConnectTokenForUpdateAsync(string itemId)
+        {
+            var xApiKey = await PluggyGenerateApiKeyAsync();
+
+            var result = await PluggyConsts.urlCreateConnectToken
+                .WithHeader("X-API-KEY", xApiKey)
+                .PostJsonAsync(new { itemId })
+                .ReceiveJson<ResultPluggyAuthToken>();
+
+            return result?.accessToken ?? string.Empty;
+        }
+
         #endregion
 
         #region Categories Pluggy 
@@ -171,6 +183,21 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                 .WithHeader("X-API-KEY", xApiKey)
                 .WithHeader("Accept", "application/json")
                 .GetJsonAsync<ResultPluggyItem>();
+
+            return result;
+        }
+
+        public async Task<ResultPluggyItem> PluggyUpdateItemAsync(string itemId)
+        {
+            string url = string.Format(PluggyConsts.urlItemPluggy, itemId);
+            var xApiKey = await PluggyGenerateApiKeyAsync();
+
+            var response = await url
+                .WithHeader("X-API-KEY", xApiKey)
+                .WithHeader("Accept", "application/json")
+                .PatchAsync();
+
+            ResultPluggyItem result = await response.GetJsonAsync<ResultPluggyItem>();
 
             return result;
         }

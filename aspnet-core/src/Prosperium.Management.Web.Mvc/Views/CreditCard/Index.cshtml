@@ -231,7 +231,7 @@
                                             <div class="row" style="width:100%;">
                                                 <div class="col-11">
                                                     <p class="saldo-label">Limite:</p>
-                                                    <p class="saldo-valor">R$ ${card.limit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                                                        <p class="saldo-valor">${formatCurrency(card.limit)}</p>
                                                 </div>
                                                    <div class="col-1 d-flex align-items-center">
                                                    <div class="dropdown" style="margin-top: 10px;">
@@ -281,5 +281,11 @@
                 console.error('Erro na requisição:', error);
             }
         });
+    }
+
+
+    function formatCurrency(value) {
+        const formattedValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return value >= 0 ? `R$ ${formattedValue}` : `- R$ ${formattedValue.substring(1)}`;
     }
 </script>
