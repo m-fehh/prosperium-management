@@ -81,7 +81,7 @@
                                     </svg>
                                 </div>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <button class="dropdown-item impersonate-tenant-get-user" data-tenant-id="${row.id}" data-tenancy-name="${row.name}" data-toggle="modal" data-target="#GetUserModal">Impersonar</button>
+                                    <button class="dropdown-item impersonate-tenant-get-user" data-tenant-id="${row.id}" data-tenancy-name="${row.name}">Impersonar</button>
                                     <button class="dropdown-item changePlanTenant" data-tenant-id="${row.id}" data-tenancy-name="${row.name}" data-toggle="modal" data-target="#TenantPlanModal">Editar plano</button>
                                     <button class="dropdown-item edit-tenant" data-tenant-id="${row.id}" data-toggle="modal" data-target="#TenantEditModal">Editar tenant</button>
                                     <button class="dropdown-item delete-tenant" data-tenant-id="${row.id}" data-tenancy-name="${row.name}">Excluir tenant</button>
@@ -126,26 +126,14 @@
         abp.ajax({
             url: abp.appPath + 'Tenants/GetUserByTenantId?tenantId=' + tenantId,
             type: 'POST',
-            dataType: 'html',
+            dataType: 'json',
             success: function (content) {
-
-                // Atualizar o conteúdo da modal com os dados retornados
-                $('#GetUserModal .modal-content').html(content);
-
-                // Exibir a modal
-                $('#GetUserModal').modal('show');
+                ImpersonateTenant(content.tenantId, content.id);
             },
             error: function (e) {
                 console.error("ERRO", e);
             }
         });
-    });
-
-    $(document).on('click', '.impersonate-tenant', function () {
-        var tenantId = $(this).data('tenant-id');
-        var userId = $(this).data('user-id');
-
-        ImpersonateTenant(tenantId, userId);
     });
 
     function ImpersonateTenant(tenantId, userId) {
@@ -159,8 +147,6 @@
                 if (!app.supportsTenancyNameInUrl) {
                     abp.multiTenancy.setTenantIdCookie(tenantId);
                 }
-
-                console.log('Usuário com ID ' + userId + ' impersonado com sucesso!');
             },
             error: function (e) {
                 console.error('Erro ao impersonar usuário: ', e);

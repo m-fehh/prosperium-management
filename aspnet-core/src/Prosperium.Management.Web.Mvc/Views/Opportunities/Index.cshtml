@@ -1,0 +1,51 @@
+﻿<link rel="stylesheet" href="~/css/Extract/style.css" />
+<link defer rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+@using Prosperium.Management.Web.Startup
+@{
+    ViewData["Title"] = "Oportunidades";
+    ViewBag.CurrentPageName = PageNames.Opportunities;
+}
+@section scripts
+    {
+    <environment names="Development">
+        <script src="~/view-resources/Views/Opportunities/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <environment names="Staging,Production">
+        <script src="~/view-resources/Views/Opportunities/Index.min.js" asp-append-version="true"></script>
+    </environment>
+}
+
+<div class="form-container" id="OpportunitiesCreate">
+    <h2>@ViewData["Title"]</h2>
+    <p class="title">Explore diversas oportunidades financeiras oferecidas pelos bancos, proporcionando opções de crédito personalizado para atender às suas necessidades.</p>
+
+    <p class="explanation-text" style="padding-bottom: 20px; font-style: oblique;">
+        <span class="fas fa-exclamation-circle" style="color: #FF8C00; margin-right: 5px;"></span>
+        Para obter informações mais detalhadas sobre cada oportunidade, entre em contato com o seu banco.
+    </p>
+
+    <table id="OpportunitiesTable" class="table" style="cursor:default;">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Data</th>
+                <th>Conta</th>
+                <th>Título</th>
+                <th>Tipo de oportunidade</th>
+                <th>Limite disponível</th>
+                <th style="width:20px;">Cotas</th>
+                <th>Tipo de cotas</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>

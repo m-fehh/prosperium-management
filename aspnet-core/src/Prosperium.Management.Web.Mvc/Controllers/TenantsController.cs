@@ -9,6 +9,7 @@ using Prosperium.Management.Users;
 using Abp.Domain.Repositories;
 using Prosperium.Management.Web.Models.Tenants;
 using Prosperium.Management.Plans;
+using System.Linq;
 
 namespace Prosperium.Management.Web.Controllers
 {
@@ -58,8 +59,10 @@ namespace Prosperium.Management.Web.Controllers
 
         public async Task<ActionResult> GetUserByTenantId(int tenantId)
         {
-            var userDto = await _userAppService.GetUserByTenantId(tenantId);
-            return PartialView("_GetUserByTenantModal", userDto);
+            var userDto = (await _userAppService.GetUserByTenantId(tenantId)).FirstOrDefault();
+            var result = new { userDto.Id, tenantId};
+
+            return Json(result);
         }
     }
 }

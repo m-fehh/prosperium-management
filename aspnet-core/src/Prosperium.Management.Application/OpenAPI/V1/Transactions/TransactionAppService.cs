@@ -1,5 +1,4 @@
 ﻿using Abp.Application.Services.Dto;
-using Abp.Collections.Extensions;
 using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore.Repositories;
@@ -8,22 +7,15 @@ using Abp.UI;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Prosperium.Management.ExternalServices.Pluggy;
-using Prosperium.Management.ExternalServices.Pluggy.Dtos;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Categories;
-using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
-using Prosperium.Management.OriginDestinations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Transactions;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions

@@ -43,6 +43,9 @@ namespace Prosperium.Management.Jobs.CaptureTransactions
                                 Thread.Sleep(8000);
                             }
 
+                            // Atualiza a conta antes de puxar as as transações
+                            await _pluggyAppService.PluggyUpdateItemAsync(pluggyTypeAccountId.PluggyAccountId);
+
                             // Captura as transações
                             await _pluggyAppService.CapturePluggyTransactionsAsync(pluggyTypeAccountId.PluggyAccountId, args.DateInitial, args.DateEnd, isCredit, args.TenantId);
 

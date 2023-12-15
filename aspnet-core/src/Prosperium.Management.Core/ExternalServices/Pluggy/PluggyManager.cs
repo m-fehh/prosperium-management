@@ -8,6 +8,7 @@ using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
@@ -243,6 +244,45 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             return result;
         }
 
+
+        #endregion
+
+        #region Opportunity Pluggy 
+
+        public async Task<ResultPluggyOpportunity> PluggyGetOpportunitiesAsync(string itemId)
+        {
+            var page = 1;
+            var pageSize = 500;
+
+            var xApiKey = await PluggyGenerateApiKeyAsync();
+            string url = string.Format(PluggyConsts.urlOpportunityPluggy, itemId);
+            var allOpportunities = new List<PluggyOpportunityDto>();
+
+            while (true)
+            {
+                var currentUrl = $"{url}&pageSize={pageSize}&page={page}";
+
+                var result = await currentUrl
+                    .WithHeader("X-API-KEY", xApiKey)
+                    .WithHeader("Accept", "application/json")
+                    .GetJsonAsync<ResultPluggyOpportunity>();
+
+                if (result.Total == 0)
+                    break;
+
+                allOpportunities.AddRange(result.Results);
+                page++;
+
+                if (page > result.TotalPages)
+                    break;
+            }
+
+            return new ResultPluggyOpportunity
+            {
+                Total = allOpportunities.Count,
+                Results = allOpportunities
+            };
+        }
 
         #endregion
 

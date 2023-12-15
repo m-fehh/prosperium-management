@@ -16,7 +16,8 @@ using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 using Prosperium.Management.OpenAPI.V1.Categories;
-using System.Runtime.InteropServices;
+using Prosperium.Management.OpenAPI.V1.Opportunities.Dtos;
+using Prosperium.Management.OpenAPI.V1.Opportunities;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
 {
@@ -24,16 +25,18 @@ namespace Prosperium.Management.ExternalServices.Pluggy
     {
         private readonly PluggyManager _pluggyManager;
         private readonly IAccountAppService _accountAppService;
+        private readonly IOpportunitiesAppService _opportunitiesAppService;
         private readonly ICreditCardAppService _creditCardAppService;
         private readonly ICustomerAppService _customerAppService;
         private readonly ITransactionAppService _transactionAppService;
         private readonly ICategoryAppService _categoryAppService;
         private readonly IRepository<OriginDestination> _originDestinationRepository;
 
-        public PluggyAppService(PluggyManager pluggyManager, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService, ICustomerAppService customerAppService, ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IRepository<OriginDestination> originDestinationRepository)
+        public PluggyAppService(PluggyManager pluggyManager, IAccountAppService accountAppService, IOpportunitiesAppService opportunitiesAppService, ICreditCardAppService creditCardAppService, ICustomerAppService customerAppService, ITransactionAppService transactionAppService, ICategoryAppService categoryAppService, IRepository<OriginDestination> originDestinationRepository)
         {
             _pluggyManager = pluggyManager;
             _accountAppService = accountAppService;
+            _opportunitiesAppService = opportunitiesAppService;
             _creditCardAppService = creditCardAppService;
             _customerAppService = customerAppService;
             _transactionAppService = transactionAppService;
@@ -41,52 +44,8 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             _originDestinationRepository = originDestinationRepository;
         }
 
-        public async Task<List<string>> PluggyCreateAsync(string itemId)
-        {
-            var pluggyAccounts = await _pluggyManager.PluggyGetAccountAsync(itemId);
-            if (pluggyAccounts == null || pluggyAccounts.Total == 0)
-            {
-                throw new UserFriendlyException("Erro ao criar a conta, por favor, acione a equipe de suporte.");
-            }
 
-            Dictionary<string, int> accountsCount = new Dictionary<string, int>();
-
-            foreach (var item in pluggyAccounts.Results)
-            {
-                long accountId = await (item.Type == "CREDIT" ? CreateCreditCardAsync(item) : CreateAccountAsync(item));
-
-                // Atualiza a contagem do tipo de conta
-                if (accountsCount.ContainsKey(item.Type))
-                {
-                    accountsCount[item.Type]++;
-                }
-                else
-                {
-                    accountsCount[item.Type] = 1;
-                }
-
-                var tenantId = (await _accountAppService.GetAccountById(accountId)).TenantId;
-                await CapturePluggyTransactionsAsync(item.Id, null, null, (item.Type == "CREDIT"), tenantId);
-            }
-
-            await _customerAppService.PluggyCreateCustomer(itemId);
-            List<string> accountsCreated = accountsCount.Select(kv => $"{kv.Value} {kv.Key}").ToList();
-
-            return accountsCreated;
-        }
-
-        public async Task Abc(string a)
-        {
-            await _customerAppService.PluggyCreateCustomer(a);
-        }
-
-        public async Task<ResultPluggyItem> PluggyUpdateItemAsync(string pluggyAccountId)
-        {
-            var accountPluggy = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyAccountId == pluggyAccountId).FirstOrDefault();
-            var result = await _pluggyManager.PluggyUpdateItemAsync(accountPluggy.PluggyItemId);
-
-            return result;
-        }
+        #region GET - PLUGGY 
 
         public async Task CapturePluggyTransactionsAsync(string pluggyAccountOrCardId, DateTime? dateInitial, DateTime? dateEnd, bool isCreditCard, int tenantId)
         {
@@ -161,6 +120,44 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                     await _transactionAppService.CreateAtomicTransactionAsync(insertPendingTransactions);
                 }
             }
+        } 
+
+        #endregion
+
+        #region CREATE - PLUGGY 
+        public async Task<List<string>> PluggyCreateAsync(string itemId)
+        {
+            var pluggyAccounts = await _pluggyManager.PluggyGetAccountAsync(itemId);
+            if (pluggyAccounts == null || pluggyAccounts.Total == 0)
+            {
+                throw new UserFriendlyException("Erro ao criar a conta, por favor, acione a equipe de suporte.");
+            }
+
+            Dictionary<string, int> accountsCount = new Dictionary<string, int>();
+
+            foreach (var item in pluggyAccounts.Results)
+            {
+                long accountId = await (item.Type == "CREDIT" ? CreateCreditCardAsync(item) : CreateAccountAsync(item));
+
+                // Atualiza a contagem do tipo de conta
+                if (accountsCount.ContainsKey(item.Type))
+                {
+                    accountsCount[item.Type]++;
+                }
+                else
+                {
+                    accountsCount[item.Type] = 1;
+                }
+
+                var tenantId = (await _accountAppService.GetAccountById(accountId)).TenantId;
+                await CapturePluggyTransactionsAsync(item.Id, null, null, (item.Type == "CREDIT"), tenantId);
+            }
+
+            await _customerAppService.PluggyCreateCustomerAsync(itemId);
+            await _opportunitiesAppService.PluggyCreateOpportunitiesAsync(itemId);
+            List<string> accountsCreated = accountsCount.Select(kv => $"{kv.Value} {kv.Key}").ToList();
+
+            return accountsCreated;
         }
 
         private async Task<long> CreateAccountAsync(PluggyAccount input)
@@ -241,6 +238,17 @@ namespace Prosperium.Management.ExternalServices.Pluggy
             }
 
             return accountId;
+        } 
+
+        #endregion
+
+        #region PUT - Pluggy 
+        public async Task<ResultPluggyItem> PluggyUpdateItemAsync(string pluggyAccountId)
+        {
+            var accountPluggy = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyAccountId == pluggyAccountId).FirstOrDefault();
+            var result = await _pluggyManager.PluggyUpdateItemAsync(accountPluggy.PluggyItemId);
+
+            return result;
         }
 
         public async Task UpdateBalanceAccount(string pluggyAccountId)
@@ -282,8 +290,11 @@ namespace Prosperium.Management.ExternalServices.Pluggy
 
                 await CapturePluggyTransactionsAsync(item.PluggyAccountId, dateInitial, dateEnd, isCredit, item.TenantId);
                 await ((isCredit) ? UpdateLimitCard(item.PluggyAccountId) : UpdateBalanceAccount(item.PluggyAccountId));
+                await _opportunitiesAppService.PluggyCreateOpportunitiesAsync(itemId);
             }
-        }
+        } 
+
+        #endregion
 
         #region PRIVATE METHODS
 

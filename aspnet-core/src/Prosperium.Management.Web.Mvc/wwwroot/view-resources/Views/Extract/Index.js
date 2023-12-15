@@ -153,14 +153,8 @@
             {
                 targets: 4,
                 data: 'transaction.expenseValue',
-                render: function (data, type, row) {
-                    var formattedValue = Math.abs(data).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-                    if (row.transaction.transactionType === 1 /* Gastos */ || row.transaction.transactionType === 3 /* Transferência */) {
-                        formattedValue = '-' + formattedValue;
-                    }
-
-                    return formattedValue;
+                render: function (data) {
+                    return formatCurrency(data);
                 },
                 sortable: false
             }

@@ -2008,6 +2008,62 @@ namespace Prosperium.Management.Migrations
                     b.ToTable("Pxp_Flags");
                 });
 
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Opportunities.Opportunity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("AccountId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("AvailableLimit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InterestRate")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Origin")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PluggyItemId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PluggyOpportunityId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuotasType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalQuotas")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Pxp_Opportunities");
+                });
+
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>
                 {
                     b.Property<long>("Id")
@@ -2514,6 +2570,17 @@ namespace Prosperium.Management.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Opportunities.Opportunity", b =>
+                {
+                    b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Subcategories.Subcategory", b =>

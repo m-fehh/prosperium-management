@@ -10,6 +10,7 @@
 
         public const string Transactions = "Transações"; 
         public const string Extract = "Extrato"; 
+        public const string Opportunities = "Oportunidades"; 
         public const string Accounts = "Contas"; 
         public const string CreditCards = "Cartão"; 
         public const string OriginDestination = "OriginDestination"; 

@@ -108,5 +108,13 @@
     <text name="SearchWithThreeDot">Pesquisar...</text>
     <text name="DeleteAccount">Ao confirmar, todos os dados associados à conta '{0}' serão perdidos de forma irreversível.</text>
     <text name="AutomaticIntegration">Integração automática</text>
+    <text name="OpportunityTypeNameCard">Novo cartão de crédito</text>
+    <text name="OpportunityTypeNamePersonalLoan">Novo empréstimo pessoal</text>
+    <text name="OpportunityTypeNameComercialLoan">Novo empréstimo comercial</text>
+    <text name="OpportunityTypeNameMortgageLoan">Novo empréstimo hipotecário</text>
+    <text name="OpportunityTypeNameVehicle">Empréstimo de veículo novo</text>
+    <text name="OpportunityTypeNameOverdraft">Novo cheque especial</text>
+    <text name="OpportunityTypeNameNotIncluded">Outro tipo não contemplada</text>
+    <text name="OpportunityTypeNameOther">Outro tipo de empréstimo</text>
   </texts>
 </localizationDictionary>

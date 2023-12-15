@@ -172,10 +172,13 @@ h3 {
     border: none;
 }
 
+
+.dataTables_length, #OpportunitiesTable_paginate,
 .dataTables_length, #ExtractTable_paginate {
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
     justify-content: end !important;
+    align-items: center;
 }
 
 .dataTables_info {

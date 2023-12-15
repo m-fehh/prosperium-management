@@ -46,7 +46,7 @@ namespace Prosperium.Management.OpenAPI.V1.Customers
 
         [HttpPost]
         [Route("PluggyCreateCustomer")]
-        public async Task PluggyCreateCustomer(string itemId)
+        public async Task PluggyCreateCustomerAsync(string itemId)
         {
             List<CustomerDto> customersAlreadysaved = await GetAllListAsync();
             ResultPluggyIdentity customerByPluggy = await _pluggyManager.PluggyGetIdentityAsync(itemId);

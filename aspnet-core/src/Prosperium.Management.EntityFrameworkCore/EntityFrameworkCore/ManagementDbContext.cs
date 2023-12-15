@@ -14,6 +14,7 @@ using Prosperium.Management.OriginDestinations;
 using Prosperium.Management.OpenAPI.V1.Customers;
 using Prosperium.Management.OpenAPI.V1.Banks;
 using Prosperium.Management.Plans;
+using Prosperium.Management.OpenAPI.V1.Opportunities;
 
 namespace Prosperium.Management.EntityFrameworkCore
 {
@@ -33,6 +34,7 @@ namespace Prosperium.Management.EntityFrameworkCore
         public DbSet<CustomerEmails> CustomerEmails { get; set; }
         public DbSet<CustomerAddresses> CustomerAddresses { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<Opportunity> Opportunities { get; set; }
 
         public ManagementDbContext(DbContextOptions<ManagementDbContext> options)
             : base(options)
@@ -83,6 +85,14 @@ namespace Prosperium.Management.EntityFrameworkCore
 
             modelBuilder.Entity<Bank>()
                 .Property(a => a.Origin)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Opportunity>()
+                .Property(a => a.Type)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Opportunity>()
+                .Property(a => a.QuotasType)
                 .HasConversion<string>();
 
             // Relacionamentos
