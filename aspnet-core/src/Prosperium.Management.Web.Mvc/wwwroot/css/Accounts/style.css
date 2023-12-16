@@ -1,4 +1,4 @@
-﻿
+﻿/*
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f4f4;
@@ -102,4 +102,125 @@ hr.divider {
 
 .dropdown-menu dropdown-menu-right {
     display: none !important;
+}*/
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 95%;
+    width: 100%;
+    margin: 10px auto 0;
+}
+
+h2 {
+    font-size: 24px;
+    color: #FF8C00;
+    padding-top: 30px;
+    display: flex;
+    font-weight: bold;
+}
+
+.title {
+    margin-bottom: 50px;
+    text-align: left;
+    border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+    padding: 10px 0 30px;
+}
+
+.opcao-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .opcao-btn:hover {
+        background-color: #eee;
+    }
+
+.opcao-selecionada {
+    color: orange;
+    font-weight: bolder;
+    border: 2px solid;
+}
+
+.custom-button {
+    background-color: #FF8C00;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+    .custom-button:hover {
+        transform: scale(1.05);
+    }
+
+a:hover {
+    color: #fff;
+}
+
+.card {
+    background: #f8f8f2;
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+.icon {
+    font-size: 36px;
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    gap: 20px;
+}
+
+.text-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+hr.divider {
+    width: 100%;
+    margin: 10px 0;
+    border: 1px solid rgba(204, 204, 204, 0.5);
+}
+
+.saldo-label {
+    font-size: 14px;
+    margin: 0;
+    color: #555;
+}
+
+.saldo-valor {
+    font-size: 18px;
+    margin: 0;
+    font-weight: bold;
 }
