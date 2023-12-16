@@ -14,9 +14,7 @@ function formatarCartao(input) {
 }
 
 $(document).ready(function () {
-    const diaVencimentoInput = document.getElementById('diaVencimento');
-
-    diaVencimentoInput.addEventListener('input', function (event) {
+    $('#diaVencimento').on('input', function (event) {
         let inputValue = event.target.value;
 
         inputValue = inputValue.replace(/\D/g, '');
@@ -26,7 +24,7 @@ $(document).ready(function () {
         event.target.value = inputValue;
     });
 
-    diaVencimentoInput.addEventListener('blur', function (event) {
+    $('#diaVencimento').on('blur', function (event) {
         if (event.target.value.length === 1) {
             event.target.value = event.target.value.padStart(2, '0');
         }

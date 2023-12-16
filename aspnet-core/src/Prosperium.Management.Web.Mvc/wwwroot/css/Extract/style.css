@@ -28,27 +28,25 @@ h2 {
     padding: 10px 0 30px;
 }
 
-.custom-button {
-    background-color: #FF8C00;
-    color: #fff;
+.export-button {
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px;
     border: none;
-    padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    display: flex;
-    margin: 20px 0;
-    width: 30%;
-    justify-content: center;
-    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+    color: orange;
+    font-weight: bolder;
+    border: 2px solid;
 }
 
-    .custom-button:hover {
-        transform: scale(1.05);
-    }
-
+#btnLimparFiltro:hover,
+.export-button:hover {
+    transform: scale(1.05);
+}
 
 a:hover {
     color: #fff;

@@ -251,6 +251,15 @@
             return;
         }
 
+        // Obtém a data atual
+        var currentDate = new Date();
+        var day = currentDate.getDate().toString().padStart(2, '0');
+        var month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
+        var year = currentDate.getFullYear();
+
+        // Formata a data como "dd_mm_yyyy"
+        var formattedDate = day + '_' + month + '_' + year;
+
         // Cria o conteúdo CSV
         var csvContent =  "Data;Descricao;Tipo;Conta/Cartao;Categoria;Valor\n";
         resultData.forEach(function (item) {
@@ -275,7 +284,7 @@
 
         // Converte o conteúdo para Blob e inicia o download
         var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, 'exportacao.csv');
+        saveAs(blob, 'Prosperium_' + formattedDate + '.csv');
 
         abp.notify.success(l("ExportSuccessfully"));
     }

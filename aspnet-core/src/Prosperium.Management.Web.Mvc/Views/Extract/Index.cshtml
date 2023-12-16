@@ -23,7 +23,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
-
+<script defer src="https://cdn.jsdelivr.net/g/filesaver.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <div class="form-container" id="ExtractCreate">
@@ -83,9 +83,11 @@
         <button id="btnLimparFiltro" style="background: transparent; border: none; color: #FF8C00; font-weight: bold;  visibility: hidden;">
             <i class="fas fa-times"></i> &nbsp; Limpar Filtro
         </button>
-        <a href="@Url.Action("Index", "Transactions")" class="custom-button">
-            <i class="fa fa-plus"></i> &nbsp; Adicionar Nova Transação
-        </a>
+
+
+        <button class="export-button" id="exportCsvBtn">
+            <i class="fas fa-file-excel" style="font-size: 18px;"></i> &nbsp; Exportar CSV
+        </button>
     </div>
 
 

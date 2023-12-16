@@ -1,99 +1,121 @@
-﻿
-/* Create */
+﻿    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f4;
+    }
 
-.campo-bandeira,
-.campo-dia,
-.campo-agencia,
-.campo-conta,
-.campo-instituicao,
-.campo-conta-principal,
-.campo-tipo,
-.campo-apelido,
-.campo-valor {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: 100%;
-}
+    .form-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 95%;
+        width: 100%;
+        margin: 10px auto 0;
+    }
 
-#labelBandeira,
-#labelDiaVencimento,
-#labelAgencia,
-#labelConta,
-#labelInstituicao,
-#labelTipo,
-#labelValor,
-#labelApelido {
-    margin-bottom: 10px;
-    color: #333;
-    display: block;
-    font-size: 14px;
-    text-align: left;
-    width: 100%;
-}
+    h2 {
+        font-size: 24px;
+        color: #FF8C00;
+        padding-top: 30px;
+        display: flex;
+        font-weight: bold;
+    }
 
-#cardNumber,
-#bandeira,
-#diaVencimento,
-#agencia,
-#conta,
-#instituicao,
-#conta-principal,
-#valor,
-#apelido,
-#tipo,
-#toggleSwitch {
-    border: none;
-    background: transparent;
-    font-size: 16px;
-    color: #333;
-    outline: none;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    transition: border-color 0.3s;
-    text-align: left;
-    width: 100%;
-}
-
-    #cardNumber::placeholder,
-    #bandeira::placeholder,
-    #diaVencimento::placeholder,
-    #agencia::placeholder,
-    #conta::placeholder,
-    #instituicao::placeholder,
-    #conta-principal::placeholder,
-    #valor::placeholder,
-    #apelido::placeholder,
-    #tipo::placeholder {
-        color: #aaa;
+    .title {
+        margin-bottom: 50px;
+        text-align: left;
+        border-bottom: 2px solid rgba(204, 204, 204, 0.5);
+        padding: 10px 0 30px;
     }
 
 
-button {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s, color 0.3s;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #FF8C00;
-    color: white;
-    font-weight: bold;
-    /*margin-top: 50px;*/
-}
-
-    button:hover {
-        filter: brightness(90%);
+    .opcao-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px;
+        margin: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s, color 0.3s;
     }
 
-.custom-placeholder {
-    font-size: 16px;
-    color: #aaa;
-    margin-left: -12px;
-}
+        .opcao-btn:hover {
+            background-color: #eee;
+        }
 
+    .opcao-selecionada {
+        color: orange;
+        font-weight: bolder;
+        border: 2px solid;
+    }
+
+    .custom-button {
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+    }
+
+        .custom-button:hover {
+            transform: scale(1.05);
+        }
+
+    a:hover {
+        color: #fff;
+    }
+
+    .card {
+        background: #f2f4f8;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin: 10px;
+        text-align: center;
+        border-radius: 10px;
+        height: 150px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .icon {
+        font-size: 36px;
+    }
+
+    .card-content {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .text-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    hr.divider {
+        width: 100%;
+        margin: 10px 0;
+        border: 1px solid rgba(204, 204, 204, 0.5);
+    }
+
+    .saldo-label {
+        font-size: 14px;
+        margin: 0;
+        color: #555;
+    }
+
+    .saldo-valor {
+        font-size: 18px;
+        margin: 0;
+        font-weight: bold;
+    }
