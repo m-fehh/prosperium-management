@@ -120,12 +120,21 @@
                 targets: 6,
                 data: 'opportunity.totalQuotas',
                 render: function (data) {
-                    return data !== null ? data : '';
+                    console.log(data === 0);
+                    return data !== null && data !== 0 ? data :  '-';
                 },
                 sortable: false,
             },
             {
                 targets: 7,
+                data: 'opportunity.interestRate',
+                render: function (data) {
+                    return data !== null && data !== 0 ? data + "%" : '-';
+                },
+                sortable: false,
+            },
+            {
+                targets: 8,
                 data: 'opportunity.quotasType',
                 render: function (data) {
                     return getOpportunitiesDateTypeName(data) || '';

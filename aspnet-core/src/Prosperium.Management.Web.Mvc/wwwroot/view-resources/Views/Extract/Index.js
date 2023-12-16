@@ -192,6 +192,12 @@
         $("#resumoTitle").text(formattedDate);
     }
 
+    // Formata data
+    function formatDate(dateString) {
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return new Date(dateString).toLocaleDateString('pt-BR', options);
+    }
+
     $(document).ready(function () {
         UpdateResumoTitle(new Date());
 
@@ -221,8 +227,6 @@
 
         if (resultData) {
             resultData.forEach(function (item) {
-                console.log(resultData)
-
                 if (item.transaction.transactionType === 1) {
                     // Despesa
                     if (item.transaction.categoryId !== 33) {
@@ -239,6 +243,48 @@
         $('#gastosValue').text(formatCurrency(totalGastos));
         $('#ganhosValue').text(formatCurrency(totalGanhos));
     }
+
+    // Função para exportar CSV
+    function ExportCsv() {
+        if (!resultData || resultData.length === 0) {
+            abp.notify.warn('Nenhum dado para exportar');
+            return;
+        }
+
+        // Cria o conteúdo CSV
+        var csvContent =  "Data;Descricao;Tipo;Conta/Cartao;Categoria;Valor\n";
+        resultData.forEach(function (item) {
+            var isCard = (item.transaction.account) ? false : true;
+
+            csvContent += (item.transaction.date ? formatDate(item.transaction.date) : "") + ";";
+            csvContent += (item.transaction.description ? item.transaction.description : "") + ";";
+
+            csvContent += (isCard) ?  "Cartao" + ";" : "Conta" + ";";
+
+            var accountInfo = "";
+            if (!isCard) {
+                accountInfo = item.transaction.account.agencyNumber + "/" + item.transaction.account.accountNumber;
+            } else {
+                accountInfo += item.transaction.creditCard.cardName + " (" + item.transaction.creditCard.cardNumber + ")";
+            }
+            csvContent += accountInfo + ";";
+
+            csvContent += (item.transaction.categories ? removeSpecialChars(item.transaction.categories.name.toUpperCase()) : "") + ";";
+            csvContent += (item.transaction.expenseValue ? formatCurrency(item.transaction.expenseValue) : "") + "\n";
+        });
+
+        // Converte o conteúdo para Blob e inicia o download
+        var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        saveAs(blob, 'exportacao.csv');
+
+        abp.notify.success(l("ExportSuccessfully"));
+    }
+
+    // Função para remover caracteres especiais
+    function removeSpecialChars(str) {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
 
     // Função para lidar com a entrada de pesquisa
     function HandleSearchInput() {
@@ -276,6 +322,16 @@
             },
             error: function (e) { }
         });
+    });
+
+    $(document).on('click', '#exportCsvBtn', function (e) {
+        e.preventDefault();
+
+        if (resultData && resultData.length > 0) {
+            ExportCsv();
+        } else {
+            abp.notify.info('Nenhuma transação encontrada.');
+        }
     });
 
 

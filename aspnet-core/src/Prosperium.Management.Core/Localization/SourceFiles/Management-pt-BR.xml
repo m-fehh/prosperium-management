@@ -116,5 +116,6 @@
     <text name="OpportunityTypeNameOverdraft">Novo cheque especial</text>
     <text name="OpportunityTypeNameNotIncluded">Outro tipo não contemplada</text>
     <text name="OpportunityTypeNameOther">Outro tipo de empréstimo</text>
+    <text name="ExportSuccessfully">Exportação CSV concluída com sucesso.</text>
   </texts>
 </localizationDictionary>
