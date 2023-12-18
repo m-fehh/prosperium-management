@@ -40,6 +40,31 @@ namespace Prosperium.Management.Plans
             return (await CapturePlanByTenantId(tenantId)).IntegrationPluggy;
         }
 
+        public async Task ChangePlanOnExpiration()
+        {
+            using (var unitOfWork = _unitOfWorkManager.Begin())
+            {
+                Plan planDefault;
+
+                var expiredTenants = await _tenantRepository.GetAll()
+                    .Where(t => t.PlanExpiration.HasValue && t.PlanExpiration < DateTime.Now)
+                    .ToListAsync();
+
+                using (_unitOfWorkManager.Current.DisableFilter(AbpDataFilters.MayHaveTenant))
+                {
+                    planDefault = await _planRepository.GetAll().Where(x => x.Name.ToLower().Trim() == "essencial").FirstOrDefaultAsync();
+                }
+
+                foreach (var item in expiredTenants)
+                {
+                    await ChangeTenantPlan(item.Id, planDefault.Id, planDefault.Name, null);
+                }
+
+                await unitOfWork.CompleteAsync();
+            }
+        }
+
+
         public async Task ChangeTenantPlan(int tenantId, int selectedPlanId, string selectedPlanName, string formattedDate)
         {
             var tenant = await _tenantRepository.FirstOrDefaultAsync(tenantId);

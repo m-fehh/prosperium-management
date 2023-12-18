@@ -76,6 +76,7 @@ const initPluggyConnect = async () => {
             connectToken: accessToken,
             includeSandbox: false,
             onSuccess: (itemData) => {
+                $('.Connect Prosperium is-modal').modal('hide');
                 insertAccountPluggy(itemData.item.id);
             },
             onError: (error) => {
@@ -94,6 +95,7 @@ const initPluggyConnect = async () => {
 $(document).on('click', '#bntAtualizarConta', async function (e) {
     e.preventDefault();
 
+    var accountId = $(this).data('conta-id');
     var itemId = $(this).data('item-id');
     const accessToken = await getPluggyAccessToken(true, itemId);
 
@@ -107,7 +109,7 @@ $(document).on('click', '#bntAtualizarConta', async function (e) {
             updateItem: itemId,
             includeSandbox: false,
             onSuccess: (itemData) => {
-                PluggyUpdateAllData(itemId);
+                PluggyUpdateAllData(itemId, accountId);
             },
             onError: (error) => {
                 throw error;
@@ -121,13 +123,18 @@ $(document).on('click', '#bntAtualizarConta', async function (e) {
     }
 });
 
-function PluggyUpdateAllData(itemId) {
-    abp.notify.info("Atualizando item...");
+function PluggyUpdateAllData(itemId, accountId) {
+    var notification = abp.notify.info("Atualizando item...", '', { autoClose: false });
+
+    var requestData = {
+        itemId: itemId,
+        accountId: accountId
+    };
 
     $.ajax({
         url: abp.appPath + 'App/Accounts/UpdateAllDataPluggy',
         type: 'POST',
-        data: JSON.stringify(itemId),
+        data: JSON.stringify(requestData),
         contentType: 'application/json',
         success: function (response) {
             abp.notify.success("Item atualizado com sucesso.");
@@ -137,10 +144,14 @@ function PluggyUpdateAllData(itemId) {
             console.error("Erro ao enviar GET request:", error);
         },
         complete: function () {
+            notification.close();
             abp.ui.clearBusy();
         }
     });
 }
+
+
+
 
 function insertAccountPluggy(id) {
     $.ajax({

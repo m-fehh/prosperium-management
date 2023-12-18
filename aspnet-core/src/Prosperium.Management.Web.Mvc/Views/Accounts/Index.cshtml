@@ -130,7 +130,6 @@
                 for (let index = 0; index < data.result.length; index++) {
                     try {
                         var account = data.result[index];
-                        console.log(account);
 
                         var typeAccount = (account.origin == 2) ? "Automática" : "Manual";
 
@@ -159,7 +158,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-10">
-                                                    <p class="saldo-label" style="display: flex; padding: 0 5px;">Saldo:</p>
+                                                            <p class="saldo-label" style="display: flex; padding: 0 5px;">${(account.accountType !== 7) ? "Saldo atual:" : "Fatura atual:"}</p>
                                                     <p class="saldo-valor" id="saldo_${account.id}" style="display: flex; padding: 0 5px;">${isSaldoVisible ? formatCurrency(account.balanceAvailable) : 'R$ ••••'}</p>
                                                 </div>
                                                 <div class="col-1 d-flex align-items-center" style="padding: 0;">
@@ -170,7 +169,7 @@
                                                             </svg>
                                                         </div>
                                                         <div class="dropdown-menu dropdown-menu-right">
-                                                            <button class="dropdown-item" data-item-id="${account.pluggyItemId}" data-conta-nome="${account.accountNickname}" id="bntAtualizarConta" style="${account.origin != 2 ? 'display: none;' : ''}">Atualizar</button>
+                                                                <button class="dropdown-item" data-item-id="${account.pluggyItemId}" data-conta-id="${account.id}" id="bntAtualizarConta" style="${account.origin != 2 ? 'display: none;' : ''}">Atualizar</button>
                                                             <button class="dropdown-item" data-conta-id="${account.id}" data-status-conta="${isActive}" id="bntChangeStatus">${textActive}</button>
                                                             <button class="dropdown-item" data-conta-id="${account.id}" data-conta-nome="${account.accountNickname}" id="bntExcluirConta">Excluir definitivamente</button>
                                                         </div>

@@ -121,18 +121,21 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         }
 
         [HttpGet]
-        [Route("list-transaction")]
-        public async Task<List<TransactionDto>> GetAllListAsync()
+        [Route("list-transaction-per-itemId")]
+        public async Task<List<string>> GetAllTransactionPerItemIdAsync(int tenantId, string pluggyItemId, bool isCreditCard)
         {
-            List<Transaction> allTransactions = await _transactionRepository
-                .GetAll().Include(x => x.Categories)
-                    .ThenInclude(x => x.Subcategories)
-                .Include(x => x.Account)
-                    .ThenInclude(x => x.Bank)
-                .Include(x => x.CreditCard)
-                    .ThenInclude(x => x.FlagCard).ToListAsync();
-            return ObjectMapper.Map<List<TransactionDto>>(allTransactions);
+            var query = _transactionRepository
+                .GetAll()
+                .Where(x => x.TenantId == tenantId)
+                .Where(x => (isCreditCard) ? x.CreditCard.PluggyItemId.Equals(pluggyItemId) : x.Account.PluggyItemId.Equals(pluggyItemId));
+
+            var selectedColumnsQuery = query
+                .Select(x => x.PluggyTransactionId);
+
+            var allTransactionIds = await selectedColumnsQuery.ToListAsync();
+            return allTransactionIds;
         }
+
 
         [HttpGet]
         [Route("list-transaction-per-month")]

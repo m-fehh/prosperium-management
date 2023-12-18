@@ -75,11 +75,11 @@ a:hover {
 
     .table tbody tr.gastos:hover,
     .table tbody tr.transferencia:hover {
-        background-color: #FFE6E6; /* Vermelho bem clarinho para gastos */
+        background-color: #FFE6E6; 
     }
 
     .table tbody tr.ganhos:hover {
-        background-color: #E6FFE6; /* Verde bem clarinho para ganhos */
+        background-color: #E6FFE6;
     }
 
 .table-responsive {
@@ -89,21 +89,30 @@ a:hover {
 .card {
     background: #f2f4f8;
     border: 1px solid #ddd;
-    padding: 10px; /* Reduzindo o preenchimento */
+    padding: 10px; 
     margin: 10px;
     text-align: start;
-    margin-bottom: 20px; /* Reduzindo a margem inferior */
-    transition: transform 0.3s ease-in-out;
+    margin-bottom: 20px; 
     border-radius: 10px;
-    height: 100px; /* Reduzindo a altura */
+    height: 100px; 
     display: flex;
     align-items: center;
-    cursor: pointer;
     justify-content: space-around;
 }
 
-.icon {
-    font-size: 36px; /* Aumentando o tamanho do ícone */
+.animation-card {
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.animation-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+    .icon {
+    font-size: 36px; 
     margin-right: 10px;
 }
 
@@ -116,7 +125,7 @@ a:hover {
 }
 
 .text-content {
-    flex-grow: 1; /* Ocupando o espaço disponível */
+    flex-grow: 1; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -142,12 +151,6 @@ h3 {
 
 #totalGanhos .icon {
     color: #2ecc71;
-}
-
-.card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
 }
 
 .page-item.active .page-link {

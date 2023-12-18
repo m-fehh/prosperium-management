@@ -62,46 +62,53 @@ namespace Prosperium.Management.OpenAPI.V1.Opportunities
         }
 
         [HttpPost]
-        public async Task PluggyCreateOpportunitiesAsync(string itemId)
+        public async Task PluggyCreateOpportunitiesAsync(string itemId, long accountId)
         {
-            List<Opportunity> OpportunitiesAlreadysaved = await _opportunityRepository.GetAllListAsync();
             ResultPluggyOpportunity opportunity = await _pluggyManager.PluggyGetOpportunitiesAsync(itemId);
             AccountFinancialDto account = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyItemId == itemId).FirstOrDefault();
 
             if (opportunity.Total > 0)
             {
-                List<Opportunity> opportunitiesToInsert = new List<Opportunity>();
-                foreach (var item in opportunity.Results)
-                {
-                    bool isItemAlreadySaved = OpportunitiesAlreadysaved.Any(x => x.PluggyItemId == item.ItemId && x.PluggyOpportunityId == item.Id);
-                    if (!isItemAlreadySaved)
-                    {
-                        CreateOpportunityDto opportunityDto = new CreateOpportunityDto
-                        {
-                            AccountId = account.Id,
-                            Name = item.Name,
-                            Description = item.Description,
-                            Date = item.Date,
-                            TotalQuotas = item.TotalQuotas ?? 0,
-                            QuotasType = Enum.Parse<OpportunitiesDateType>(item.QuotasType ?? "NULL"),
-                            InterestRate = item.InterestRate ?? 0,
-                            Type = Enum.Parse<OpportunitiesType>(item.Type),
-                            AvailableLimit = Convert.ToInt64(item.AvailableLimit ?? 0),
-                            Origin = AccountConsts.AccountOrigin.Pluggy,
-                            PluggyOpportunityId = item.Id,
-                            PluggyItemId = item.ItemId
-                        };
+                // Exclui os registros existentes com base no itemId
+                var existingOpportunities = await _opportunityRepository
+                    .GetAll()
+                    .Where(x => x.PluggyItemId == itemId && x.AccountId == accountId)
+                    .ToListAsync();
 
-                        Opportunity toInsert = ObjectMapper.Map<Opportunity>(opportunityDto);
-                        opportunitiesToInsert.Add(toInsert);
+                if (existingOpportunities.Any())
+                {
+                    foreach (var existingOpportunity in existingOpportunities)
+                    {
+                        await _opportunityRepository.DeleteAsync(existingOpportunity.Id);
                     }
                 }
 
-                using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
+                List<Opportunity> opportunitiesToInsert = new List<Opportunity>();
+                foreach (var item in opportunity.Results)
                 {
-                    await _opportunityRepository.InsertRangeAsync(opportunitiesToInsert);
-                    uow.Complete();
+
+                    CreateOpportunityDto opportunityDto = new CreateOpportunityDto
+                    {
+                        AccountId = account.Id,
+                        Name = item.Name,
+                        Description = item.Description,
+                        Date = item.Date,
+                        TotalQuotas = item.TotalQuotas ?? 0,
+                        QuotasType = Enum.Parse<OpportunitiesDateType>(item.QuotasType ?? "NULL"),
+                        InterestRate = item.InterestRate ?? 0,
+                        Type = Enum.Parse<OpportunitiesType>(item.Type),
+                        AvailableLimit = Convert.ToInt64(item.AvailableLimit ?? 0),
+                        Origin = AccountConsts.AccountOrigin.Pluggy,
+                        PluggyOpportunityId = item.Id,
+                        PluggyItemId = item.ItemId
+                    };
+
+                    Opportunity toInsert = ObjectMapper.Map<Opportunity>(opportunityDto);
+                    opportunitiesToInsert.Add(toInsert);
+
                 }
+
+                await _opportunityRepository.InsertRangeAsync(opportunitiesToInsert);
             }
         }
     }

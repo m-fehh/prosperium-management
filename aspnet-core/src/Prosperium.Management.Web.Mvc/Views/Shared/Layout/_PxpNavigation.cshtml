@@ -1,6 +1,7 @@
 ﻿@using Abp.Runtime.Security
+@using Abp.MultiTenancy
 @{
-    var isHostUser = AbpSession.TenantId == null;
+    var isHostUser = AbpSession.UserId == 1 && AbpSession.TenantId == null;
 }
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -129,7 +130,6 @@
             });
 
             var hostToBackImpersonate = abp.session && abp.session.impersonatorUserId === 1;
-
             if (hostToBackImpersonate) {
                 $('#BackToImpersonator').show();
 

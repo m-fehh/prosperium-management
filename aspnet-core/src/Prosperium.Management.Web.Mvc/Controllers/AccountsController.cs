@@ -94,9 +94,9 @@ namespace Prosperium.Management.Web.Controllers
 
         [HttpPost]
         [Route("UpdateAllDataPluggy")]
-        public async Task UpdateAllDataPluggy([FromBody] string itemId)
+        public async Task UpdateAllDataPluggy([FromBody] PluggyUpdateDataDto input)
         {
-            await _pluggyAppService.UpdateAllDataPluggy(itemId);
+            await _pluggyAppService.UpdateAllDataPluggy(input.ItemId, input.AccountId);
         }
 
 
@@ -109,5 +109,11 @@ namespace Prosperium.Management.Web.Controllers
 
             return Json(result);
         }
+    }
+
+    public class PluggyUpdateDataDto
+    {
+        public string ItemId { get; set; }
+        public long AccountId { get; set; }
     }
 }

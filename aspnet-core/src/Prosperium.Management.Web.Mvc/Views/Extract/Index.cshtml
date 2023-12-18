@@ -26,9 +26,25 @@
 <script defer src="https://cdn.jsdelivr.net/g/filesaver.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
 <div class="form-container" id="ExtractCreate">
     <h2>@ViewData["Title"]</h2>
     <p class="title">Acompanhe seus gastos e ganhos de forma clara e organizada, proporcionando o controle necessário sobre sua saúde financeira.</p>
+
+    <div class="alert alert-info message-banner" role="alert" style="margin: 0 0 50px 0; background: #FF8C00; border: none; font-weight: bold;">
+        Para atualizar os dados do <u>Banco Inter</u>, por favor, acesse a tela de contas e atualize o QR code.
+        <button type="button" class="close" data-dismiss="alert" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+
+
+
+
 
     <!-- Inputs ocultos para armazenar os IDs selecionados -->
     <input type="hidden" id="selectedAccount" name="selectedAccount" />
@@ -41,6 +57,7 @@
         <div class="col-4" style="display: flex; align-items: center; ">
             <h2 id="resumoTitle" style="border: none; margin: 0; font-size: 1.3rem; color: #333; padding: 0"></h2>
         </div>
+
         <div class="col-8" style="display: flex; width: 100%; align-items: center; justify-content: end;">
             <form id="ExtractSearchForm" class="form-horizontal" style="width: 85%;">
                 <div style="position: relative; display: flex; align-items: center;">
@@ -89,7 +106,6 @@
             <i class="fas fa-file-excel" style="font-size: 18px;"></i> &nbsp; Exportar CSV
         </button>
     </div>
-
 
 
     <table id="ExtractTable" class="table" style="cursor:default;">

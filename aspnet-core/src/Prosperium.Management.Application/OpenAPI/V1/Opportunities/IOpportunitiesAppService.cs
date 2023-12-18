@@ -5,6 +5,6 @@ namespace Prosperium.Management.OpenAPI.V1.Opportunities
 {
     public interface IOpportunitiesAppService : IApplicationService
     {
-        Task PluggyCreateOpportunitiesAsync(string itemId);
+        Task PluggyCreateOpportunitiesAsync(string itemId, long accountId);
     }
 }

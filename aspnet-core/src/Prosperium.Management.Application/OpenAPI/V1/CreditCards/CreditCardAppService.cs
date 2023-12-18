@@ -76,8 +76,9 @@ namespace Prosperium.Management.OpenAPI.V1.CreditCards
             {
                 var creditCard = await _creditCardRepository.FirstOrDefaultAsync(input.Id);
                 
-                // No creditCard, será atualizado apenas o LIMITE.
+                // No creditCard, será atualizado apenas o LIMITE e DATA DE FECHAMENTO.
                 creditCard.Limit = input.Limit;
+                creditCard.DueDay = input.DueDay;
 
                 await _creditCardRepository.UpdateAsync(creditCard);
                 unitOfWork.Complete();

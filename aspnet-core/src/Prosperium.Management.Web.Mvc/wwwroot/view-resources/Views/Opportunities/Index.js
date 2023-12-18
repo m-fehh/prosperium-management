@@ -120,7 +120,6 @@
                 targets: 6,
                 data: 'opportunity.totalQuotas',
                 render: function (data) {
-                    console.log(data === 0);
                     return data !== null && data !== 0 ? data :  '-';
                 },
                 sortable: false,
@@ -156,9 +155,9 @@
             case 2:
                 return 'Anual';
             case 3:
-                return 'Nenhum';
+                return '-';
             default:
-                return '';
+                return '-';
         }
     }
 

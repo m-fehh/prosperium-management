@@ -3,6 +3,8 @@
         l = abp.localization.getSource('Management'),
         _$table = $('#ExtractTable');
 
+    var hasInterAccount = false;
+
     var resultData;
     var _$extractTable = _$table.DataTable({
         paging: true,
@@ -38,6 +40,13 @@
                 transactionPromise.then(function (data) {
                     resultData = data.items;
                     UpdateCardValues();
+
+                    hasInterAccount = checkInterAccount(data.items);
+
+                    if ($("#ExtractCreate").length > 0 && hasInterAccount) {
+                        $(".message-banner").show();
+                    }
+
                     return data.items;
                 });
 
@@ -85,6 +94,9 @@
                 render: function (data, type, row) {
                     if (data.account != null) {
                         var accountNickname = data.account.accountNickname;
+                        hasInterAccount = (accountNickname === "BANCO INTER S.A.") ? true : false;
+
+
                         var agencyNumber = data.account.agencyNumber;
                         var accountNumber = data.account.accountNumber;
                         var imageFullPath = abp.appPath + 'img/banks/' + data.account.bank.imagePath;
@@ -133,6 +145,9 @@
                 render: function (data, type, row) {
                     var imageFullPath = abp.appPath + 'img/categories/' + data.iconPath;
 
+                    var maxLength = 15;
+                    var truncatedData = data.name.length > maxLength ? data.name.substring(0, maxLength) + '...' : data.name;
+
                     if (data && data.name) {
                         return `
                             <div class="d-flex" style="display: flex; justify-content: start; margin-left: 20%; align-items: center;">
@@ -140,7 +155,7 @@
                                     <img src="${imageFullPath}" style="padding: 10px;" width="50" />
                                 </div>
                                 <div>
-                                    <h5 class="card-title">${data.name.toUpperCase()}</h5>
+                                    <h5 class="card-title" title="${data.name}">${truncatedData.toUpperCase()}</h5>
                                 </div>
                             </div>
                         `;
@@ -149,6 +164,7 @@
                     }
                 },
                 sortable: false
+
             },
             {
                 targets: 4,
@@ -161,6 +177,15 @@
         ]
     });
 
+    function checkInterAccount(items) {
+        for (var i = 0; i < items.length; i++) {
+            var data = items[i].transaction;
+            if (data.account != null && data.account.accountNickname === "BANCO INTER S.A.") {
+                return true;
+            }
+        }
+        return false;
+    }
     function formatCurrency(value) {
         const formattedValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         return value >= 0 ? `R$ ${formattedValue}` : `- R$ ${formattedValue.substring(1)}`;
@@ -199,7 +224,9 @@
     }
 
     $(document).ready(function () {
+        $(".message-banner").hide();
         UpdateResumoTitle(new Date());
+
 
         $("#calendarIcon").datepicker({
             format: "mm/yyyy",

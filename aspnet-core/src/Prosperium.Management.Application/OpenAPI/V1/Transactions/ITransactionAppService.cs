@@ -12,7 +12,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         Task CreateAsync(CreateTransactionDto input);
         Task CreateAtomicTransactionAsync(List<Transaction> input);
         Task<TransactionDto> GetByIdAsync(long id);
-        Task<List<TransactionDto>> GetAllListAsync();
+        Task<List<string>> GetAllTransactionPerItemIdAsync(int tenantId, string pluggyItemId, bool isCreditCard);
         Task<List<TransactionDto>> GetAllTransactionPerAccount(long accountId);
         Task<PagedResultDto<GetTransactionForViewDto>> GetAllAsync(GetAllTransactionFilter input);
         Task UpdateAsync(TransactionDto input);
