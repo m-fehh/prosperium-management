@@ -29,123 +29,125 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.pt-BR.min.js"></script>
 
+<div class="container-fluid">
+    <div class="form-container">
+        <h2>Boas vindas</h2>
+        <p class="title">Centralize suas contas bancárias, acompanhe suas transações e tenha o controle total sobre seus ganhos e gastos. </p>
 
-<div class="form-container" id="ExtractCreate">
-    <h2>Boas vindas</h2>
-    <p class="title">Centralize suas contas bancárias, acompanhe suas transações e tenha o controle total sobre seus ganhos e gastos. </p>
-
-    @* Filtros *@
-    <div class="row">
-    </div>
-
-    @if (!isHostUser)
-    {
-        <div class="row" style="display: flex; justify-content: flex-end;">
-            <div class="col-10" style="display: flex; justify-content: start;">
-                <h2 class="titleMonth" style="border: none; margin: 0; font-size: 1.3rem; color: #333; padding-left: 20px; padding: 0;"></h2>
-            </div>
-            <div class="col-2" style="display: flex; justify-content: flex-end; align-items: center; padding-right: 20px;">
-                <i class="fas fa-funnel-dollar" data-toggle="modal" data-target="#FilterModal" style="font-size: 30px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="FilterIcon"></i>
-                <i class="far fa-calendar-alt" style="font-size: 30px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="calendarIcon"></i>
-                <input type="text" name="MonthYear" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 30px; display: none;" oninput="HandleSearchInput(this)" id="monthYearInput" />
-            </div>
-        </div>
-
-        <button id="btnLimparFiltro" style="background: transparent; border: none; color: #FF8C00; font-weight: bold;  visibility: hidden; display: flex; align-items: center; padding: 20px 0 0 20px;">
-            <i class="fas fa-times"></i> &nbsp; Limpar Filtro
-        </button>
-
-        @* Cards *@
-        <div class="row mb-5" style="display: flex; justify-content: space-evenly; margin: 10px 0 0 0;">
-            <div class="col-4">
-                <div class="card" id="totalGastos">
-                    <div class="card-content">
-                        <img src="~/img/transactionTypes/gastos.png" width="40" />
-                        <div>
-                            <p id="gastosValue">Carregando...</p>
-                            <h3>Gastos do mês</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="card" id="totalGanhos">
-                    <div class="card-content">
-                        <img src="~/img/transactionTypes/ganhos.png" width="40" />
-                        <div>
-                            <p id="ganhosValue">Carregando...</p>
-                            <h3>Ganhos do mês</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="card" id="total">
-                    <div class="card-content">
-                        <img src="~/img/transactionTypes/total.png" width="40" />
-                        <div>
-                            <p id="totalValue">Carregando...</p>
-                            <h3>Total do mês</h3>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        @* Gráfico *@
-        <div class="row row-cols-2 mb-5">
-            <div class="col">
-                <div class="row" style="display: flex; justify-content: center;">
-                    <h2 style="font-size: 18px; padding: 15px;">Transações por categoria</h2>
-                </div>
-                <div class="row" id="chartMessage" style="display: none; display: flex; justify-content: center; padding: 20px;">
-                    <p class="messageNotVisible" id="messageNotVisibleCategories">Não há transações disponíveis para o mês/ano especificado.</p>
-                </div>
-                <div class="row" style="display: flex; justify-content: center;">
-                    <canvas id="myPieChart" width="400" height="400"></canvas>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gastos')">
-                            <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
-                            <div class="opcao">Gastos</div>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="opcao-btn" onclick="marcarOpcao(this, 'ganhos')">
-                            <input type="radio" name="TransactionType" value="2" style="display: none;" />
-                            <div class="opcao">Ganhos</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <div class="row" style="display: flex; justify-content: center;">
-                    <h2 style="font-size: 18px; padding: 15px;">Últimas transações</h2>
-                </div>
-                <div class="row" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 20px;">
-                    <div id="latestTransactionsContainer" style="width: 100%; margin-left: 50px;"></div>
-                    <p class="messageNotVisible">Não há transações disponíveis para o mês/ano especificado.</p>
-                </div>
-            </div>
-        </div>
-
+        @* Filtros *@
         <div class="row">
-            <div class="col-12">
-                <div class="row" style="display: flex; justify-content: center;">
-                    <h2 style="font-size: 18px; padding: 15px;">Gastos no cartão de crédito</h2>
-                </div>
-                <div class="row" style="display: flex; justify-content: center;">
-                    <div id="progress-bar-container" style="width: 100%;"></div>
-                    <p class="messageNotVisible" id="messageNotVisibleCreditCard">Não há transações disponíveis para o mês/ano especificado.</p>
-                </div>
-            </div>
         </div>
 
-        <input type="hidden" id="selectedAccount" name="selectedAccount" />
-        <input type="hidden" id="selectedCard" name="selectedCard" />
-        <input type="hidden" id="selectedCategory" name="selectedCategory" />
-    }
+        @if (!isHostUser)
+        {
+
+            <div class="row" style="display: flex; justify-content: space-between; align-items: center; padding: 0 20px;">
+                <h2 class="titleMonth" style="border: none; margin: 0; font-size: 1.3rem; color: #333; padding-left: 20px; padding: 0"> </h2>
+                <div style="display: flex; align-items: center;">
+                    <i class="fas fa-funnel-dollar" data-toggle="modal" data-target="#FilterModal" style="font-size: 30px; color: #FF8C00; margin-right: 10px; cursor: pointer;" id="FilterIcon"></i>
+                    <i class="far fa-calendar-alt" style="font-size: 30px; color: #FF8C00; cursor: pointer;"></i>
+                    <input type="text" name="MonthYear" class="form-control txt-search" style="outline: none; border: 1px solid #ddd; padding-right: 20px; display: none;" oninput="HandleSearchInput(this)" id="monthYearInput" />
+                </div>
+            </div>
+
+            <button id="btnLimparFiltro" style="background: transparent; border: none; color: #FF8C00; font-weight: bold;  visibility: hidden; display: flex; align-items: center; padding: 20px 0 0 20px;">
+                <i class="fas fa-times"></i> &nbsp; Limpar Filtro
+            </button>
+
+
+            @* Cards *@
+            <div class="row mb-5" style="display: flex; flex-wrap: wrap; justify-content: space-evenly; margin: 10px 0 0 0;">
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="card" id="totalGastos">
+                        <div class="card-content">
+                            <img src="~/img/transactionTypes/gastos.png" width="40" />
+                            <div>
+                                <p id="gastosValue">Carregando...</p>
+                                <h3>Gastos do mês</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="card" id="totalGanhos">
+                        <div class="card-content">
+                            <img src="~/img/transactionTypes/ganhos.png" width="40" />
+                            <div>
+                                <p id="ganhosValue">Carregando...</p>
+                                <h3>Ganhos do mês</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-12">
+                    <div class="card" id="total">
+                        <div class="card-content">
+                            <img src="~/img/transactionTypes/total.png" width="40" />
+                            <div>
+                                <p id="totalValue">Carregando...</p>
+                                <h3>Total do mês</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Gráfico *@
+            <div class="row row-cols-1 row-cols-md-2 mb-5">
+                <div class="col">
+                    <div class="row" style="display: flex; justify-content: center;">
+                        <h2 style="font-size: 18px; padding: 15px;">Transações por categoria</h2>
+                    </div>
+                    <div class="row" id="chartMessage" style="display: none; display: flex; justify-content: center; padding: 20px;">
+                        <p class="messageNotVisible" id="messageNotVisibleCategories">Não há transações disponíveis para o mês/ano especificado.</p>
+                    </div>
+                    <div class="row" style="display: flex; justify-content: center;">
+                        <canvas id="myPieChart" width="400" height="400"></canvas>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gastos')">
+                                <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
+                                <div class="opcao">Gastos</div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="opcao-btn" onclick="marcarOpcao(this, 'ganhos')">
+                                <input type="radio" name="TransactionType" value="2" style="display: none;" />
+                                <div class="opcao">Ganhos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row" style="display: flex; justify-content: center;">
+                        <h2 style="font-size: 18px; padding: 15px;">Últimas transações</h2>
+                    </div>
+                    <div class="row" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 20px;">
+                        <div id="latestTransactionsContainer" style="width: 100%; margin-left: 50px;"></div>
+                        <p class="messageNotVisible">Não há transações disponíveis para o mês/ano especificado.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="row" style="display: flex; justify-content: center;">
+                        <h2 style="font-size: 18px; padding: 15px;">Gastos no cartão de crédito</h2>
+                    </div>
+                    <div class="row" style="display: flex; justify-content: center;">
+                        <div id="progress-bar-container" style="width: 100%;"></div>
+                        <p class="messageNotVisible" id="messageNotVisibleCreditCard">Não há transações disponíveis para o mês/ano especificado.</p>
+                    </div>
+                </div>
+            </div>
+
+
+            <input type="hidden" id="selectedAccount" name="selectedAccount" />
+            <input type="hidden" id="selectedCard" name="selectedCard" />
+            <input type="hidden" id="selectedCategory" name="selectedCategory" />
+        }
+    </div>
 </div>
 <div class="modal fade" id="FilterModal" tabindex="-1" role="dialog" aria-labelledby="filterModalLabel" data-backdrop="static">
     <div class="modal-dialog modal-xl" role="document">

@@ -460,16 +460,13 @@ function updateModalSubcategories(subcategories, categoryIcon) {
 
         for (var i = 0; i < subcategories.length; i++) {
             subcategoriasHtml += `
-                        <div class="col-md-12">
+                        <div class="col-12 col-sm-6">
                             <div class="card categoria-modal subcategoria" data-subcategoria="${subcategories[i].name}" data-subcategoria-id="${subcategories[i].id}" data-categoria-id="${selectedCategoryId}">
                                 <div class="card-body d-flex align-items-center" style="width: 100%;">
-                                    <div class="col-1">
-                                        <img src="${imageFullPath}" width="50" />
-                                    </div>
-                                    <div class="col-10 d-flex align-items-center" style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div class="col-11 col-sm-11 d-flex align-items-center">
                                         <h3 class="card-title" style="color: #000; font-weight: bold; margin-left: 10px;">${subcategories[i].name}</h3>
                                     </div>  
-                                    <div class="col-1">
+                                    <div class="col-1 col-sm-1">
                                         <div class="ml-auto arrow-right">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="color: #FF8C00;" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                                 <path d="M11.354 8.354a.5.5 0 0 0 0-.708L9.172 5.464a.5.5 0 1 1 .707-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.707-.708L11.354 8.354z" />

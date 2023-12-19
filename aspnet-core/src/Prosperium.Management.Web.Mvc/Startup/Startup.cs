@@ -20,7 +20,7 @@ using Abp.Json;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.WebEncoders;
 using Newtonsoft.Json.Serialization;
-
+using System;
 
 namespace Prosperium.Management.Web.Startup
 {
@@ -61,7 +61,13 @@ namespace Prosperium.Management.Web.Startup
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
             });
-            
+
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(1); // tempo de inatividade antes da expiração da sessão
+                options.Cookie.IsEssential = true; // torna o cookie essencial para o funcionamento do site
+            });
+
             services.AddScoped<IWebResourceManager, WebResourceManager>();
 
             services.AddSignalR();

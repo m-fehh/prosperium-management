@@ -72,6 +72,11 @@
         columnDefs: [
             {
                 targets: 0,
+                className: 'control',
+                defaultContent: '',
+            },
+            {
+                targets: 1,
                 data: 'transaction.date',
                 render: function (data) {
                     return moment(data).format('DD/MM/YYYY');
@@ -79,7 +84,7 @@
                 sortable: false
             },
             {
-                targets: 1,
+                targets: 2,
                 data: 'transaction.description',
                 render: function (data) {
                     var maxLength = 30;
@@ -89,7 +94,7 @@
                 sortable: false
             },
             {
-                targets: 2,
+                targets: 3,
                 data: 'transaction',
                 render: function (data, type, row) {
                     if (data.account != null) {
@@ -140,7 +145,7 @@
                 sortable: false
             },
             {
-                targets: 3,
+                targets: 4,
                 data: 'transaction.categories',
                 render: function (data, type, row) {
                     var imageFullPath = abp.appPath + 'img/categories/' + data.iconPath;
@@ -167,7 +172,7 @@
 
             },
             {
-                targets: 4,
+                targets: 5,
                 data: 'transaction.expenseValue',
                 render: function (data) {
                     return formatCurrency(data);
@@ -370,6 +375,11 @@
         }
     });
 
+    // newTransacionBnt
+    $(document).on('click', '#newTransacionBnt', function (e) {
+        e.preventDefault();
+        window.location.href = 'Transactions';
+    });
 
     // Comitta a pesquisa
     abp.event.on('filter.applied', () => {

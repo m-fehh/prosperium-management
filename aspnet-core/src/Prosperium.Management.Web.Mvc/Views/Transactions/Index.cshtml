@@ -136,156 +136,160 @@
                 font-weight: 600;
             }
 
-            .datepicker table tr td.active.active, .datepicker table tr td.active.disabled.active, .datepicker table tr td.active.disabled:active, .datepicker table tr td.active.disabled:hover.active, .datepicker table tr td.active.disabled:hover:active, .datepicker table tr td.active:active, .datepicker table tr td.active:hover.active, .datepicker table tr td.active:hover:active{
+            .datepicker table tr td.active.active, .datepicker table tr td.active.disabled.active, .datepicker table tr td.active.disabled:active, .datepicker table tr td.active.disabled:hover.active, .datepicker table tr td.active.disabled:hover:active, .datepicker table tr td.active:active, .datepicker table tr td.active:hover.active, .datepicker table tr td.active:hover:active {
                 background-color: #FF8C00 !important;
                 background-image: none;
             }
 
 </style>
 
-<div class="form-container" id="TransactionCreate">
-    <h2>@ViewData["Title"]</h2>
-    <p class="title">Registre suas transações de maneira fácil e rápida, garantindo um controle eficaz dos seus movimentos financeiros, adaptado ao seu estilo de vida.</p>
+<div class="container-fluid">
+    <div class="form-container" id="TransactionCreate">
+        <h2>@ViewData["Title"]</h2>
+        <p class="title">Registre suas transações de maneira fácil e rápida, garantindo um controle eficaz dos seus movimentos financeiros, adaptado ao seu estilo de vida.</p>
 
-    <form method="post">
-        <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gasto')">
-            <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
-            <div class="opcao">Gasto</div>
-        </div>
-
-        <div class="opcao-btn" onclick="marcarOpcao(this, 'ganho')">
-            <input type="radio" name="TransactionType" value="2" style="display: none;" />
-            <div class="opcao">Ganho</div>
-        </div>
-
-        <div class="opcao-btn" onclick="marcarOpcao(this, 'transferencia')">
-            <input type="radio" name="TransactionType" value="3" style="display: none;" />
-            <div class="opcao">Transferência</div>
-        </div>
-
-        <div class="row">
-            <div class="col-6">
-                <div class="campo-valor">
-                    <label id="labelValor" for="valor">Valor do gasto * </label>
-                    <input type="text" id="valor" style="color: red; font-weight: bold;" name="ExpenseValue" placeholder="R$ 0,00" required oninput="formatarValor(this)" />
-                </div>
+        <form method="post">
+            <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gasto')">
+                <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
+                <div class="opcao">Gasto</div>
             </div>
-            <div class="col-6">
-                <div class="campo-descricao">
-                    <label id="labelDescricao" for="descricao">Descrição do gasto * </label>
-                    <input type="text" id="descricao" name="Description" placeholder="Digite sua descrição" required />
-                </div>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-categoria">
-                    <label id="labelCategoria" for="categoria">Categoria *</label>
-                    <div id="categoria" data-toggle="modal" data-target="#SelectCategoryModal">
-                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma categoria" style="padding: 0; background: transparent; border: none;" readonly>
+            <div class="opcao-btn" onclick="marcarOpcao(this, 'ganho')">
+                <input type="radio" name="TransactionType" value="2" style="display: none;" />
+                <div class="opcao">Ganho</div>
+            </div>
+
+            <div class="opcao-btn" onclick="marcarOpcao(this, 'transferencia')">
+                <input type="radio" name="TransactionType" value="3" style="display: none;" />
+                <div class="opcao">Transferência</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="campo-valor">
+                        <label id="labelValor" for="valor">Valor do gasto * </label>
+                        <input type="text" id="valor" style="color: red; font-weight: bold;" name="ExpenseValue" placeholder="R$ 0,00" required oninput="formatarValor(this)" />
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="campo-descricao">
+                        <label id="labelDescricao" for="descricao">Descrição do gasto * </label>
+                        <input type="text" id="descricao" name="Description" placeholder="Digite sua descrição" required />
                     </div>
                 </div>
             </div>
-        </div>
 
-
-        <div class="row">
-            <div class="col-6">
-                <div class="campo-tipo-cartao">
-                    <label id="labelCartao">Cartão de Crédito/Débito *</label>
-                    <div class="opcao-cartao-btn" onclick="marcarOpcaoCartao(this, 'credito')">
-                        <input type="radio" name="PaymentType" value="1" style="display: none;" />
-                        <div class="opcao">Crédito</div>
-                    </div>
-
-                    <div class="opcao-cartao-btn opcao-selecionada" onclick="marcarOpcaoCartao(this, 'debito')">
-                        <input type="radio" name="PaymentType" value="2" style="display: none;" checked />
-                        <div class="opcao">Débito</div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-categoria">
+                        <label id="labelCategoria" for="categoria">Categoria *</label>
+                        <div id="categoria" data-toggle="modal" data-target="#SelectCategoryModal">
+                            <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma categoria" style="padding: 0; background: transparent; border: none;" readonly>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="campo-condicoes">
-                    <label id="labelCondicoes">Condições de Pagamento *</label>
-                    <div class="opcao-condicao-btn opcao-selecionada" onclick="marcarOpcaoCondicao(this, 'avista')">
-                        <input type="radio" name="PaymentTerm" value="1" style="display: none;" checked />
-                        <div class="opcao">À Vista</div>
-                    </div>
 
-                    <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')">
-                        <input type="radio" name="PaymentTerm" value="2" style="display: none;" />
-                        <div class="opcao">Parcelado</div>
-                    </div>
-                </div>
-                <p id="info-campo-condicao" style="display: flex; font-size: 13px; color: orange; padding: 5px; margin: 0;">O parcelamento está disponível apenas para cartões de crédito.</p>
-            </div>
-        </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="campo-tipo-cartao">
+                        <label id="labelCartao">Cartão de Crédito/Débito *</label>
+                        <div class="opcao-cartao-btn" onclick="marcarOpcaoCartao(this, 'credito')">
+                            <input type="radio" name="PaymentType" value="1" style="display: none;" />
+                            <div class="opcao">Crédito</div>
+                        </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-conta">
-                    <label id="labelConta" for="conta">Conta *</label>
-                    <div id="conta" data-toggle="modal" data-target="#SelectAccountModal" style="display: flex; align-items: center; gap: 15px;">
-                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="padding: 0; background: transparent; border: none;" readonly>
+                        <div class="opcao-cartao-btn opcao-selecionada" onclick="marcarOpcaoCartao(this, 'debito')">
+                            <input type="radio" name="PaymentType" value="2" style="display: none;" checked />
+                            <div class="opcao">Débito</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+                <div class="col-md-6">
+                    <div class="campo-condicoes">
+                        <label id="labelCondicoes">Condições de Pagamento *</label>
+                        <div class="opcao-condicao-btn opcao-selecionada" onclick="marcarOpcaoCondicao(this, 'avista')">
+                            <input type="radio" name="PaymentTerm" value="1" style="display: none;" checked />
+                            <div class="opcao">À Vista</div>
+                        </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-cartao" style="display: none;">
-                    <label id="labelCartao" for="cartao">Cartão *</label>
-                    <div id="cartao" data-toggle="modal" data-target="#SelectCardModal" style="display: flex; align-items: center; gap: 15px;">
-                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione um cartão" style="padding: 0; background: transparent; border: none;" readonly>
+                        <div class="opcao-condicao-btn" onclick="marcarOpcaoCondicao(this, 'parcelado')">
+                            <input type="radio" name="PaymentTerm" value="2" style="display: none;" />
+                            <div class="opcao">Parcelado</div>
+                        </div>
+                    </div>
+                    <p id="info-campo-condicao" style="display: flex; font-size: 13px; color: orange; padding: 5px; margin: 0;">O parcelamento está disponível apenas para cartões de crédito.</p>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-conta">
+                        <label id="labelConta" for="conta">Conta *</label>
+                        <div id="conta" data-toggle="modal" data-target="#SelectAccountModal" style="display: flex; align-items: center; gap: 15px;">
+                            <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="padding: 0; background: transparent; border: none;" readonly>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-parcela" style="display: none;">
-                    <label id="labelParcela" for="parcela">Parcelas *</label>
-                    <input type="text" id="parcela" name="Installments" placeholder="Digite o número de parcelas" required oninput="calcularParcelas()" />
-                    <div id="resultadoParcelas" style="color: orange; font-weight: bold; margin-top: 10px;"></div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-cartao" style="display: none;">
+                        <label id="labelCartao" for="cartao">Cartão *</label>
+                        <div id="cartao" data-toggle="modal" data-target="#SelectCardModal" style="display: flex; align-items: center; gap: 15px;">
+                            <input type="text" class="form-control custom-placeholder" placeholder="Selecione um cartão" style="padding: 0; background: transparent; border: none;" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-mes" style="display: none;">
-                    <label id="labelMes" for="mes">Primeira fatura *</label>
-                    <select id="mes" name="Months" required disabled></select>
-                </div>
-            </div>
-        </div>
 
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-parcela" style="display: none;">
+                        <label id="labelParcela" for="parcela">Parcelas *</label>
+                        <input type="text" id="parcela" name="Installments" placeholder="Digite o número de parcelas" required oninput="calcularParcelas()" />
+                        <div id="resultadoParcelas" style="color: orange; font-weight: bold; margin-top: 10px;"></div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-data">
-                    <label id="labelData" for="data">Data da Transação *</label>
-                    <input type="text" id="data" name="Date" placeholder="Selecione a data" required />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-mes" style="display: none;">
+                        <label id="labelMes" for="mes">Primeira fatura *</label>
+                        <select id="mes" name="Months" required disabled></select>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-tags">
-                    <label id="labelTags" for="tags">Tags *</label>
-                    <input type="text" id="tags" name="Tags" class="tagify custom-tagify" placeholder="Adicione tag e pressione Enter" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-data">
+                        <label id="labelData" for="data">Data da Transação *</label>
+                        <input type="text" id="data" name="Date" placeholder="Selecione a data" required />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <button type="submit" id="btnSubmit" class="gasto">
-                Registrar Gasto
-            </button>
-        </div>
-    </form>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="campo-tags">
+                        <label id="labelTags" for="tags">Tags</label>
+                        <input type="text" id="tags" name="Tags" class="tagify custom-tagify" placeholder="Adicione tag e pressione Enter" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" id="btnSubmit" class="gasto">
+                    Registrar Gasto
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
 
 
 <script>

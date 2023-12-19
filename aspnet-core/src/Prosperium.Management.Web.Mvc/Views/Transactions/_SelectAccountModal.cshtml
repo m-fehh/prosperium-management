@@ -129,17 +129,17 @@
                             <div class="col-md-12">
                                 <div class="card institution-modal" data-conta-id="@item.Id" data-conta-icon="@item.Bank.ImagePath" data-conta-agencia="@item.AgencyNumber" data-conta-numero="@item.AccountNumber" style="cursor: pointer;">
                                     <div class="card-body d-flex align-items-center">
-                                        <div class="col-1 d-flex align-items-center">
+                                        <div class="col-2 d-flex align-items-center">
                                             <img src="~/img/banks/@item.Bank.ImagePath" style="border-radius: 10px;" width="50" />
                                         </div>
                                         <div class="col-10 d-flex align-items-center" style="display: flex; align-items: center; justify-content: space-between;">
-                                            <h3 class="card-title" style="color: #000; font-weight: bold; margin-left: 10px;">@item.AccountNickname</h3>
-                                            <div style="margin-left: 10px; font-size: 12px; color: #999;">
-                                                <p style="margin: 0;">Agência: @item.AgencyNumber</p>
-                                                <p style="margin: 0;">Conta: @item.AccountNumber</p>
+                                            <div style="display: flex;">
+                                                <h3 class="card-title" style="color: #000; font-weight: bold; margin-left: 10px;">@item.AccountNickname</h3>
+                                                <div style="font-size: 12px; color: #999; margin-left: 10px; display: flex; gap: 10px;justify-content: center;">
+                                                    <p style="margin: 0;">Agência: @item.AgencyNumber</p>
+                                                    <p style="margin: 0;">Conta: @item.AccountNumber</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="col-1 d-flex align-items-center">
                                             <div class="ml-auto arrow-right">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" style="color: #FF8C00;" class="bi bi-arrow-right" viewBox="0 0 16 16">
                                                     <path d="M11.354 8.354a.5.5 0 0 0 0-.708L9.172 5.464a.5.5 0 1 1 .707-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.707-.708L11.354 8.354z" />
@@ -147,36 +147,26 @@
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
 
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    else if (!Model.Accounts.Any(x => x.IsActive == true))
-                    {
-                        <div class="row justify-content-center align-items-center" style="padding-bottom: 10px; width: 100%;">
-                            <div class="col-md-10">
-                                <div class="card text-center" style="height: 100%; padding: 30px 0; background: #f2f4f8; border: 1px solid #ddd; margin: 10px; ">
-                                    <h3 style="font-size: 18px; font-weight: bold;">Você não possui conta ativa associado ao seu perfil.</h3>
-                                </div>
-                            </div>
-                        </div>
                     }
                 }
             }
-            else
+            else if (!Model.Accounts.Any(x => x.IsActive == true))
             {
                 <div class="row justify-content-center align-items-center" style="padding-bottom: 10px; width: 100%;">
                     <div class="col-md-10">
                         <div class="card text-center" style="height: 100%; padding: 30px 0; background: #f2f4f8; border: 1px solid #ddd; margin: 10px; ">
-                            <h3 style="font-size: 18px; font-weight: bold;">Você não possui conta ativa associado ao seu perfil.</h3>
+                            <h3 style="font-size: 18px; font-weight: bold;">Você não possui conta ativa associada ao seu perfil.</h3>
                         </div>
                     </div>
                 </div>
             }
 
             <hr class="divider">
-            <div class="row" style="display: flex; justify-content: flex-end;  padding: 10px 0;">
+            <div class="row" style="display: flex; justify-content: flex-end; padding: 10px 0;">
                 <a href="@Url.Action("CreateAccount", "Accounts")" class="custom-button">
                     <i class="fa fa-plus"></i> &nbsp; Adicionar Nova Conta
                 </a>

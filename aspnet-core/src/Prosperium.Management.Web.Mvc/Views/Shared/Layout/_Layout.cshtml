@@ -27,19 +27,29 @@
 </head>
 <body class="hold-transition sidebar-mini sidebar-collapse">
     <div class="wrapper" style="overflow-x: hidden;">
+
+        <!-- Header -->
         @await Html.PartialAsync("_Header.cshtml")
+
+        <!-- Sidebar -->
         @await Html.PartialAsync("_PxpNavigation.cshtml")
+
+        <!-- Content Wrapper -->
         <div class="content-wrapper">
             @await Html.PartialAsync("_Alerts.cshtml")
             @RenderBody()
         </div>
+
+        <!-- Footer -->
         @await Html.PartialAsync("_Footer.cshtml")
     </div>
 
+    <!-- Scripts -->
     @await Html.PartialAsync("_Scripts.cshtml")
     @RenderSection("scripts", required: false)
     @WebResourceManager.RenderScripts()
 </body>
+
 </html>
 
 <style>

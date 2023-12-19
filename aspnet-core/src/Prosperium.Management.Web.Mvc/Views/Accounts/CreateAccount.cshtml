@@ -19,88 +19,91 @@
 
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
-<link rel="stylesheet" href="~/css/Accounts/account.css"/>
+<link rel="stylesheet" href="~/css/Accounts/account.css" />
 
-<div class="form-container" id="AccountCreate">
-    <h2>@ViewData["Title"]</h2>
-    <p class="title">Cadastre suas contas manualmente e tenha o controle preciso de seus gastos e ganhos. Uma maneira simples e personalizada de gerenciar suas finanças.</p>
+<div class="container-fluid">
+    <div class="form-container" id="AccountCreate">
+        <h2>@ViewData["Title"]</h2>
+        <p class="title">Cadastre suas contas manualmente e tenha o controle preciso de seus gastos e ganhos. Uma maneira simples e personalizada de gerenciar suas finanças.</p>
 
-    <form method="post">
-        <div class="row">
-            <div class="col-12">
-                <div class="campo-instituicao">
-                    <label id="labelInstituicao" for="instituicao">Instituição financeira</label>
-                    <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal">
-                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma instituição" style="padding: 0; background: transparent; border: none;" readonly>
+        <form method="post">
+            <div class="row">
+                <div class="col-12">
+                    <div class="campo-instituicao">
+                        <label id="labelInstituicao" for="instituicao">Instituição financeira</label>
+                        <div id="instituicao" data-toggle="modal" data-target="#SelectInstitutionModal">
+                            <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma instituição" style="padding: 0; background: transparent; border: none;" readonly>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row" id="camposAgenciaConta" style="display: none;">
-            <div class="col-6">
-                <div class="campo-agencia">
-                    <label id="labelAgencia" for="agencia">
-                        Número da Agência
-                    </label>
-                    <input type="text" id="agencia" name="AgencyNumber" placeholder="Digite o número da agência" required />
+            <div class="row" id="camposAgenciaConta" style="display: none;">
+                <div class="col-6">
+                    <div class="campo-agencia">
+                        <label id="labelAgencia" for="agencia">
+                            Agência
+                        </label>
+                        <input type="text" id="agencia" name="AgencyNumber" placeholder="Digite o número da agência" required />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="campo-conta">
+                        <label id="labelConta" for="conta">
+                            Conta
+                            <span class="label-with-note"> (com pontuação)</span>
+                        </label>
+                        <input type="text" id="conta" name="AccountNumber" placeholder="Digite o número da conta" required />
+                    </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="campo-conta">
-                    <label id="labelConta" for="conta">
-                        Número da Conta
-                        <span class="label-with-note"> (com pontuação)</span>
-                    </label>
-                    <input type="text" id="conta" name="AccountNumber" placeholder="Digite o número da conta" required />
-                </div>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-6">
-                <div class="campo-apelido">
-                    <label id="labelApelido" for="apelido">Apelido da conta</label>
-                    <input type="text" id="apelido" name="AccountNickname" placeholder="Digite sua descrição" required />
+            <div class="row">
+                <div class="col-6">
+                    <div class="campo-apelido">
+                        <label id="labelApelido" for="apelido">Apelido da conta</label>
+                        <input type="text" id="apelido" name="AccountNickname" placeholder="Digite sua descrição" required />
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="campo-valor">
+                        <label id="labelValor" for="valor">Saldo disponível na conta</label>
+                        <input type="text" id="valor" style="font-weight: bold;" name="BalanceAvailable" placeholder="R$ 0,00" oninput="formatarValor(this)" />
+                    </div>
                 </div>
             </div>
-            <div class="col-6">
-                <div class="campo-valor">
-                    <label id="labelValor" for="valor">Saldo disponível na conta</label>
-                    <input type="text" id="valor" style="font-weight: bold;" name="BalanceAvailable" placeholder="R$ 0,00" oninput="formatarValor(this)" />
-                </div>
-            </div>
-        </div>
 
-        <div class="row">
-            <div class="col-10">
-                <div class="campo-tipo">
-                    <label id="labelTipo" for="tipo">Tipo de conta</label>
-                    <select class="form-select" id="tipo" name="AccountType">
-                        @foreach (var accountType in Enum.GetValues(typeof(AccountType)))
-                        {
-                            <option value="@accountType">@accountType</option>
-                        }
-                    </select>
+            <div class="row">
+                <div class="col-10">
+                    <div class="campo-tipo">
+                        <label id="labelTipo" for="tipo">Tipo de conta</label>
+                        <select class="form-select" id="tipo" name="AccountType">
+                            @foreach (var accountType in Enum.GetValues(typeof(AccountType)))
+                            {
+                                <option value="@accountType">@accountType</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="campo-conta-principal mx-auto">
+                        <label id="labelContaPrincipal" for="conta-principal">Conta principal?</label>
+                        <label class="toggleSwitch">
+                            <input type="checkbox" id="conta-principal" name="MainAccount">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
-            <div class="col-2">
-                <div class="campo-conta-principal mx-auto">
-                    <label id="labelContaPrincipal" for="conta-principal">Conta principal?</label>
-                    <label class="toggleSwitch">
-                        <input type="checkbox" id="conta-principal" name="MainAccount">
-                        <span class="slider"></span>
-                    </label>
-                </div>
+            <div class="form-group">
+                <button type="submit" id="btnSubmit" class="accountSubmit">
+                    Adicionar conta
+                </button>
             </div>
-        </div>
-        <div class="form-group">
-            <button type="submit" id="btnSubmit" class="accountSubmit">
-                Adicionar conta
-            </button>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
+
 
 
 @* MODAL DE INSTITUIÇÃO FINANCEIRA *@

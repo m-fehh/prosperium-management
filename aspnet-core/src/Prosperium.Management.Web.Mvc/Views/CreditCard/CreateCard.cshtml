@@ -19,72 +19,74 @@
 
 <link rel="stylesheet" href="~/css/CreditCard/card.css" />
 
+<div class="container-fluid">
+    <div class="form-container" id="CardCreate">
+        <h2>@ViewData["Title"]</h2>
+        <p class="title">Adicione um novo cartão com facilidade, proporcionando controle preciso sobre suas transações. Gerencie seus cartões de forma simples e segura.</p>
 
-<div class="form-container" id="CardCreate">
-    <h2>@ViewData["Title"]</h2>
-    <p class="title">Adicione um novo cartão com facilidade, proporcionando controle preciso sobre suas transações. Gerencie seus cartões de forma simples e segura.</p>
+        <form method="post">
 
-    <form method="post">
-
-        <div class="row">
-            <div class="col-6">
-                <div class="campo-apelido">
-                    <label id="labelApelido" for="apelido">Nome cartão *</label>
-                    <input type="text" id="apelido" name="CardName" placeholder="Digite sua descrição" required />
+            <div class="row">
+                <div class="col-6">
+                    <div class="campo-apelido">
+                        <label id="labelApelido" for="apelido">Nome cartão *</label>
+                        <input type="text" id="apelido" name="CardName" placeholder="Digite sua descrição" required />
+                    </div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="campo-conta">
-                    <label id="labelConta" for="conta">Número do cartão *</label>
-                    <input type="text" id="cardNumber" name="CardNumber" placeholder="Digite o número do cartão" required oninput="formatarCartao(this)" />
-                    <p style="font-size: 13px; color: orange; padding: 5px; margin: 0;">* Digite apenas os 4 últimos dígitos *</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-9">
-                <div class="campo-valor">
-                    <label id="labelValor" for="valor">Limite mensal *</label>
-                    <input type="text" id="valor" style="font-weight: bold;" name="Limit" placeholder="R$ 0,00" oninput="formatarValor(this)" required />
-                </div>
-            </div>
-            <div class="col-3">
-                <div class="campo-dia">
-                    <label id="labelDiaVencimento" for="diaVencimento">Dia de Vencimento *</label>
-                    <input type="text" id="diaVencimento" name="DueDay" placeholder="01" min="01" max="31" maxlength="2" required />
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="col-6">
-                <div class="campo-conta">
-                    <label id="labelConta" for="conta">Conta *</label>
-                    <div id="conta" data-toggle="modal" data-target="#SelectAccountModal" style="display: flex; align-items: center; gap: 15px;">
-                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="background: transparent; border: none;" readonly>
+                <div class="col-6">
+                    <div class="campo-conta">
+                        <label id="labelConta" for="conta">Número do cartão *</label>
+                        <input type="text" id="cardNumber" name="CardNumber" placeholder="Digite o número do cartão" required oninput="formatarCartao(this)" />
+                        <p style="font-size: 13px; color: orange; padding: 5px; margin: 0;">* Digite apenas os 4 últimos dígitos *</p>
                     </div>
                 </div>
             </div>
 
-            <div class="col-6">
-                <div class="campo-bandeira">
-                    <label id="labelBandeira" for="bandeira">Bandeira *</label>
-                    <div id="bandeira" data-toggle="modal" data-target="#SelectFlagModal" style="display: flex; align-items: center; gap: 15px;">
-                        <input type="text" class="form-control custom-placeholder" placeholder="Selecione a bandeira" style="background: transparent; border: none;" readonly>
+            <div class="row">
+                <div class="col-8">
+                    <div class="campo-valor">
+                        <label id="labelValor" for="valor">Limite mensal *</label>
+                        <input type="text" id="valor" style="font-weight: bold;" name="Limit" placeholder="R$ 0,00" oninput="formatarValor(this)" required />
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="campo-dia">
+                        <label id="labelDiaVencimento" for="diaVencimento">Vencimento *</label>
+                        <input type="text" id="diaVencimento" name="DueDay" placeholder="1" min="01" max="31" maxlength="2" required />
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <button type="submit" id="btnSubmit" class="cardSubmit">
-                Adicionar cartão
-            </button>
-        </div>
-    </form>
+            <div class="row">
+                <div class="col-12">
+                    <div class="campo-conta">
+                        <label id="labelConta" for="conta">Conta *</label>
+                        <div id="conta" data-toggle="modal" data-target="#SelectAccountModal" style="display: flex; align-items: center; gap: 15px;">
+                            <input type="text" class="form-control custom-placeholder" placeholder="Selecione uma conta" style="background: transparent; border: none;" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="campo-bandeira">
+                        <label id="labelBandeira" for="bandeira">Bandeira *</label>
+                        <div id="bandeira" data-toggle="modal" data-target="#SelectFlagModal" style="display: flex; align-items: center; gap: 15px;">
+                            <input type="text" class="form-control custom-placeholder" placeholder="Selecione a bandeira" style="background: transparent; border: none;" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" id="btnSubmit" class="cardSubmit">
+                    Adicionar cartão
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
 
 @* Modal de bandeiras *@
 <div class="modal fade" id="SelectFlagModal" tabindex="-1" role="dialog" aria-labelledby="SelectFlagModalLabel" data-backdrop="static">

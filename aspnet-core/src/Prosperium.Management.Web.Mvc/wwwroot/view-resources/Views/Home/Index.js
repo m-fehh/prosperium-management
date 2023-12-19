@@ -134,32 +134,39 @@
                 var imageFullPath = abp.appPath + 'img/flags/' + item.iconPath;
                 var progressBar =
                     `
-                            <div class="progress-card">
-                                <div class="card" style="height: 120px;">
-                                    <div class="card-content">
-                                            <div class="card-body d-flex align-items-center" style="width: 100%; flex-direction: column;">
-                                            <div class="row" style="width: 100%; display: flex; align-items: center;">
-                                                <div class="col-1" style="display: flex; justify-content: center;">
-                                                    <img src="${imageFullPath}" width="45" />
-                                                </div>
-                                                <div class="col-7" style="display: flex; align-items: center; gap: 15px;">
-                                                    <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${item.cardName}
-                                                        <label style="font-size: 13px; color: #999; margin: 0;">${item.cardNumber}</label>
-                                                    </p>
-                                                    <p style="font-size: 13px; color: #999; margin: 0;">Usado: ${formatCurrency(item.totalExpenses)}  - Limite: R$ ${formatCurrency(item.limit)}</p>
-                                                </div>
-                                                 <div class="col-3">
-                                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">Vencimento: ${date}</p>
-                                                </div>
-                                            </div>
-                                            <div class="progress" role="progressbar" aria-label="${item.cardName}" aria-valuenow="${item.progress}" aria-valuemin="0" aria-valuemax="100">
-                                                <div class="progress-bar" style="width: ${item.progress}%">${item.progress}%</div>
-                                            </div>
+                    <div class="progress-card">
+                        <div class="card" style="height: auto;">
+                            <div class="card-content">
+                                <div class="card-body d-flex align-items-center" style="width: 100%; flex-direction: column;">
+                    
+                                    <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                        <div class="col-md-1 col-3" style="display: flex; justify-content: center;">
+                                            <img src="${imageFullPath}" width="45" />
+                                        </div>
+                    
+                                        <div class="col-md-7 col-9" style="display: flex; align-items: center; gap: 15px;">
+                                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${item.cardName}
+                                                <label style="font-size: 13px; color: #999; margin: 0;">${item.cardNumber}</label>
+                                            </p>
+                                            <p style="font-size: 13px; color: #999; margin: 0;">Usado: ${formatCurrency(item.totalExpenses)} - Limite: R$ ${formatCurrency(item.limit)}</p>
+                                        </div>
+                    
+                                        <div class="col-md-3 d-md-block d-none">
+                                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">Vencimento: ${date}</p>
                                         </div>
                                     </div>
+                    
+                                    <div class="progress" role="progressbar" aria-label="${item.cardName}" aria-valuenow="${item.progress}" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar" style="width: ${item.progress}%">${item.progress}%</div>
+                                    </div>
+                    
                                 </div>
                             </div>
-                                `
+                        </div>
+                    </div>
+
+                    `
+
 
                 $('#progress-bar-container').append(progressBar);
             });
@@ -348,39 +355,52 @@
         var additionalInfo = "";
 
         if (transaction.creditCard) {
-            additionalInfo = `<p style="font-size: 13px; color: #999; margin: 0;">Cart&atilde;o: ${transaction.creditCard.cardNumber}</p>`;
+            var imageFullPathFlag = abp.appPath + 'img/flags/' + transaction.creditCard.flagCard.iconPath;
+
+            additionalInfo = `
+            <p style="font-size: 13px; color: #999; margin: 0; display: flex; gap: 10px">
+                <img src="${imageFullPathFlag}"  width="20"  style="padding: 10px;">
+                Cart&atilde;o: ${transaction.creditCard.cardNumber}
+            </p>`;
         } else {
-            additionalInfo = `<p style="font-size: 13px; color: #999; margin: 0;">Ag&ecirc;ncia: ${transaction.account.agencyNumber} | Conta: ${transaction.account.accountNumber}</p>`;
+            var imageFullPathBank = abp.appPath + 'img/banks/' + transaction.account.bank.imagePath;
+
+            additionalInfo = `
+            <p style="font-size: 13px; color: #999; margin: 0;display: flex; gap: 10px"">
+                <img src="${imageFullPathBank}"  width="20"  style="padding: 10px;">
+                Ag&ecirc;ncia: ${transaction.account.agencyNumber} | Conta: ${transaction.account.accountNumber}
+            </p>`;
         }
 
-        var categoryName = transaction.categories.name.length > 20
-            ? transaction.categories.name.substring(0, 20) + '...'
+        var categoryName = transaction.categories.name.length > 9
+            ? transaction.categories.name.substring(0, 9) + '...'
             : transaction.categories.name;
 
         return `
-        <div class="card" style="height: 90px;">
-            <div class="card-content">
-                <div class="card-body d-flex align-items-center" style="width: 100%;">
-                    <div class="row" style="width: 100%; display: flex; align-items: center;">
-                        <div class="col-2" style="display: flex; justify-content: center;">
-                            <img src="${imageFullPath}" width="40" />
-                        </div>
-                        <div class="col-7" style="display: flex; align-items: center; gap: 5px; flex-direction: column;">
-                        <div class="row">
-                            <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;" title="${transaction.categories.name}">${categoryName} ${formatCurrency(transaction.expenseValue)}</p>
+                <div class="card" style="height: 90px;">
+                    <div class="card-content">
+                        <div class="card-body d-flex align-items-center" style="width: 100%;">
+                            <div class="row" style="width: 100%; display: flex; align-items: center;">
+                                <div class="col-md-2 col-4" style="display: flex; justify-content: center;">
+                                    <img src="${imageFullPath}" width="40" />
+                                </div>
+                                <div class="col-md-7 col-8" style="display: flex; align-items: center; gap: 5px; flex-direction: column;">
+                                    <div class="row">
+                                        <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;" title="${transaction.categories.name}">${categoryName} ${formatCurrency(transaction.expenseValue)}</p>
+                                    </div>
+                                    <div class="row">
+                                        ${additionalInfo}
+                                    </div>
+                                </div>
+                                <div class="col-md-3 d-md-block d-none">
+                                    <p style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.date)}</p>
+                                </div>
                             </div>
-                            <div class="row">
-                                ${additionalInfo}
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            <p  style="font-size: 16px; color: #000; font-weight: bold; margin-left: 10px;">${formatDate(transaction.date)}</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    `;
+
+            `;
     }
 
     // Abre a modal do filtro avançado

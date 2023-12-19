@@ -5,22 +5,32 @@
 }
 
 <style>
-
     .card {
+        background: #f2f4f8;
         border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        transition: transform 0.3s;
+        padding: 10px;
+        margin: 10px;
+        text-align: start;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
     }
-
-        .card:hover {
-            transform: scale(1.05);
-        }
-
-
     .card-body {
         padding: 15px;
     }
+
+    .animation-card {
+        transition: transform 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+        .animation-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
 
 
     .card-text {
@@ -96,7 +106,7 @@
                         @foreach (var account in Model.Accounts)
                         {
                             <div class="col-md-4 mb-1">
-                                <div class="card" data-conta-id="@account.Id" data-selected="false">
+                                <div class="card animation-card" data-conta-id="@account.Id" data-selected="false">
                                     <img src="~/img/banks/@account.Bank.ImagePath" width="40" alt="@account.AccountNickname">
                                     <div class="card-body">
                                         <p style="font-size: 13px; color: #999; margin: 0;">Agência: @account.AgencyNumber Conta: @account.AccountNumber</p>
@@ -114,7 +124,7 @@
                         @foreach (var card in Model.Cards)
                         {
                             <div class="col-md-4 mb-1">
-                                <div class="card" data-cartao-id="@card.Id" data-selected="false">
+                                <div class="card animation-card" data-cartao-id="@card.Id" data-selected="false">
                                     <img src="~/img/flags/@card.FlagCard.IconPath" width="40" alt="@card.CardName">
                                     <div class="card-body">
                                         @if (card.Origin == Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts.AccountOrigin.Pluggy)
@@ -139,7 +149,7 @@
                         @foreach (var category in Model.Categories)
                         {
                             <div class="col-md-2 mb-1">
-                                <div class="card" style="padding-top: 20px; display: flex;" data-categoria-id="@category.Id" data-selected="false">
+                                <div class="card animation-card" style="padding-top: 20px; display: flex; height: 130px;" data-categoria-id="@category.Id" data-selected="false">
                                     <img src="~/img/categories/@category.IconPath" width="45" alt="@category.Name">
                                     <div class="card-body">
                                         <p style="font-size: 13px; color: #999; margin: 0;">@category.Name</p>
