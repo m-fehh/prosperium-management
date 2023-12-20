@@ -31,12 +31,12 @@
             <div class="col-12 col-md-6">
                 <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'ativos')">
                     <input type="radio" value="1" style="display: none;" checked />
-                    <div class="opcao">Cartões ativas</div>
+                    <div class="opcao">Cartões ativos</div>
                 </div>
 
                 <div class="opcao-btn" onclick="marcarOpcao(this, 'desativados')">
                     <input type="radio" value="2" style="display: none;" />
-                    <div class="opcao">Cartões inativas</div>
+                    <div class="opcao">Cartões inativos</div>
                 </div>
             </div>
 
@@ -147,7 +147,7 @@
                                                  <p class="saldo-label" style="display: flex; padding: 0 5px;">Limite:</p>
                                                  <p class="saldo-valor" id="saldo_${card.id}" style="display: flex; padding: 0 5px; margin-right: 10px;">${isSaldoVisible ? formatCurrency(card.limit) : 'R$ ••••'}</p>
                                              </div>
-                                             <div class="col-1 d-flex align-items-center">
+                                                 <div class="col-1 d-flex align-items-center" style="padding-left: 15px;">
                                                  <div class="dropdown" style="margin-top: 10px;">
                                                      <div id="menuIcon" class="ml-auto dropdown-toggle" data-toggle="dropdown" style="display: flex; align-items: center;">
                                                          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">

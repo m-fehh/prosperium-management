@@ -164,7 +164,7 @@
                                                             <p class="saldo-label" style="display: flex; padding: 0 5px;">${(account.accountType !== 7) ? "Saldo atual:" : "Fatura atual:"}</p>
                                                             <p class="saldo-valor" id="saldo_${account.id}" style="display: flex; padding: 0 5px;">${isSaldoVisible ? formatCurrency(account.balanceAvailable) : 'R$ ••••'}</p>
                                                         </div>
-                                                 <div class="col-1 d-flex align-items-center">
+                                                     <div class="col-1 d-flex align-items-center" style="padding-left: 15px;">
                                                      <div class="dropdown" style="margin-top: 10px;">
                                                                 <div id="menuIcon" class="ml-auto dropdown-toggle" data-toggle="dropdown" style="display: flex; align-items: center;">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">

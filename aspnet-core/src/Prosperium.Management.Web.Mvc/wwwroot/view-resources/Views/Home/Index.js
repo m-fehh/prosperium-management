@@ -359,7 +359,7 @@
 
             additionalInfo = `
             <p style="font-size: 13px; color: #999; margin: 0; display: flex; gap: 10px">
-                <img src="${imageFullPathFlag}"  width="20"  style="padding: 10px;">
+                <img src="${imageFullPathFlag}"  width="20" height="20">
                 Cart&atilde;o: ${transaction.creditCard.cardNumber}
             </p>`;
         } else {
@@ -367,7 +367,7 @@
 
             additionalInfo = `
             <p style="font-size: 13px; color: #999; margin: 0;display: flex; gap: 10px"">
-                <img src="${imageFullPathBank}"  width="20"  style="padding: 10px;">
+                <img src="${imageFullPathBank}"  width="20" height="20">
                 Ag&ecirc;ncia: ${transaction.account.agencyNumber} | Conta: ${transaction.account.accountNumber}
             </p>`;
         }

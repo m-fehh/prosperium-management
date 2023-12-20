@@ -47,5 +47,13 @@ namespace Prosperium.Management.Web.Controllers
 
             return PartialView("_FilterExtractModal", model);
         }
+
+        [HttpGet("ContainsInterAccount")]
+        public async Task<ActionResult<bool>> ContainsInterAccount()
+        {
+            var hasInterAccount = (await _accountAppService.GetAllListAsync()).Any(x => x.Bank.Name.ToUpper().Trim() == "BANCO INTER S.A.");
+            return Ok(hasInterAccount);
+        }
+
     }
 }

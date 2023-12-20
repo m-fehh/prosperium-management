@@ -41,11 +41,6 @@
                     resultData = data.items;
                     UpdateCardValues();
 
-                    hasInterAccount = checkInterAccount(data.items);
-
-                    if ($("#ExtractCreate").length > 0 && hasInterAccount) {
-                        $(".message-banner").show();
-                    }
 
                     return data.items;
                 });
@@ -182,15 +177,18 @@
         ]
     });
 
-    function checkInterAccount(items) {
-        for (var i = 0; i < items.length; i++) {
-            var data = items[i].transaction;
-            if (data.account != null && data.account.accountNickname === "BANCO INTER S.A.") {
-                return true;
+    function checkInterAccount() {
+        abp.ajax({
+            url: abp.appPath + 'App/Extract/ContainsInterAccount',
+            type: 'GET',
+            success: function (result) {
+                if (result) {
+                    $(".message-banner").show();
+                }
             }
-        }
-        return false;
+        });
     }
+
     function formatCurrency(value) {
         const formattedValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         return value >= 0 ? `R$ ${formattedValue}` : `- R$ ${formattedValue.substring(1)}`;
@@ -231,7 +229,7 @@
     $(document).ready(function () {
         $(".message-banner").hide();
         UpdateResumoTitle(new Date());
-
+        checkInterAccount();
 
         $("#calendarIcon").datepicker({
             format: "mm/yyyy",
@@ -293,14 +291,14 @@
         var formattedDate = day + '_' + month + '_' + year;
 
         // Cria o conteúdo CSV
-        var csvContent =  "Data;Descricao;Tipo;Conta/Cartao;Categoria;Valor\n";
+        var csvContent = "Data;Descricao;Tipo;Conta/Cartao;Categoria;Valor\n";
         resultData.forEach(function (item) {
             var isCard = (item.transaction.account) ? false : true;
 
             csvContent += (item.transaction.date ? formatDate(item.transaction.date) : "") + ";";
             csvContent += (item.transaction.description ? item.transaction.description : "") + ";";
 
-            csvContent += (isCard) ?  "Cartao" + ";" : "Conta" + ";";
+            csvContent += (isCard) ? "Cartao" + ";" : "Conta" + ";";
 
             var accountInfo = "";
             if (!isCard) {
@@ -364,6 +362,7 @@
             error: function (e) { }
         });
     });
+
 
     $(document).on('click', '#exportCsvBtn', function (e) {
         e.preventDefault();
