@@ -44,7 +44,6 @@ h2 {
     background: #f2f4f8;
     border: 1px solid #ddd;
     padding: 10px;
-    margin: 10px;
     text-align: start;
     margin-bottom: 20px;
     border-radius: 10px;
@@ -118,8 +117,8 @@ h3 {
     transition: background-color 0.3s, color 0.3s;
     display: flex;
     justify-content: center;
-    background: #eee;
     font-size: 16px;
+
 }
 
     .opcao-btn:hover {
@@ -127,9 +126,9 @@ h3 {
     }
 
 .opcao-selecionada {
-    background-color: #FF8C00;
-    color: white;
-    font-weight: bold
+    color: orange;
+    font-weight: bolder;
+    border: 2px solid;
 }
 
 

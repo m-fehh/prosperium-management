@@ -1,6 +1,7 @@
 (function ($) {
     var myPieChart;
-    var _transactionService = abp.services.app.transaction;
+    var _transactionService = abp.services.app.transaction,
+        l = abp.localization.getSource('Management');
 
     UpdateResumoTitle(new Date());
     UpdateCardValues();
@@ -271,8 +272,6 @@
     function renderPieChart(data, transactionType) {
         var canvas = document.getElementById('myPieChart');
 
-        canvas.width = 500; // por exemplo, 800 pixels
-        canvas.height = 400;
 
         if (!canvas) {
             console.error('Elemento canvas não encontrado.');
@@ -282,6 +281,9 @@
         if (myPieChart) {
             myPieChart.destroy();
         }
+
+        canvas.width = 400;
+        canvas.height = 300;
 
         // Filtro para pegar apenas as transações do tipo selecionado
         var filteredData = data.filter(function (item) {
@@ -324,9 +326,9 @@
                     }]
                 },
                 options: {
-                    responsive: false,
+                    responsive: true,
+                    cutout: '5%', 
                     maintainAspectRatio: false,
-                    cutout: '10%', // Ajuste o valor conforme necessário para aumentar ou diminuir o tamanho do gráfico
                     plugins: {
                         legend: {
                             display: true,
@@ -345,7 +347,17 @@
                 },
             });
         } else {
-            $('#messageNotVisibleCategories').show();
+            // Crie um gráfico vazio
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = 'transparent'; // Cor de fundo
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = '16px Arial';
+            ctx.fillStyle = 'black'; // Cor do texto
+            ctx.textAlign = 'center';
+            ctx.fillText(l("TransactionNotFound"), canvas.width / 2, canvas.height / 2);
         }
     }
 
@@ -377,7 +389,7 @@
             : transaction.categories.name;
 
         return `
-                <div class="card" style="height: 90px;">
+                <div class="card" style="height: 90px; width: 90%;  ">
                     <div class="card-content">
                         <div class="card-body d-flex align-items-center" style="width: 100%;">
                             <div class="row" style="width: 100%; display: flex; align-items: center;">

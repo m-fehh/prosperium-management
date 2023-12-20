@@ -117,5 +117,6 @@
     <text name="OpportunityTypeNameNotIncluded">Outro tipo não contemplada</text>
     <text name="OpportunityTypeNameOther">Outro tipo de empréstimo</text>
     <text name="ExportSuccessfully">Exportação CSV concluída com sucesso.</text>
+    <text name="TransactionNotFound">Não há transações para o tipo especificado.</text>
   </texts>
 </localizationDictionary>

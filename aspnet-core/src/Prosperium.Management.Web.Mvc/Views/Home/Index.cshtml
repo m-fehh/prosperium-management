@@ -98,13 +98,13 @@
                     <div class="row" style="display: flex; justify-content: center;">
                         <h2 style="font-size: 18px; padding: 15px;">Transações por categoria</h2>
                     </div>
-                    <div class="row" id="chartMessage" style="display: none; display: flex; justify-content: center; padding: 20px;">
+                    <div class="row" id="chartMessage" style="display: none; display: flex; justify-content: center; padding: 20px; margin-top: 30px;">
                         <p class="messageNotVisible" id="messageNotVisibleCategories">Não há transações disponíveis para o mês/ano especificado.</p>
                     </div>
                     <div class="row" style="display: flex; justify-content: center;">
                         <canvas id="myPieChart" width="400" height="400"></canvas>
                     </div>
-                    <div class="row">
+                    <div class="row" style="margin-top: 90px;">
                         <div class="col">
                             <div class="opcao-btn opcao-selecionada" onclick="marcarOpcao(this, 'gastos')">
                                 <input type="radio" name="TransactionType" value="1" style="display: none;" checked />
@@ -124,7 +124,7 @@
                         <h2 style="font-size: 18px; padding: 15px;">Últimas transações</h2>
                     </div>
                     <div class="row" style="display: flex; justify-content: flex-end; width: 100%; margin-top: 20px;">
-                        <div id="latestTransactionsContainer" style="width: 100%; margin-left: 50px;"></div>
+                        <div id="latestTransactionsContainer" style="width: 100%; display: flex; flex-direction: column; align-items: center;"></div>
                         <p class="messageNotVisible">Não há transações disponíveis para o mês/ano especificado.</p>
                     </div>
                 </div>

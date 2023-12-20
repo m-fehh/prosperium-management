@@ -32,20 +32,31 @@ h2 {
     background: transparent;
     display: inline-flex;
     align-items: center;
-    padding: 10px;
-    margin: 5px;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    width: 50%;
+    background-color: #FF8C00;
+    color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    color: orange;
-    font-weight: bolder;
-    border: 2px solid;
+    font-size: 1em;
+    font-weight: bold;
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+}
+
+
+@media screen and (max-width: 768px) {
+    .export-button {
+        font-size: 0.8em; 
+    }
 }
 
 #btnLimparFiltro:hover,
 .export-button:hover {
-    transform: scale(1.05);
+    transform: scale(1.00);
 }
 
 a:hover {
