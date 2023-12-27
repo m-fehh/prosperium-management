@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
-using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
@@ -33,7 +32,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
         public virtual long? CreditCardId { get; set; }
         public virtual CreditCardDto CreditCard { get; set; }
         public DateTime Date { get; set; }
-        public ICollection<TagDto> Tags { get; set; }
+        public string Tags { get; set; }
         public AccountOrigin Origin { get; set; }
         public string PluggyTransactionId { get; set; }
     }

@@ -1,7 +1,6 @@
 ﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Prosperium.Management.OpenAPI.V1.Accounts;
-using Prosperium.Management.OpenAPI.V1.Tags;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
 using System;
@@ -42,7 +41,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         [ForeignKey("CreditCardId")]
         public CreditCard CreditCard { get; set; }
         public DateTime Date { get; set; }
-        public ICollection<Tag> Tags { get; set; }
+        public string Tags { get; set; }
         public AccountOrigin Origin { get; set; }
         public string PluggyTransactionId { get; set; }
     }

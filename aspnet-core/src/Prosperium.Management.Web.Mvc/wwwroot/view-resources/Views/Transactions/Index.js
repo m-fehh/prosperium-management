@@ -111,7 +111,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var tagify = new Tagify(inputTags, {
         duplicates: false,
-        maxTags: 4,
+        delimiters: ",",
+        maxTags: 1,
         dropdown: {
             classname: "tags-look"
         }
@@ -537,13 +538,10 @@ $('#SelectCategoryModal').on('hidden.bs.modal', function () {
         transactionDto['ExpenseValue'] = parseFloat(expenseValueString).toFixed(2);
 
         // Ajuste para o campo Tags
-        var tagsString = transactionDto['Tags'];
-        transactionDto['Tags'] = tagsString ? JSON.parse(tagsString).map(tag => ({ Name: tag.value })) : [];
+        transactionDto['Tags'] = transactionDto['Tags'] ? JSON.parse(transactionDto['Tags']).map(tag => tag.value).join(',') : '';
 
-        // Verifique se a propriedade Tags está presente no objeto e é uma matriz
-        if (!transactionDto['Tags'] || !Array.isArray(transactionDto['Tags'])) {
-            transactionDto['Tags'] = [];
-        }
+        console.log(transactionDto['Tags']);
+
 
         // Ajuste para o campo Date
         var dateParts = transactionDto['Date'].split('/');

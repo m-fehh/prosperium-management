@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
-using Prosperium.Management.OpenAPI.V1.Tags.Dto;
 using static Prosperium.Management.OpenAPI.V1.Accounts.AccountConsts;
 
 namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
@@ -26,7 +25,7 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions.Dto
         public virtual int? Installments { get; set; }
         public virtual long? CreditCardId { get; set; }
         public DateTime Date { get; set; }
-        public ICollection<TagDto> Tags { get; set; }
+        public string Tags { get; set; }
         public AccountOrigin Origin { get; set; }
         public string PluggyTransactionId { get; set; }
     }

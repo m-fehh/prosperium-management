@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prosperium.Management.Controllers;
 using Prosperium.Management.OpenAPI.V1.Accounts;
-using Prosperium.Management.OpenAPI.V1.Tags;
 using Prosperium.Management.OpenAPI.V1.Categories;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
 using Prosperium.Management.OpenAPI.V1.Transactions;
+using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using Prosperium.Management.Web.Models.Extract;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,12 +17,14 @@ namespace Prosperium.Management.Web.Controllers
         private readonly ICategoryAppService _categoryAppService;
         private readonly IAccountAppService _accountAppService;
         private readonly ICreditCardAppService _creditCardAppService;
+        private readonly ITransactionAppService _transactionAppService;
 
-        public ExtractController(ICategoryAppService categoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService)
+        public ExtractController(ICategoryAppService categoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService, ITransactionAppService transactionAppService)
         {
             _categoryAppService = categoryAppService;
             _accountAppService = accountAppService;
             _creditCardAppService = creditCardAppService;
+            _transactionAppService = transactionAppService;
         }
 
         public IActionResult Index()
@@ -55,5 +57,11 @@ namespace Prosperium.Management.Web.Controllers
             return Ok(hasInterAccount);
         }
 
+        [HttpGet("ViewTransaction")]
+        public async Task<ActionResult> ViewTransaction(long id)
+        {
+            TransactionDto transaction = await _transactionAppService.GetByIdAsync(id);
+            return PartialView("_ViewDetailTransaction", transaction);
+        }
     }
 }

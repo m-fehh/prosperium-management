@@ -2085,42 +2085,6 @@ namespace Prosperium.Management.Migrations
                     b.ToTable("Pxp_Subcategories");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Tags.Tag", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("CreatorUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long?>("LastModifierUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.Property<long?>("TransactionId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TransactionId");
-
-                    b.ToTable("Pxp_Tags");
-                });
-
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
                 {
                     b.Property<long>("Id")
@@ -2179,6 +2143,9 @@ namespace Prosperium.Management.Migrations
                         .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("PluggyTransactionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tags")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TenantId")
@@ -2594,13 +2561,6 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Tags.Tag", b =>
-                {
-                    b.HasOne("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", null)
-                        .WithMany("Tags")
-                        .HasForeignKey("TransactionId");
-                });
-
             modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
                 {
                     b.HasOne("Prosperium.Management.OpenAPI.V1.Accounts.AccountFinancial", "Account")
@@ -2721,11 +2681,6 @@ namespace Prosperium.Management.Migrations
                     b.Navigation("Emails");
 
                     b.Navigation("Phones");
-                });
-
-            modelBuilder.Entity("Prosperium.Management.OpenAPI.V1.Transactions.Transaction", b =>
-                {
-                    b.Navigation("Tags");
                 });
 #pragma warning restore 612, 618
         }

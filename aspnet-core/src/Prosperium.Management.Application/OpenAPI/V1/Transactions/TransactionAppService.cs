@@ -110,12 +110,10 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         [HttpGet("{id}")]
         public async Task<TransactionDto> GetByIdAsync(long id)
         {
-            Transaction transaction = await _transactionRepository.GetAsync(id);
-
-            if (transaction == null)
-            {
-                throw new UserFriendlyException("A transação não foi encontrada.");
-            }
+            Transaction transaction = await _transactionRepository.GetAll()
+                .Include(x => x.Categories).ThenInclude(x => x.Subcategories)
+                .Include(x => x.Account).ThenInclude(x => x.Bank)
+                .Include(x => x.CreditCard).ThenInclude(x => x.FlagCard).FirstOrDefaultAsync();
 
             return ObjectMapper.Map<TransactionDto>(transaction);
         }

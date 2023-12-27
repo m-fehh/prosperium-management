@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
-using Prosperium.Management.OpenAPI.V1.Tags.Dto;
+﻿using Prosperium.Management.OpenAPI.V1.Accounts.Dto;
 using Prosperium.Management.OpenAPI.V1.Categories.Dto;
 using Prosperium.Management.OpenAPI.V1.CreditCards.Dto;
 using System.Collections.Generic;

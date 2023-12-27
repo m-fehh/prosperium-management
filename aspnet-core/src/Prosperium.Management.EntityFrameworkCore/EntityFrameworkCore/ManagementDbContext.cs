@@ -9,7 +9,6 @@ using Prosperium.Management.OpenAPI.V1.Subcategories;
 using Prosperium.Management.OpenAPI.V1.Accounts;
 using Prosperium.Management.OpenAPI.V1.Flags;
 using Prosperium.Management.OpenAPI.V1.CreditCards;
-using Prosperium.Management.OpenAPI.V1.Tags;
 using Prosperium.Management.OriginDestinations;
 using Prosperium.Management.OpenAPI.V1.Customers;
 using Prosperium.Management.OpenAPI.V1.Banks;
@@ -27,7 +26,6 @@ namespace Prosperium.Management.EntityFrameworkCore
         public DbSet<AccountFinancial> Accounts { get; set; }
         public DbSet<FlagCard> Flags { get; set; }
         public DbSet<CreditCard> CreditCards { get; set; }
-        public DbSet<Tag> Tags { get; set; }
         public DbSet<OriginDestination> OriginDestinations { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerPhones> CustomerPhones { get; set; }
