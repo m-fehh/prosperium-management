@@ -246,6 +246,16 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
                 query = query.Where(x => categoryIds.Contains(x.CategoryId));
             }
 
+            if (input.FilteredExpense.HasValue && input.FilteredExpense == true)
+            {
+                query = query.Where(x => x.TransactionType == TransactionType.Gastos);
+            }
+
+            if (input.FilteredRecipes.HasValue && input.FilteredRecipes == true)
+            {
+                query = query.Where(x => x.TransactionType == TransactionType.Ganhos);
+            }
+
             return query;
         }
 
