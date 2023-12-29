@@ -1,0 +1,210 @@
+﻿@using Prosperium.Management.OpenAPI.V1.Accounts;
+@using Prosperium.Management.OpenAPI.V1.Transactions;
+@using Prosperium.Management.Web.Models.Extract
+@model DetailTransactionModalViewModel
+@{
+    Layout = null;
+}
+
+<style>
+    .modal-header {
+        background-color: #ff8c00;
+        color: #ffffff;
+    }
+
+    .badge-custom {
+        background-color: #ff8c00;
+        color: #ffffff;
+        padding: 5px;
+    }
+
+    .modal-body .row {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+    }
+
+    .modal-body img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .modal-body .col {
+        margin-bottom: 10px;
+    }
+
+    .modal-body .tag-col {
+        grid-column: span 2;
+    }
+
+    .modal-body .tag-badge {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    .col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        gap: 10px;
+    }
+
+    p{
+        text-align: center;
+    }
+</style>
+
+<div class="modal-header">
+    <h5 class="modal-title" id="transactionModalLabel">Detalhes da Transação</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col">
+            <strong>Descrição</strong>
+            <p>@Model.Transaction.Description</p>
+        </div>
+        <div class="col">
+            <strong>Valor</strong>
+            <p>
+                @Model.Transaction.ExpenseValue.ToString("C")
+                @if (string.IsNullOrEmpty(Model.Transaction.AccountId.ToString()))
+                {
+                    <span>(@Model.Transaction.CurrentInstallment)</span>
+                }
+            </p>
+
+        </div>
+        <div class="col">
+            <strong>Data</strong>
+            <p>@Model.Transaction.Date.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <strong>Tipo</strong>
+            <p>@GetTransactionTypeDisplay((int)Model.Transaction.TransactionType)</p>
+        </div>
+        <div class="col">
+            <strong>Condição</strong>
+            <p>@GetPaymentTermDisplay((int)@Model.Transaction.PaymentTerm)</p>
+        </div>
+        <div class="col">
+            <strong>Categoria</strong>
+            <div class="d-flex" style="display: flex; justify-content: start; align-items: center;">
+                <div>
+                    <img src="~/img/categories/@Model.Transaction.Categories.IconPath" />
+                </div>
+                <div style="margin-left: 10px;">
+                    <span>@Model.Transaction.Categories.Name</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        @if (!string.IsNullOrEmpty(Model.Transaction.AccountId.ToString()))
+        {
+            <div class="col">
+                <strong>Banco</strong>
+                <div class="d-flex" style="display: flex; justify-content: start; align-items: center;">
+                    <div>
+                        <img src="~/img/banks/@Model.Transaction.Account.Bank.ImagePath" />
+                    </div>
+                    <div style="margin-left: 10px;">
+                        <span>@Model.Transaction.Account.AccountNickname</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <strong>Agência e conta</strong>
+                <p>@Model.Transaction.Account.AgencyNumber/@Model.Transaction.Account.AccountNumber</p>
+            </div>
+        }
+        else
+        {
+            <div class="col">
+                <strong>Cartão</strong>
+                <div class="d-flex" style="display: flex; justify-content: start; align-items: center;">
+                    <div>
+                        <img src="~/img/flags/@Model.Transaction.CreditCard.FlagCard.IconPath" />
+                    </div>
+                    <div style="margin-left: 10px;">
+                        @Model.Transaction.CreditCard.CardName
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <strong>Número Cartão</strong>
+                <p>@Model.Transaction.CreditCard.CardNumber</p>
+            </div>
+        }
+
+        <div class="col">
+            <strong>Tag</strong>
+            @if (!string.IsNullOrEmpty(Model.Transaction.Tags))
+            {
+                <p>
+                    @{
+                        var tagsArray = Model.Transaction.Tags.Split(',');
+                        if (tagsArray != null)
+                        {
+                            foreach (var tag in tagsArray)
+                            {
+                                <span class="badge badge-custom tag-badge">@tag.Trim()</span>
+                            }
+                        }
+                    }
+                </p>
+            }
+        </div>
+    </div>
+
+    @functions {
+        string GetTransactionTypeDisplay(int transactionType)
+        {
+            switch (transactionType)
+            {
+                case (int)TransactionConsts.TransactionType.Gastos:
+                    return "Despesas";
+                case (int)TransactionConsts.TransactionType.Ganhos:
+                    return "Receitas";
+                case (int)TransactionConsts.TransactionType.Transferência:
+                    return "Transferência";
+                case (int)TransactionConsts.TransactionType.Saldo:
+                    return "Saldo";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        string GetPaymentTermDisplay(int paymentTerm)
+        {
+            switch (paymentTerm)
+            {
+                case (int)TransactionConsts.PaymentTerms.Imediatamente:
+                    return "Pagamento à vista";
+                case (int)TransactionConsts.PaymentTerms.Parcelado:
+                    return "Pagamento parcelado";
+                case (int)TransactionConsts.PaymentTerms.Recorrente:
+                    return "Pagamento recorrente";
+                case (int)TransactionConsts.PaymentTerms.Saldo:
+                    return "Saldo";
+                default:
+                    return string.Empty;
+            }
+        }
+    }
+
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="export-button" data-dismiss="modal">Fechar</button>
+</div>
+
+
+
+

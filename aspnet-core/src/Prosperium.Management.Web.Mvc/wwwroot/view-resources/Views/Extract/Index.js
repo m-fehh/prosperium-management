@@ -173,8 +173,46 @@
                     return formatCurrency(data);
                 },
                 sortable: false
+            },
+            {
+                targets: 6,
+                data: null,
+                sortable: false,
+                autoWidth: false,
+                defaultContent: '',
+                render: (data, type, row, meta) => {
+                    var imageFullPath = abp.appPath + 'img/categories/detail.png';
+                    return [
+                        `
+                            <div class="d-flex" style="display: flex; justify-content: start; margin-left: 20%; align-items: center;">
+                                <div>
+                                    <button type="button" style="background: transparent; border: none; padding: 0; outline: 0;" class="view-detail" data-transacao-id="${row.transaction.id}" data-toggle="modal" data-target="#ViewDetailTransactionModal">
+                                        <img src="${imageFullPath}" style="padding: 10px;" width="50" />
+                                    </button>
+                                </div>
+                            </div>
+                        `
+                    ].join('');
+                }
             }
         ]
+    });
+
+    $(document).on('click', '.view-detail', function (e) {
+        e.preventDefault();
+        var transactionId = $(this).data('transacao-id');
+
+        console.log(transactionId);
+
+        abp.ajax({
+            url: abp.appPath + 'App/Extract/ViewDetail?transactionId=' + transactionId,
+            type: 'GET',
+            dataType: 'html',
+            success: function (content) {
+                $('#ViewDetailTransactionModal div.modal-content').html(content);
+            },
+            error: function (e) { }
+        });
     });
 
     function checkInterAccount() {
@@ -187,12 +225,12 @@
                 }
             }
         });
-    }
+    };
 
     function formatCurrency(value) {
         const formattedValue = value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         return value >= 0 ? `R$ ${formattedValue}` : `- R$ ${formattedValue.substring(1)}`;
-    }
+    };
 
     // Função para atualizar o estilo de cada linha 
     _$extractTable.on('draw.dt', function () {
@@ -218,13 +256,13 @@
         var monthNames = ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
         var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
         $("#resumoTitle").text(formattedDate);
-    }
+    };
 
     // Formata data
     function formatDate(dateString) {
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return new Date(dateString).toLocaleDateString('pt-BR', options);
-    }
+    };
 
     $(document).ready(function () {
         $(".message-banner").hide();
@@ -272,7 +310,7 @@
         // Atualize os elementos HTML com os novos valores calculados
         $('#gastosValue').text(formatCurrency(totalGastos));
         $('#ganhosValue').text(formatCurrency(totalGanhos));
-    }
+    };
 
     // Função para exportar CSV
     function ExportCsv() {
@@ -317,12 +355,12 @@
         saveAs(blob, 'Prosperium_' + formattedDate + '.csv');
 
         abp.notify.success(l("ExportSuccessfully"));
-    }
+    };
 
     // Função para remover caracteres especiais
     function removeSpecialChars(str) {
         return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    }
+    };
 
 
     // Função para lidar com a entrada de pesquisa
@@ -331,7 +369,7 @@
             _$extractTable.draw();
             UpdateCardValues();
         }, 500)();
-    }
+    };
 
     // Função de Debounce para controlar a frequência de chamadas
     function Debounce(func, wait) {
@@ -346,7 +384,7 @@
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
-    }
+    };
 
     // Abre a modal do filtro avançado
     $(document).on('click', '#FilterIcon', function (e) {

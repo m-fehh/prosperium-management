@@ -16,9 +16,7 @@ using System.Collections.Generic;
 using Prosperium.Management.OpenAPI.V1.Transactions.Dto;
 using static Prosperium.Management.OpenAPI.V1.Transactions.TransactionConsts;
 using Prosperium.Management.OpenAPI.V1.Categories;
-using Prosperium.Management.OpenAPI.V1.Opportunities.Dtos;
 using Prosperium.Management.OpenAPI.V1.Opportunities;
-using Prosperium.Management.ExternalServices.Pluggy.Dtos.PaymentRequest;
 
 namespace Prosperium.Management.ExternalServices.Pluggy
 {
@@ -74,36 +72,33 @@ namespace Prosperium.Management.ExternalServices.Pluggy
                             TransactionDto transactionDto = new TransactionDto();
                             if (isCreditCard)
                             {
-                                transactionDto.TenantId = tenantId;
                                 transactionDto.TransactionType = TransactionType.Gastos;
-                                transactionDto.ExpenseValue = (item.Amount > 0) ? Convert.ToDecimal(item.Amount * -1) : Convert.ToDecimal(item.Amount);
-                                transactionDto.Description = item.Description;
+                                transactionDto.ExpenseValue = (item.Amount > 0) ? Convert.ToDecimal(item.Amount * -1) : Convert.ToDecimal(item.Amount);            
                                 transactionDto.CategoryId = (item.CategoryId == "29") ? (await _categoryAppService.GetAllListAsync()).Where(x => x.Name == "Fatura Mensal").Select(x => x.Id).FirstOrDefault() : (!string.IsNullOrEmpty(item.CategoryId)) ? Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()) : (await _categoryAppService.GetAllListAsync()).Where(x => x.Name == "Outros").Select(x => x.Id).FirstOrDefault();
                                 transactionDto.PaymentType = PaymentType.Crédito;
                                 transactionDto.PaymentTerm = (item.CreditCardMetadata?.TotalInstallments > 1) ? PaymentTerms.Parcelado : PaymentTerms.Imediatamente;
                                 transactionDto.Installments = (item.CreditCardMetadata?.TotalInstallments > 1) ? item.CreditCardMetadata.TotalInstallments : 1;
                                 transactionDto.CurrentInstallment = (item.CreditCardMetadata?.TotalInstallments > 1) ? $"{item.CreditCardMetadata.InstallmentNumber}/{item.CreditCardMetadata.TotalInstallments}" : "1/1";
                                 transactionDto.CreditCardId = (await _creditCardAppService.GetAllListAsync()).Where(x => x.PluggyCreditCardId == pluggyAccountOrCardId).Select(x => x.Id).FirstOrDefault();
-                                transactionDto.Date = item.Date;
-                                transactionDto.Origin = AccountOrigin.Pluggy;
-                                transactionDto.PluggyTransactionId = item.Id;
                             }
                             else
                             {
-                                transactionDto.TenantId = tenantId;
                                 transactionDto.TransactionType = (item.Amount > 0) ? TransactionType.Ganhos : TransactionType.Gastos;
                                 transactionDto.ExpenseValue = Convert.ToDecimal(item.Amount);
-                                transactionDto.Description = item.Description;
                                 transactionDto.CategoryId = (!string.IsNullOrEmpty(item.CategoryId)) ? Convert.ToInt64(originDestinations.Where(x => x.OriginValueId == item.CategoryId).Select(x => x.DestinationValueId).FirstOrDefault()) : (await _categoryAppService.GetAllListAsync()).Where(x => x.Name == "Outros").Select(x => x.Id).FirstOrDefault();
                                 transactionDto.PaymentType = (item.Type == "CREDIT") ? PaymentType.Crédito : PaymentType.Débito;
                                 transactionDto.PaymentTerm = PaymentTerms.Imediatamente;
                                 transactionDto.AccountId = (await _accountAppService.GetAllListAsync()).Where(x => x.PluggyAccountId == pluggyAccountOrCardId).Select(x => x.Id).FirstOrDefault(); ;
                                 transactionDto.Installments = 1;
                                 transactionDto.CurrentInstallment = "1/1";
-                                transactionDto.Date = item.Date;
-                                transactionDto.Origin = AccountOrigin.Pluggy;
-                                transactionDto.PluggyTransactionId = item.Id;
                             }
+
+                            transactionDto.Description = item.Description;
+                            transactionDto.TenantId = tenantId;
+                            transactionDto.Date = item.Date;
+                            transactionDto.Origin = AccountOrigin.Pluggy;
+                            transactionDto.PluggyTransactionId = item.Id;
+                            transactionDto.Tags = "Integração automática";
 
                             Transaction transactionToInsert = ObjectMapper.Map<Transaction>(transactionDto);
                             insertPendingTransactions.Add(transactionToInsert);

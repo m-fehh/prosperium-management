@@ -16,22 +16,21 @@ namespace Prosperium.Management.Web.Controllers
     {
         private readonly ICategoryAppService _categoryAppService;
         private readonly IAccountAppService _accountAppService;
-        private readonly ICreditCardAppService _creditCardAppService;
         private readonly ITransactionAppService _transactionAppService;
+        private readonly ICreditCardAppService _creditCardAppService;
 
-        public ExtractController(ICategoryAppService categoryAppService, IAccountAppService accountAppService, ICreditCardAppService creditCardAppService, ITransactionAppService transactionAppService)
+        public ExtractController(ICategoryAppService categoryAppService, IAccountAppService accountAppService, ITransactionAppService transactionAppService, ICreditCardAppService creditCardAppService)
         {
             _categoryAppService = categoryAppService;
             _accountAppService = accountAppService;
-            _creditCardAppService = creditCardAppService;
             _transactionAppService = transactionAppService;
+            _creditCardAppService = creditCardAppService;
         }
 
         public IActionResult Index()
         {
             return View();
         }
-
 
         [HttpGet("GetAllFilters")]
         public async Task<ActionResult> GetAllFilters()
@@ -50,18 +49,23 @@ namespace Prosperium.Management.Web.Controllers
             return PartialView("_FilterExtractModal", model);
         }
 
+        [HttpGet("ViewDetail")]
+        public async Task<IActionResult> ViewDetail(long transactionId)
+        {
+            var transaction = await _transactionAppService.GetByIdAsync(transactionId);
+            var model = new DetailTransactionModalViewModel
+            {
+                Transaction = transaction
+            };
+
+            return PartialView("_ViewDetailTransactionModal", model);
+        }
+
         [HttpGet("ContainsInterAccount")]
         public async Task<ActionResult<bool>> ContainsInterAccount()
         {
             var hasInterAccount = (await _accountAppService.GetAllListAsync()).Any(x => x.Bank.Name.ToUpper().Trim() == "BANCO INTER S.A.");
             return Ok(hasInterAccount);
-        }
-
-        [HttpGet("ViewTransaction")]
-        public async Task<ActionResult> ViewTransaction(long id)
-        {
-            TransactionDto transaction = await _transactionAppService.GetByIdAsync(id);
-            return PartialView("_ViewDetailTransaction", transaction);
         }
     }
 }

@@ -49,7 +49,8 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
         public async Task CreateAsync(CreateTransactionDto input)
         {
             var transaction = ObjectMapper.Map<Transaction>(input);
-            transaction.Origin = Accounts.AccountConsts.AccountOrigin.Manual;
+            transaction.Origin = AccountConsts.AccountOrigin.Manual;
+            transaction.Tags = $"Integração manual,{input.Tags}";
 
             if (transaction.TransactionType == TransactionType.Gastos || transaction.TransactionType == TransactionType.Transferência)
             {
@@ -107,13 +108,16 @@ namespace Prosperium.Management.OpenAPI.V1.Transactions
             if (input.PaymentType == PaymentType.Débito && input.PaymentTerm == PaymentTerms.Recorrente) { }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("get-by-id-async")]
         public async Task<TransactionDto> GetByIdAsync(long id)
         {
             Transaction transaction = await _transactionRepository.GetAll()
                 .Include(x => x.Categories).ThenInclude(x => x.Subcategories)
                 .Include(x => x.Account).ThenInclude(x => x.Bank)
-                .Include(x => x.CreditCard).ThenInclude(x => x.FlagCard).FirstOrDefaultAsync();
+                .Include(x => x.CreditCard).ThenInclude(x => x.FlagCard)
+                .Where(x => x.Id == id)
+                .FirstOrDefaultAsync();
 
             return ObjectMapper.Map<TransactionDto>(transaction);
         }
