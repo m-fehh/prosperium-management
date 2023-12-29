@@ -2,7 +2,7 @@
 
 namespace Prosperium.Management.Migrations
 {
-    public partial class Upgrade_To_ABP_6_3 : Migration
+    public partial class Upgrade_To_ABP_6_3 : Migration 
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

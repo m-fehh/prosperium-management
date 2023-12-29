@@ -2,7 +2,7 @@
 
 namespace Prosperium.Management.Migrations
 {
-    public partial class Remove_IsActive_From_Role : Migration
+    public partial class Remove_IsActive_From_Role : Migration 
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
