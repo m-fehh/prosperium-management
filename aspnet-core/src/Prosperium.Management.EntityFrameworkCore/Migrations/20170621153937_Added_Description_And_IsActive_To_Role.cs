@@ -2,7 +2,7 @@
 
 namespace Prosperium.Management.Migrations
 {
-    public partial class Added_Description_And_IsActive_To_Role : Migration
+    public partial class Added_Description_And_IsActive_To_Role : Migration 
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

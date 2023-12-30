@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Prosperium.Management.Migrations
 {
-    public partial class Upgrade_ABP_383 : Migration
+    public partial class Upgrade_ABP_383 : Migration 
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

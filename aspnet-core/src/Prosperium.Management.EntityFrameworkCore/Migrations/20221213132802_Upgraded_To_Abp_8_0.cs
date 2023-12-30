@@ -5,7 +5,7 @@
 namespace Prosperium.Management.Migrations
 {
     /// <inheritdoc />
-    public partial class UpgradedToAbp80 : Migration
+    public partial class UpgradedToAbp80 : Migration 
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

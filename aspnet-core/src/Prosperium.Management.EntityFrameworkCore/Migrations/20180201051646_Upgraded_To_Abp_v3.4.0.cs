@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Prosperium.Management.Migrations
 {
-    public partial class Upgraded_To_Abp_v340 : Migration
+    public partial class Upgraded_To_Abp_v340 : Migration 
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
