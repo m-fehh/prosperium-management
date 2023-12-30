@@ -4,12 +4,17 @@
         _$table = $('#ExtractTable');
 
     var hasInterAccount = false;
+    var filterExpense = false;
+    var filterRecipes = false;
 
     var resultData;
     var _$extractTable = _$table.DataTable({
         paging: true,
         serverSide: true,
-        lengthChange: true,  // Adicionando esta opção para permitir a alteração do número de itens por página
+        lengthChange: true,
+        language: {
+            url: "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"
+        },
         listAction: {
             ajaxFunction: function (input) {
                 var currentDate = new Date();
@@ -35,13 +40,20 @@
                 formData.skipCount = currentPage * itemsPerPage;
                 formData.maxResultCount = itemsPerPage;
 
+                if (filterExpense) {
+                    formData.filteredExpense = true;
+                }
+
+                if (filterRecipes) {
+                    formData.filteredRecipes = true;
+                }
+
                 var transactionPromise = _transactionService.getAll(formData);
 
                 transactionPromise.then(function (data) {
                     resultData = data.items;
                     UpdateCardValues();
-
-
+ 
                     return data.items;
                 });
 
@@ -198,6 +210,26 @@
         ]
     });
 
+    $(document).on('click', '#totalGastos', function (e) {
+        filterExpense = true;
+        filterRecipes = false;
+        $("#btnLimparFiltro").css("visibility", "visible");
+
+        _$table.DataTable().page(1).draw(false);
+
+        UpdateCardValues();
+    });
+
+    $(document).on('click', '#totalGanhos', function (e) {
+        filterRecipes = true;
+        filterExpense = false;
+        $("#btnLimparFiltro").css("visibility", "visible");
+
+        _$table.DataTable().page(1).draw(false);
+
+        UpdateCardValues();
+    });
+
     $(document).on('click', '.view-detail', function (e) {
         e.preventDefault();
         var transactionId = $(this).data('transacao-id');
@@ -254,7 +286,7 @@
     // Função para atualizar o texto do título
     function UpdateResumoTitle(date) {
         var monthNames = ["Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        var formattedDate = monthNames[date.getMonth()] + " de " + date.getFullYear();
+        var formattedDate = monthNames[date.getMonth()] + "/" + date.getFullYear();
         $("#resumoTitle").text(formattedDate);
     };
 
@@ -436,7 +468,10 @@
         $('#selectedTag').val('');
         $('#selectedType').val('');
 
-        _$extractTable.ajax.reload();
+        filterExpense = false;
+        filterRecipes = false;
+
+        _$extractTable.draw();
 
         $("#btnLimparFiltro").css("visibility", "hidden");
         UpdateCardValues();
